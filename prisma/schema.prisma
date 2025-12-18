@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  passwordHash String
+  name         String
+  role         String       @default("user") // "user" or "admin"
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  predictions  Prediction[]
+}
+
+model Team {
+  id        String  @id @default(cuid())
+  name      String
+  code      String  @unique // e.g., "FRA", "GER", "USA"
+  group     String? // A-L for group stage
+  flagEmoji String? // 🇫🇷
+
+  homeMatches Match[] @relation("HomeTeam")
+  awayMatches Match[] @relation("AwayTeam")
+}
+
+model Match {
+  id              String   @id @default(cuid())
+  matchNumber     Int      @unique // 1-104
+  stage           String // "group", "round32", "round16", "quarter", "semi", "third", "final"
+  group           String? // Only for group stage (A-L)
+  homeTeamId      String? // null for future knockout matches
+  awayTeamId      String? // null for future knockout matches
+  homePlaceholder String? // "Winner Group A" for knockout
+  awayPlaceholder String? // "Runner-up Group B" for knockout
+  matchDate       DateTime?
+  realScoreHome   Int?
+  realScoreAway   Int?
+  isBonusMatch    Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  homeTeam    Team?        @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam    Team?        @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  predictions Prediction[]
+}
+
+model Prediction {
+  id              String   @id @default(cuid())
+  userId          String
+  matchId         String
+  predictedHome   Int
+  predictedAway   Int
+  predictedWinner String? // For knockout draws (home/away team ID or "home"/"away")
+  pointsEarned    Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, matchId])
+}
+
+model Tournament {
+  id                 String   @id @default(cuid())
+  name               String   @default("FIFA World Cup 2026")
+  predictionDeadline DateTime
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}

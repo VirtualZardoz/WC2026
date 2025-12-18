@@ -1,0 +1,317 @@
+# World Cup Pronostics 2026
+
+A Next.js web application for organizing a football prediction competition among friends and family for the FIFA World Cup 2026. Participants submit predictions for all 104 matches before the tournament begins, and admins manually enter real results to trigger automatic scoring and dynamic leaderboard updates.
+
+## Meta
+project_type: web-app
+language: typescript
+framework: nextjs
+database: sqlite
+styling: tailwindcss
+
+## Overview
+
+This is a personal prediction game (pronostics) that replaces an Excel-based system. Key characteristics:
+- **Pre-tournament submission:** All predictions must be submitted before the first match
+- **Manual result entry:** 1-2 admins enter real match results (no external API)
+- **Automatic scoring:** Points calculated instantly when results are entered
+- **Auto-progression:** Knockout bracket teams auto-populate based on group results
+- **Pre-populated data:** All 48 teams, 12 groups, and 104 matches come pre-configured for 2026 World Cup
+
+## Core Features
+
+### 1. User Authentication
+- Email + password registration and login
+- Secure session management with cookies
+- Password reset functionality (admin-assisted)
+- Admin role for 1-2 designated users
+- Admin can view user list and reset passwords
+
+**Acceptance Criteria:**
+- Users can register with email/password
+- Users remain logged in across sessions
+- Admin can see all users and trigger password resets
+- Only admins can access admin pages
+
+### 2. Pre-Populated 2026 World Cup Tournament
+
+The app comes pre-configured with the complete 2026 FIFA World Cup structure:
+
+**48 Teams in 12 Groups (A-L):**
+- Group A: USA, and 3 qualified teams
+- Group B-L: Remaining qualified teams
+- (Teams TBD until qualification complete - use placeholder names or actual qualified teams)
+
+**104 Matches:**
+- **Group Stage (48 matches):** Each group plays 6 matches (4 teams × 3 matches each ÷ 2)
+- **Round of 32 (16 matches):** Top 2 from each group + 8 best third-placed teams
+- **Round of 16 (8 matches)**
+- **Quarter-finals (4 matches)**
+- **Semi-finals (2 matches)**
+- **Third-place playoff (1 match)**
+- **Final (1 match)**
+
+**Database Seeding:**
+- On first run, seed database with all 48 teams and 104 matches
+- Match dates can be placeholder dates (actual schedule available closer to tournament)
+- Group stage matches have fixed teams
+- Knockout matches have placeholder text (e.g., "Winner Group A vs Runner-up Group B")
+
+**Acceptance Criteria:**
+- All 104 matches visible in correct tournament structure
+- Group stage shows 12 groups with 4 teams each
+- Knockout bracket displays correct progression paths
+- Match list is complete from first match to final
+
+### 3. Automatic Knockout Progression
+
+When admin enters group stage results:
+- System calculates group standings (Points, GD, GF, etc.)
+- Top 2 from each group automatically placed in Round of 32
+- 8 best third-placed teams calculated and placed
+- Knockout bracket teams auto-populated
+
+When admin enters knockout results:
+- Winner automatically advances to next round
+- Bracket updates in real-time
+
+**Acceptance Criteria:**
+- After all group matches entered, Round of 32 teams auto-populated
+- Knockout winners automatically fill next round
+- Users see updated bracket immediately after admin saves results
+
+### 4. Prediction Submission
+
+**Before Tournament:**
+- Users predict exact scores for all 104 matches
+- Group stage: Home-Away score (e.g., France 2-1 Germany)
+- Knockout stage: Predict score + winner (for draws going to penalties)
+- Progress indicator shows completion percentage
+- Users can edit predictions until tournament deadline
+
+**Deadline Enforcement:**
+- Configurable deadline (set by admin)
+- All predictions locked after deadline
+- Clear countdown shown to users
+
+**Acceptance Criteria:**
+- User can enter predictions for all 104 matches
+- Score inputs accept numbers 0-20
+- Knockout matches allow selecting winner if draw predicted
+- Progress bar shows X/104 matches predicted
+- Predictions locked after deadline with clear message
+
+### 5. Scoring System
+
+Based on the original Excel system with adaptations for the expanded format:
+
+**Group Stage (48 matches):**
+- **3 points:** Exact score match (e.g., predicted 2-1, actual 2-1)
+- **1 point:** Correct result but wrong score (e.g., predicted 2-1, actual 3-0 = home win)
+
+**Knockout Stage (56 matches):**
+- **3 points:** Exact score match
+- **1 point:** Correct result (win/draw) but wrong score
+- **1 point (bonus):** Correctly predicted qualifying team (cumulative per round)
+
+**Bonus Matches (Admin-defined):**
+- Admin can mark any 3-5 matches as "bonus matches" before tournament
+- Special prize tracking for users who get all bonus matches as exact scores
+- This is tracked separately from main leaderboard
+
+**Acceptance Criteria:**
+- Points calculated automatically when admin enters real results
+- Scoring breakdown visible per match
+- Total points accurate and updated in real-time
+- Bonus match tracking separate from main score
+
+### 6. Admin Interface
+
+**Result Entry:**
+- Match-by-match score input
+- Bulk entry by matchday (all matches on same day)
+- Confirmation before saving (results trigger recalculation)
+- Edit existing results if correction needed
+
+**Tournament Management:**
+- Update team names (for placeholders before qualification)
+- Set prediction deadline
+- Mark bonus matches (3-5 matches)
+- Manual override for knockout progression (edge cases)
+
+**User Management:**
+- View all registered users
+- Reset user passwords
+- Export leaderboard to CSV
+
+**Acceptance Criteria:**
+- Admin pages protected by role check
+- Results saved and points recalculated immediately
+- Can mark/unmark bonus matches
+- Can export current standings
+
+### 7. Leaderboard
+
+**Main Leaderboard:**
+- Rank, Name, Total Points, Exact Scores Count
+- Highlighted row for current user's position
+- Filter: All matches, Group stage only, Knockout only
+- Sortable by points (default), exact scores, name
+
+**Detailed View:**
+- Click user to see their prediction breakdown
+- Match-by-match points earned
+- Accuracy percentage
+
+**Bonus Tracking:**
+- Separate display for bonus match performance
+- "3/3 exact on bonus matches" highlighted
+
+**Acceptance Criteria:**
+- Leaderboard updates after each result entry
+- Tied users share same rank (alphabetical secondary sort)
+- Mobile-friendly table with horizontal scroll
+- Filter buttons work correctly
+
+### 8. Match Results View
+
+**Public Results Page:**
+- Completed matches show real scores
+- Grouped by matchday or tournament phase
+- Each match shows:
+  - Teams and real score
+  - How many users got exact score
+  - How many got correct result
+  - Whether it was a bonus match
+
+**Acceptance Criteria:**
+- Only shows results after admin enters them
+- Bonus matches visually distinct (star icon or badge)
+- Mobile-responsive cards or table
+
+## Technical Requirements
+
+- **Framework:** Next.js 14+ with App Router
+- **Language:** TypeScript
+- **Database:** SQLite with Prisma ORM
+- **Auth:** NextAuth.js with Credentials provider
+- **Styling:** TailwindCSS
+- **Structure:** Multi-file, organized by feature/route
+
+## Database Schema
+
+```prisma
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  passwordHash  String
+  name          String
+  role          String       @default("user") // "user" or "admin"
+  createdAt     DateTime     @default(now())
+  predictions   Prediction[]
+}
+
+model Team {
+  id           String   @id @default(cuid())
+  name         String
+  code         String   @unique  // e.g., "FRA", "GER", "USA"
+  group        String?  // A-L for group stage
+  flagEmoji    String?  // 🇫🇷
+}
+
+model Match {
+  id              String       @id @default(cuid())
+  matchNumber     Int          @unique  // 1-104
+  stage           String       // "group", "round32", "round16", "quarter", "semi", "third", "final"
+  group           String?      // Only for group stage (A-L)
+  homeTeamId      String?      // null for future knockout matches
+  awayTeamId      String?      // null for future knockout matches
+  homePlaceholder String?      // "Winner Group A" for knockout
+  awayPlaceholder String?      // "Runner-up Group B" for knockout
+  matchDate       DateTime?
+  realScoreHome   Int?
+  realScoreAway   Int?
+  isBonusMatch    Boolean      @default(false)
+  predictions     Prediction[]
+}
+
+model Prediction {
+  id             String   @id @default(cuid())
+  userId         String
+  matchId        String
+  predictedHome  Int
+  predictedAway  Int
+  predictedWinner String? // For knockout draws (home/away team ID)
+  pointsEarned   Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id])
+  match Match @relation(fields: [matchId], references: [id])
+
+  @@unique([userId, matchId])
+}
+
+model Tournament {
+  id                 String   @id @default(cuid())
+  name               String   @default("FIFA World Cup 2026")
+  predictionDeadline DateTime
+  isActive           Boolean  @default(true)
+}
+```
+
+## Error Handling
+
+- **Invalid credentials:** Clear error, no account enumeration
+- **Duplicate email:** "Email already registered"
+- **Past deadline:** Block edits with message "Predictions locked"
+- **Invalid score input:** Client-side validation (0-20, integers only)
+- **Database errors:** Graceful error page, logged to console
+
+## Page Routes
+
+```
+/                     - Home (redirect to /predictions if logged in, else login)
+/login                - Login page
+/register             - Registration page
+/predictions          - User's prediction form (104 matches)
+/predictions/[stage]  - Filtered by stage (group, knockout)
+/leaderboard          - Public leaderboard
+/results              - Match results view
+/profile              - User profile, password change
+/admin                - Admin dashboard
+/admin/matches        - Enter/edit match results
+/admin/users          - User management
+/admin/settings       - Tournament settings (deadline, bonus matches)
+```
+
+## Seed Data
+
+On first run, the app should seed:
+1. **48 Teams** with placeholder names (e.g., "Team A1", "Team B1") or actual qualified teams
+2. **104 Matches** with:
+   - Group stage: Fixed team matchups per FIFA schedule
+   - Knockout: Placeholder text for teams ("Winner A vs Runner-up B")
+3. **1 Admin user** with default credentials (admin@example.com / admin123)
+4. **Tournament** with deadline 1 day before first match
+
+## Success Criteria
+
+- [ ] User registration and login works
+- [ ] All 104 matches displayed correctly by stage
+- [ ] Users can submit predictions for all matches
+- [ ] Predictions lock at deadline
+- [ ] Admin can enter match results
+- [ ] Points calculated correctly per scoring rules
+- [ ] Knockout bracket auto-populates from group results
+- [ ] Leaderboard shows accurate rankings
+- [ ] Bonus match tracking works
+- [ ] Mobile-responsive design
+- [ ] Admin can manage users and export data
+
+## Notes
+
+- This replaces a decades-old Excel system used for family/friends competitions
+- The key value proposition is **flexibility in scoring rules** and **automatic calculations**
+- No external APIs - all results entered manually by trusted admins
+- Focus on reliability and simplicity over features
