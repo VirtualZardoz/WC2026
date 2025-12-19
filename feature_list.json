@@ -609,7 +609,7 @@
       "Step 4: Verify user email and name visible",
       "Step 5: Verify registration date visible"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "045",
@@ -677,7 +677,7 @@
       "Step 3: Verify profile page loads",
       "Step 4: Verify user name and email displayed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "050",
