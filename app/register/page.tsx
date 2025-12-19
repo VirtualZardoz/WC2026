@@ -89,7 +89,7 @@ export default function RegisterPage() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="input mt-1"
+                className="input w-full mt-1"
                 placeholder="John Doe"
               />
             </div>
@@ -109,7 +109,7 @@ export default function RegisterPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input mt-1"
+                className="input w-full mt-1"
                 placeholder="you@example.com"
               />
             </div>
@@ -129,7 +129,7 @@ export default function RegisterPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="input mt-1"
+                className="input w-full mt-1"
                 placeholder="At least 6 characters"
               />
             </div>
@@ -149,7 +149,7 @@ export default function RegisterPage() {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="input mt-1"
+                className="input w-full mt-1"
                 placeholder="Confirm your password"
               />
             </div>

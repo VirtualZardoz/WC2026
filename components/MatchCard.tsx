@@ -143,13 +143,11 @@ export default function MatchCard({
       {/* Teams and scores */}
       <div className="space-y-3">
         {/* Home team */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 flex-1 min-w-0">
-            <span className="text-lg">{homeFlag}</span>
-            <span className="font-medium text-slate-900 dark:text-white truncate">
-              {homeName}
-            </span>
-          </div>
+        <div className="flex items-center gap-3">
+          <span className="text-lg flex-shrink-0">{homeFlag}</span>
+          <span className="font-medium text-slate-900 dark:text-white flex-1 min-w-0 truncate">
+            {homeName}
+          </span>
           <input
             type="number"
             min="0"
@@ -157,19 +155,17 @@ export default function MatchCard({
             value={homeScore}
             onChange={(e) => setHomeScore(e.target.value)}
             disabled={isLocked}
-            className="w-16 input text-center"
+            className="w-16 input text-center flex-shrink-0"
             placeholder="-"
           />
         </div>
 
         {/* Away team */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 flex-1 min-w-0">
-            <span className="text-lg">{awayFlag}</span>
-            <span className="font-medium text-slate-900 dark:text-white truncate">
-              {awayName}
-            </span>
-          </div>
+        <div className="flex items-center gap-3">
+          <span className="text-lg flex-shrink-0">{awayFlag}</span>
+          <span className="font-medium text-slate-900 dark:text-white flex-1 min-w-0 truncate">
+            {awayName}
+          </span>
           <input
             type="number"
             min="0"
@@ -177,7 +173,7 @@ export default function MatchCard({
             value={awayScore}
             onChange={(e) => setAwayScore(e.target.value)}
             disabled={isLocked}
-            className="w-16 input text-center"
+            className="w-16 input text-center flex-shrink-0"
             placeholder="-"
           />
         </div>

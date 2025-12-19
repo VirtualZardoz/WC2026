@@ -162,7 +162,7 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="input mt-1"
+                className="input w-full mt-1"
                 required
               />
             </div>
@@ -179,7 +179,7 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="input mt-1"
+                  className="input w-full mt-1"
                   required
                 />
               </div>
@@ -195,7 +195,7 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="input mt-1"
+                  className="input w-full mt-1"
                   required
                 />
               </div>

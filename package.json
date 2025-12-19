@@ -14,6 +14,7 @@
     "bcryptjs": "^2.4.3",
     "next": "14.2.15",
     "next-auth": "^4.24.8",
+    "puppeteer": "^24.33.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

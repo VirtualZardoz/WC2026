@@ -182,7 +182,7 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
             <select
               value={stageFilter}
               onChange={(e) => setStageFilter(e.target.value)}
-              className="input py-1"
+              className="input w-full py-1"
             >
               <option value="all">All Stages</option>
               {Object.entries(stageNames).map(([key, name]) => (

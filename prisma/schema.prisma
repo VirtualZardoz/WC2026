@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,42 +12,40 @@ model User {
   email        String       @unique
   passwordHash String
   name         String
-  role         String       @default("user") // "user" or "admin"
+  role         String       @default("user")
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   predictions  Prediction[]
 }
 
 model Team {
-  id        String  @id @default(cuid())
-  name      String
-  code      String  @unique // e.g., "FRA", "GER", "USA"
-  group     String? // A-L for group stage
-  flagEmoji String? // 🇫🇷
-
-  homeMatches Match[] @relation("HomeTeam")
+  id          String  @id @default(cuid())
+  name        String
+  code        String  @unique
+  group       String?
+  flagEmoji   String?
   awayMatches Match[] @relation("AwayTeam")
+  homeMatches Match[] @relation("HomeTeam")
 }
 
 model Match {
-  id              String   @id @default(cuid())
-  matchNumber     Int      @unique // 1-104
-  stage           String // "group", "round32", "round16", "quarter", "semi", "third", "final"
-  group           String? // Only for group stage (A-L)
-  homeTeamId      String? // null for future knockout matches
-  awayTeamId      String? // null for future knockout matches
-  homePlaceholder String? // "Winner Group A" for knockout
-  awayPlaceholder String? // "Runner-up Group B" for knockout
+  id              String       @id @default(cuid())
+  matchNumber     Int          @unique
+  stage           String
+  group           String?
+  homeTeamId      String?
+  awayTeamId      String?
+  homePlaceholder String?
+  awayPlaceholder String?
   matchDate       DateTime?
   realScoreHome   Int?
   realScoreAway   Int?
-  isBonusMatch    Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  homeTeam    Team?        @relation("HomeTeam", fields: [homeTeamId], references: [id])
-  awayTeam    Team?        @relation("AwayTeam", fields: [awayTeamId], references: [id])
-  predictions Prediction[]
+  isBonusMatch    Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  awayTeam        Team?        @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  homeTeam        Team?        @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  predictions     Prediction[]
 }
 
 model Prediction {
@@ -59,13 +54,12 @@ model Prediction {
   matchId         String
   predictedHome   Int
   predictedAway   Int
-  predictedWinner String? // For knockout draws (home/away team ID or "home"/"away")
+  predictedWinner String?
   pointsEarned    Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  match           Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, matchId])
 }

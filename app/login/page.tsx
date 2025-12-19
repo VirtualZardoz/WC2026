@@ -1,11 +1,11 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/predictions';
@@ -42,6 +42,111 @@ export default function LoginPage() {
   };
 
   return (
+    <>
+      {registered && (
+        <div className="alert-success">
+          Registration successful! Please sign in with your credentials.
+        </div>
+      )}
+
+      {error && (
+        <div className="alert-error">
+          {error}
+        </div>
+      )}
+
+      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <div className="space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            >
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input w-full mt-1"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input w-full mt-1"
+              placeholder="Your password"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-primary w-full flex justify-center items-center"
+        >
+          {loading ? (
+            <>
+              <span className="spinner mr-2"></span>
+              Signing in...
+            </>
+          ) : (
+            'Sign in'
+          )}
+        </button>
+      </form>
+
+      <p className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">
+        Don&apos;t have an account?{' '}
+        <Link
+          href="/register"
+          className="font-medium text-primary-600 hover:text-primary-500"
+        >
+          Register here
+        </Link>
+      </p>
+    </>
+  );
+}
+
+function LoginFormFallback() {
+  return (
+    <div className="mt-8 space-y-6">
+      <div className="space-y-4">
+        <div>
+          <div className="h-5 w-24 bg-slate-200 dark:bg-slate-700 rounded animate-pulse"></div>
+          <div className="h-10 w-full bg-slate-200 dark:bg-slate-700 rounded mt-1 animate-pulse"></div>
+        </div>
+        <div>
+          <div className="h-5 w-20 bg-slate-200 dark:bg-slate-700 rounded animate-pulse"></div>
+          <div className="h-10 w-full bg-slate-200 dark:bg-slate-700 rounded mt-1 animate-pulse"></div>
+        </div>
+      </div>
+      <div className="h-10 w-full bg-slate-200 dark:bg-slate-700 rounded animate-pulse"></div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-500 to-primary-700 px-4">
       <div className="max-w-md w-full space-y-8 bg-white dark:bg-slate-800 p-8 rounded-xl shadow-2xl">
         <div>
@@ -53,86 +158,9 @@ export default function LoginPage() {
           </h2>
         </div>
 
-        {registered && (
-          <div className="alert-success">
-            Registration successful! Please sign in with your credentials.
-          </div>
-        )}
-
-        {error && (
-          <div className="alert-error">
-            {error}
-          </div>
-        )}
-
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
-              >
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input mt-1"
-                placeholder="you@example.com"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input mt-1"
-                placeholder="Your password"
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary w-full flex justify-center items-center"
-          >
-            {loading ? (
-              <>
-                <span className="spinner mr-2"></span>
-                Signing in...
-              </>
-            ) : (
-              'Sign in'
-            )}
-          </button>
-        </form>
-
-        <p className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">
-          Don&apos;t have an account?{' '}
-          <Link
-            href="/register"
-            className="font-medium text-primary-600 hover:text-primary-500"
-          >
-            Register here
-          </Link>
-        </p>
+        <Suspense fallback={<LoginFormFallback />}>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );
