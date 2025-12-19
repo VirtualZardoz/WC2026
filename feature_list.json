@@ -8,7 +8,7 @@
       "Step 2: Verify page loads without errors",
       "Step 3: Verify login or redirect to predictions page occurs"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "002",
@@ -24,7 +24,7 @@
       "Step 7: Verify redirect to login or predictions page",
       "Step 8: Verify success message appears"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "003",
@@ -38,7 +38,7 @@
       "Step 5: Verify redirect to /predictions",
       "Step 6: Verify user session is active"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "004",
@@ -91,7 +91,7 @@
       "Step 4: Verify user is still logged in",
       "Step 5: Verify predictions page still accessible"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "008",
@@ -273,7 +273,7 @@
       "Step 3: Verify countdown or deadline display is visible",
       "Step 4: Verify countdown shows remaining time"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "020",
@@ -285,7 +285,7 @@
       "Step 3: Verify admin dashboard loads",
       "Step 4: Verify admin navigation options visible"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "021",
@@ -476,7 +476,7 @@
       "Step 3: Verify columns: Rank, Name, Total Points, Exact Scores Count",
       "Step 4: Verify sorted by points (highest first)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "035",
@@ -488,7 +488,7 @@
       "Step 3: Verify current user's row is highlighted or distinguished",
       "Step 4: Verify easy to identify own position"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "036",
@@ -708,7 +708,7 @@
       "Step 6: Navigate to /admin",
       "Step 7: Verify admin access granted"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "052",
@@ -734,7 +734,7 @@
       "Step 4: Count total matches across all stages",
       "Step 5: Verify 104 matches exist"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "054",
@@ -801,7 +801,7 @@
       "Step 4: Verify login button is visible and styled",
       "Step 5: Verify link to registration page exists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "059",
@@ -814,7 +814,7 @@
       "Step 4: Verify register button styled consistently",
       "Step 5: Verify link to login page exists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "060",
@@ -829,7 +829,7 @@
       "Step 6: Navigate to /results",
       "Step 7: Verify navigation header consistent"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "061",
@@ -844,7 +844,7 @@
       "Step 6: Verify link to Profile",
       "Step 7: Verify logout option present"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "062",
@@ -856,7 +856,7 @@
       "Step 3: Verify Admin link/section visible",
       "Step 4: Verify admin options accessible from nav"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "063",
@@ -869,7 +869,7 @@
       "Step 4: Verify group headers (A, B, C... L) visible",
       "Step 5: Verify matches within groups are clearly organized"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "064",
@@ -883,7 +883,7 @@
       "Step 5: Verify inputs are appropriately sized",
       "Step 6: Verify easy to enter scores"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "065",
@@ -909,7 +909,7 @@
       "Step 4: Verify rank numbers visible",
       "Step 5: Verify points clearly displayed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "067",
@@ -961,7 +961,7 @@
       "Step 4: Verify completion count displayed (X/104)",
       "Step 5: Verify visual indication of progress (filled bar, percentage)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "071",
@@ -1258,7 +1258,7 @@
       "Step 4: Verify countdown is prominently displayed",
       "Step 5: Verify urgency styling when close to deadline (optional)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "091",
@@ -1390,6 +1390,6 @@
       "Step 3: Verify footer exists",
       "Step 4: Verify relevant info (copyright, year)"
     ],
-    "passes": false
+    "passes": true
   }
 ]
