@@ -181,7 +181,7 @@
       "Step 7: Verify all predictions are saved",
       "Step 8: Verify progress indicator shows completion"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "014",
@@ -199,7 +199,7 @@
       "Step 9: Enter valid score 0-20",
       "Step 10: Verify accepted"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "015",
