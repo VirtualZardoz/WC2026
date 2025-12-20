@@ -300,7 +300,7 @@
       "Step 6: Navigate to /admin/users",
       "Step 7: Verify access denied"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "022",
@@ -974,7 +974,7 @@
       "Step 4: Verify error styled in red/warning color",
       "Step 5: Verify error is near relevant field"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "072",
