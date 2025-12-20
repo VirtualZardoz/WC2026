@@ -43,13 +43,14 @@ The app comes pre-configured with the complete 2026 FIFA World Cup structure:
 - (Teams TBD until qualification complete - use placeholder names or actual qualified teams)
 
 **104 Matches:**
-- **Group Stage (48 matches):** Each group plays 6 matches (4 teams × 3 matches each ÷ 2)
+- **Group Stage (72 matches):** Each group plays 6 matches (4 teams × 3 matches each ÷ 2 = 6 per group × 12 groups = 72)
 - **Round of 32 (16 matches):** Top 2 from each group + 8 best third-placed teams
 - **Round of 16 (8 matches)**
 - **Quarter-finals (4 matches)**
 - **Semi-finals (2 matches)**
 - **Third-place playoff (1 match)**
 - **Final (1 match)**
+- **Knockout total: 32 matches**
 
 **Database Seeding:**
 - On first run, seed database with all 48 teams and 104 matches
@@ -105,11 +106,11 @@ When admin enters knockout results:
 
 Based on the original Excel system with adaptations for the expanded format:
 
-**Group Stage (48 matches):**
+**Group Stage (72 matches):**
 - **3 points:** Exact score match (e.g., predicted 2-1, actual 2-1)
 - **1 point:** Correct result but wrong score (e.g., predicted 2-1, actual 3-0 = home win)
 
-**Knockout Stage (56 matches):**
+**Knockout Stage (32 matches):**
 - **3 points:** Exact score match
 - **1 point:** Correct result (win/draw) but wrong score
 - **1 point (bonus):** Correctly predicted qualifying team (cumulative per round)

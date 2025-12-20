@@ -114,7 +114,7 @@
       "Step 1: Login as user",
       "Step 2: Navigate to /predictions",
       "Step 3: Count total number of matches displayed",
-      "Step 4: Verify 48 group stage matches",
+      "Step 4: Verify 72 group stage matches",
       "Step 5: Verify 16 Round of 32 matches",
       "Step 6: Verify 8 Round of 16 matches",
       "Step 7: Verify 4 Quarter-final matches",
@@ -743,9 +743,9 @@
     "steps": [
       "Step 1: Login as user",
       "Step 2: Navigate to /predictions/group",
-      "Step 3: Verify only group stage matches shown (48)",
+      "Step 3: Verify only group stage matches shown (72)",
       "Step 4: Navigate to /predictions/knockout",
-      "Step 5: Verify only knockout matches shown (56)"
+      "Step 5: Verify only knockout matches shown (32)"
     ],
     "passes": false
   },
