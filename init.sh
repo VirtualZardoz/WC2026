@@ -41,6 +41,17 @@ fi
 echo -e "${GREEN}✓ npm $(npm -v) detected${NC}"
 echo ""
 
+# Kill any running Next.js processes and clean caches
+echo -e "${YELLOW}Cleaning build caches...${NC}"
+pkill -f "next dev" 2>/dev/null || true
+pkill -f "next-server" 2>/dev/null || true
+sleep 1
+
+# Clean .next and node_modules cache to prevent corruption
+rm -rf .next node_modules/.cache 2>/dev/null || true
+echo -e "${GREEN}✓ Build caches cleaned${NC}"
+echo ""
+
 # Install dependencies
 echo -e "${YELLOW}Installing dependencies...${NC}"
 npm install
