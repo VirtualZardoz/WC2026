@@ -530,7 +530,7 @@
       "Step 3: Verify both users show same rank number",
       "Step 4: Verify secondary sort is alphabetical"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "039",
@@ -747,7 +747,7 @@
       "Step 4: Navigate to /predictions/knockout",
       "Step 5: Verify only knockout matches shown (32)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "055",

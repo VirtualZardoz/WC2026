@@ -40,6 +40,7 @@ interface PredictionsClientProps {
   predictedMatches: number;
   isLocked: boolean;
   deadline: string | null;
+  initialTab?: 'group' | 'knockout';
 }
 
 export default function PredictionsClient({
@@ -49,8 +50,9 @@ export default function PredictionsClient({
   predictedMatches: initialPredicted,
   isLocked,
   deadline,
+  initialTab = 'group',
 }: PredictionsClientProps) {
-  const [activeTab, setActiveTab] = useState<'group' | 'knockout'>('group');
+  const [activeTab, setActiveTab] = useState<'group' | 'knockout'>(initialTab);
   const [predictedCount, setPredictedCount] = useState(initialPredicted);
   const [timeLeft, setTimeLeft] = useState<string>('');
 
