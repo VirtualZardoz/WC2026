@@ -317,7 +317,7 @@
       "Step 8: Navigate to /results",
       "Step 9: Verify match result appears"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "023",
@@ -346,7 +346,7 @@
       "Step 5: Confirm the entry",
       "Step 6: Verify result is saved after confirmation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "025",
@@ -555,7 +555,7 @@
       "Step 3: Verify real scores displayed",
       "Step 4: Verify matches grouped by matchday or phase"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "041",
@@ -568,7 +568,7 @@
       "Step 4: Verify 'X users got exact score' displayed",
       "Step 5: Verify 'Y users got correct result' displayed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "042",
