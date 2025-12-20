@@ -215,7 +215,7 @@
       "Step 7: Save prediction",
       "Step 8: Verify prediction saved with winner selection"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "016",
@@ -230,7 +230,7 @@
       "Step 6: Enter more predictions",
       "Step 7: Verify progress reflects accurate count"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "017",
@@ -246,7 +246,7 @@
       "Step 7: Refresh page",
       "Step 8: Verify new prediction (3-0) is saved"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "018",
