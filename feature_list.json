@@ -78,7 +78,7 @@
       "Step 4: Verify redirect to login page",
       "Step 5: Verify protected routes are no longer accessible"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "007",
@@ -149,7 +149,7 @@
       "Step 4: Verify placeholder text like 'Winner Group A' is displayed",
       "Step 5: Verify placeholder text like 'Runner-up Group B' is displayed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "012",
