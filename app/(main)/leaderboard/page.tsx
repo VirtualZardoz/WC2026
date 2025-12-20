@@ -11,56 +11,55 @@ interface LeaderboardEntry {
   exactScores: number;
   correctResults: number;
   predictedCount: number;
+  groupPoints: number;
+  knockoutPoints: number;
 }
 
 async function getLeaderboard(): Promise<LeaderboardEntry[]> {
   const users = await prisma.user.findMany({
-    where: { role: 'user' },
     include: {
       predictions: {
-        where: {
-          pointsEarned: { gt: 0 },
-        },
+        include: { match: true },
       },
     },
   });
 
   // Calculate leaderboard entries
-  const leaderboard: LeaderboardEntry[] = [];
-
-  for (const user of users) {
-    const totalPredictions = await prisma.prediction.count({
-      where: { userId: user.id },
-    });
-
-    const predictions = await prisma.prediction.findMany({
-      where: { userId: user.id },
-      include: { match: true },
-    });
-
+  const leaderboard: LeaderboardEntry[] = users.map((user) => {
     let totalPoints = 0;
+    let groupPoints = 0;
+    let knockoutPoints = 0;
     let exactScores = 0;
     let correctResults = 0;
 
-    for (const pred of predictions) {
+    user.predictions.forEach((pred) => {
       totalPoints += pred.pointsEarned;
+      if (pred.match.stage === 'group') {
+        groupPoints += pred.pointsEarned;
+      } else {
+        knockoutPoints += pred.pointsEarned;
+      }
+
       if (pred.pointsEarned === 3) {
         exactScores++;
-      } else if (pred.pointsEarned === 1) {
+      } else if (pred.pointsEarned === 1 || pred.pointsEarned === 2 || pred.pointsEarned === 4) {
+        // Correct result (1) or Correct result + bonus (1+1=2) or Exact + bonus (3+1=4)
         correctResults++;
       }
-    }
+    });
 
-    leaderboard.push({
+    return {
       id: user.id,
       name: user.name,
       email: user.email,
       totalPoints,
+      groupPoints,
+      knockoutPoints,
       exactScores,
       correctResults,
-      predictedCount: totalPredictions,
-    });
-  }
+      predictedCount: user.predictions.length,
+    };
+  });
 
   // Sort by total points, then exact scores, then name
   leaderboard.sort((a, b) => {

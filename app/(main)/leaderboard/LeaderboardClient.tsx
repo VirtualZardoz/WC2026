@@ -11,6 +11,8 @@ interface LeaderboardEntry {
   exactScores: number;
   correctResults: number;
   predictedCount: number;
+  groupPoints?: number;
+  knockoutPoints?: number;
 }
 
 interface LeaderboardClientProps {
@@ -19,6 +21,7 @@ interface LeaderboardClientProps {
 }
 
 type SortField = 'points' | 'exactScores' | 'name';
+type PhaseFilter = 'all' | 'group' | 'knockout';
 
 export default function LeaderboardClient({
   leaderboard,
@@ -26,6 +29,7 @@ export default function LeaderboardClient({
 }: LeaderboardClientProps) {
   const [sortField, setSortField] = useState<SortField>('points');
   const [sortAsc, setSortAsc] = useState(false);
+  const [phase, setPhase] = useState<PhaseFilter>('all');
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -36,11 +40,17 @@ export default function LeaderboardClient({
     }
   };
 
+  const getPoints = (entry: LeaderboardEntry) => {
+    if (phase === 'group') return entry.groupPoints || 0;
+    if (phase === 'knockout') return entry.knockoutPoints || 0;
+    return entry.totalPoints;
+  };
+
   const sortedLeaderboard = [...leaderboard].sort((a, b) => {
     let comparison = 0;
     switch (sortField) {
       case 'points':
-        comparison = b.totalPoints - a.totalPoints;
+        comparison = getPoints(b) - getPoints(a);
         break;
       case 'exactScores':
         comparison = b.exactScores - a.exactScores;
@@ -53,28 +63,18 @@ export default function LeaderboardClient({
   });
 
   // Calculate ranks (tied users share same rank)
-  const rankedLeaderboard = sortedLeaderboard.map((entry, index, arr) => {
-    let rank = 1;
-    for (let i = 0; i < index; i++) {
-      if (arr[i].totalPoints !== entry.totalPoints) {
-        rank = i + 1;
-      }
-    }
-    if (index > 0 && arr[index - 1].totalPoints === entry.totalPoints) {
-      rank = rankedLeaderboard[index - 1]?.rank || index;
-    } else {
-      rank = index + 1;
-    }
-    return { ...entry, rank };
+  const rankedLeaderboard = sortedLeaderboard.map((entry, index) => {
+    return { ...entry, rank: 0 }; // Initialize
   });
 
   // Recalculate ranks properly
   let currentRank = 0;
-  let currentPoints = -1;
+  let currentVal = -1;
   rankedLeaderboard.forEach((entry, index) => {
-    if (entry.totalPoints !== currentPoints) {
+    const val = getPoints(entry);
+    if (val !== currentVal) {
       currentRank = index + 1;
-      currentPoints = entry.totalPoints;
+      currentVal = val;
     }
     entry.rank = currentRank;
   });
@@ -111,25 +111,52 @@ export default function LeaderboardClient({
         </p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="card text-center">
-          <p className="text-3xl font-bold text-primary-600">
-            {leaderboard.length}
-          </p>
-          <p className="text-sm text-slate-500">Participants</p>
+      {/* Filters and Stats */}
+      <div className="flex flex-col md:flex-row gap-8 mb-8">
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Filter by Phase
+          </label>
+          <div className="flex space-x-2">
+            {(['all', 'group', 'knockout'] as const).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPhase(p)}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  phase === p
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+                }`}
+              >
+                {p === 'all'
+                  ? 'All Matches'
+                  : p === 'group'
+                  ? 'Group Stage'
+                  : 'Knockout Stage'}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="card text-center">
-          <p className="text-3xl font-bold text-green-600">
-            {leaderboard.reduce((sum, e) => sum + e.exactScores, 0)}
-          </p>
-          <p className="text-sm text-slate-500">Total Exact Scores</p>
-        </div>
-        <div className="card text-center">
-          <p className="text-3xl font-bold text-amber-600">
-            {leaderboard[0]?.totalPoints || 0}
-          </p>
-          <p className="text-sm text-slate-500">Highest Score</p>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="card text-center py-4">
+            <p className="text-2xl font-bold text-primary-600">
+              {leaderboard.length}
+            </p>
+            <p className="text-xs text-slate-500">Participants</p>
+          </div>
+          <div className="card text-center py-4">
+            <p className="text-2xl font-bold text-green-600">
+              {leaderboard.reduce((sum, e) => sum + e.exactScores, 0)}
+            </p>
+            <p className="text-xs text-slate-500">Total Exact</p>
+          </div>
+          <div className="card text-center py-4 hidden md:block">
+            <p className="text-2xl font-bold text-amber-600">
+              {leaderboard[0] ? getPoints(leaderboard[0]) : 0}
+            </p>
+            <p className="text-xs text-slate-500">Top Score</p>
+          </div>
         </div>
       </div>
 
@@ -201,7 +228,7 @@ export default function LeaderboardClient({
                       </Link>
                     </td>
                     <td className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 font-bold text-lg">
-                      {entry.totalPoints}
+                      {getPoints(entry)}
                     </td>
                     <td className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
                       <span className="text-green-600 font-medium">

@@ -503,7 +503,7 @@
       "Step 6: Click 'Knockout only' filter",
       "Step 7: Verify only knockout points shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "037",
@@ -518,7 +518,7 @@
       "Step 6: Click to sort by name",
       "Step 7: Verify sorted alphabetically"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "038",
