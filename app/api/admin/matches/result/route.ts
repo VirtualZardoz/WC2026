@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { advanceKnockoutWinner, updateKnockoutBracket } from '@/lib/tournament';
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -12,19 +13,12 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { matchId, homeScore, awayScore } = body;
+    const { matchId, homeScore, awayScore, winnerId } = body;
 
     // Validation
     if (!matchId || homeScore === undefined || awayScore === undefined) {
       return NextResponse.json(
         { error: 'Match ID and scores are required' },
-        { status: 400 }
-      );
-    }
-
-    if (homeScore < 0 || homeScore > 20 || awayScore < 0 || awayScore > 20) {
-      return NextResponse.json(
-        { error: 'Scores must be between 0 and 20' },
         { status: 400 }
       );
     }
@@ -38,6 +32,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Match not found' }, { status: 404 });
     }
 
+    // Determine actual winner for knockout matches
+    let actualWinnerId = null;
+    if (match.stage !== 'group') {
+      if (homeScore > awayScore) {
+        actualWinnerId = match.homeTeamId;
+      } else if (awayScore > homeScore) {
+        actualWinnerId = match.awayTeamId;
+      } else {
+        // Draw in knockout, use provided winnerId (penalties)
+        if (!winnerId) {
+          return NextResponse.json(
+            { error: 'Winner selection is required for knockout draws' },
+            { status: 400 }
+          );
+        }
+        actualWinnerId = winnerId;
+      }
+    }
+
     // Update match result
     await prisma.match.update({
       where: { id: matchId },
@@ -47,26 +60,32 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Auto-progression
+    if (match.stage === 'group') {
+      await updateKnockoutBracket();
+    } else if (actualWinnerId) {
+      await advanceKnockoutWinner(matchId, actualWinnerId);
+    }
+
     // Calculate points for all predictions on this match
     const predictions = await prisma.prediction.findMany({
       where: { matchId },
     });
 
-    // Determine actual result
     const actualResult =
       homeScore > awayScore ? 'home' : homeScore < awayScore ? 'away' : 'draw';
 
     for (const prediction of predictions) {
       let points = 0;
 
-      // Check for exact score
+      // 1. Check for exact score (3 points)
       if (
         prediction.predictedHome === homeScore &&
         prediction.predictedAway === awayScore
       ) {
         points = 3;
       } else {
-        // Check for correct result
+        // 2. Check for correct result (1 point)
         const predictedResult =
           prediction.predictedHome > prediction.predictedAway
             ? 'home'
@@ -76,6 +95,31 @@ export async function POST(request: NextRequest) {
 
         if (predictedResult === actualResult) {
           points = 1;
+        }
+      }
+
+      // 3. Knockout bonus (1 point)
+      if (match.stage !== 'group' && actualWinnerId) {
+        // If user predicted the same winner as the actual winner
+        // We need to determine user's predicted winner
+        let userPredictedWinnerId = null;
+        if (prediction.predictedHome > prediction.predictedAway) {
+          userPredictedWinnerId = match.homeTeamId;
+        } else if (prediction.predictedAway > prediction.predictedHome) {
+          userPredictedWinnerId = match.awayTeamId;
+        } else {
+          // Prediction was a draw
+          // For now we assume user's predictedWinner is "home" or "away" (slug)
+          userPredictedWinnerId =
+            prediction.predictedWinner === 'home'
+              ? match.homeTeamId
+              : prediction.predictedWinner === 'away'
+              ? match.awayTeamId
+              : null;
+        }
+
+        if (userPredictedWinnerId === actualWinnerId) {
+          points += 1;
         }
       }
 

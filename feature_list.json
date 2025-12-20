@@ -359,7 +359,7 @@
       "Step 4: View user's points for this match",
       "Step 5: Verify 3 points earned"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "026",
@@ -372,7 +372,7 @@
       "Step 4: View user's points for this match",
       "Step 5: Verify 1 point earned"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "027",
@@ -986,7 +986,7 @@
       "Step 3: Verify success message/feedback appears",
       "Step 4: Verify success styled in green/positive color"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "073",
@@ -1285,7 +1285,7 @@
       "Step 5: POST to same endpoint",
       "Step 6: Verify success"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "093",

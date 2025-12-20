@@ -39,10 +39,12 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
   const [homeScore, setHomeScore] = useState<string>('');
   const [awayScore, setAwayScore] = useState<string>('');
   const [saving, setSaving] = useState(false);
+  const [winnerId, setWinnerId] = useState<string | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
     matchId: string;
     home: number;
     away: number;
+    winnerId: string | null;
     matchName: string;
   } | null>(null);
 
@@ -58,16 +60,20 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
     return true;
   });
 
+  const isDraw = homeScore !== '' && awayScore !== '' && parseInt(homeScore) === parseInt(awayScore);
+
   const startEditing = (match: Match) => {
     setEditingMatch(match.id);
     setHomeScore(match.realScoreHome?.toString() ?? '');
     setAwayScore(match.realScoreAway?.toString() ?? '');
+    setWinnerId(null);
   };
 
   const cancelEditing = () => {
     setEditingMatch(null);
     setHomeScore('');
     setAwayScore('');
+    setWinnerId(null);
   };
 
   const confirmSave = (match: Match) => {
@@ -79,6 +85,11 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
       return;
     }
 
+    if (match.stage !== 'group' && home === away && !winnerId) {
+      alert('Please select a winner for knockout draws');
+      return;
+    }
+
     const homeName = match.homeTeam?.name ?? match.homePlaceholder ?? 'Home';
     const awayName = match.awayTeam?.name ?? match.awayPlaceholder ?? 'Away';
 
@@ -86,6 +97,7 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
       matchId: match.id,
       home,
       away,
+      winnerId: match.stage !== 'group' && home === away ? winnerId : null,
       matchName: `${homeName} vs ${awayName}`,
     });
   };
@@ -102,6 +114,7 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
           matchId: confirmModal.matchId,
           homeScore: confirmModal.home,
           awayScore: confirmModal.away,
+          winnerId: confirmModal.winnerId,
         }),
       });
 
@@ -241,35 +254,62 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
 
                 {/* Result display or edit */}
                 {editingMatch === match.id ? (
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="number"
-                      min="0"
-                      max="20"
-                      value={homeScore}
-                      onChange={(e) => setHomeScore(e.target.value)}
-                      className="w-16 input text-center"
-                      placeholder="0"
-                    />
-                    <span className="text-slate-400">-</span>
-                    <input
-                      type="number"
-                      min="0"
-                      max="20"
-                      value={awayScore}
-                      onChange={(e) => setAwayScore(e.target.value)}
-                      className="w-16 input text-center"
-                      placeholder="0"
-                    />
-                    <button
-                      onClick={() => confirmSave(match)}
-                      className="btn-primary text-sm"
-                    >
-                      Save
-                    </button>
-                    <button onClick={cancelEditing} className="btn-secondary text-sm">
-                      Cancel
-                    </button>
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        value={homeScore}
+                        onChange={(e) => setHomeScore(e.target.value)}
+                        className="w-16 input text-center"
+                        placeholder="0"
+                      />
+                      <span className="text-slate-400">-</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        value={awayScore}
+                        onChange={(e) => setAwayScore(e.target.value)}
+                        className="w-16 input text-center"
+                        placeholder="0"
+                      />
+                      <button
+                        onClick={() => confirmSave(match)}
+                        className="btn-primary text-sm"
+                      >
+                        Save
+                      </button>
+                      <button onClick={cancelEditing} className="btn-secondary text-sm">
+                        Cancel
+                      </button>
+                    </div>
+                    {match.stage !== 'group' && isDraw && (
+                      <div className="flex items-center space-x-2 mt-1">
+                        <span className="text-xs text-slate-500">Winner:</span>
+                        <button
+                          onClick={() => setWinnerId(match.homeTeamId)}
+                          className={`px-2 py-1 text-xs rounded ${
+                            winnerId === match.homeTeamId
+                              ? 'bg-primary-500 text-white'
+                              : 'bg-slate-200 dark:bg-slate-700'
+                          }`}
+                        >
+                          {match.homeTeam?.name ?? 'Home'}
+                        </button>
+                        <button
+                          onClick={() => setWinnerId(match.awayTeamId)}
+                          className={`px-2 py-1 text-xs rounded ${
+                            winnerId === match.awayTeamId
+                              ? 'bg-primary-500 text-white'
+                              : 'bg-slate-200 dark:bg-slate-700'
+                          }`}
+                        >
+                          {match.awayTeam?.name ?? 'Away'}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ) : match.realScoreHome !== null && match.realScoreAway !== null ? (
                   <div className="flex items-center space-x-4">
