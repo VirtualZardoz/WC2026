@@ -332,7 +332,7 @@
       "Step 6: Verify result is updated",
       "Step 7: Verify points are recalculated"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "024",
@@ -464,7 +464,7 @@
       "Step 4: Enter Round of 16 result",
       "Step 5: Verify winner appears in Quarter-finals"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "034",
