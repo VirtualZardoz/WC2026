@@ -104,7 +104,7 @@
       "Step 4: Verify each group shows 4 teams",
       "Step 5: Verify total of 48 teams displayed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "009",
@@ -123,7 +123,7 @@
       "Step 10: Verify 1 Final match",
       "Step 11: Total should be 104 matches"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "010",
@@ -1298,7 +1298,7 @@
       "Step 4: Navigate to /",
       "Step 5: Verify redirect to /predictions"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "094",
