@@ -425,7 +425,7 @@
       "Step 5: Verify Goal Difference calculated correctly",
       "Step 6: Verify teams ranked by Points, then GD, then GF"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "031",
@@ -439,7 +439,7 @@
       "Step 5: Verify winners are in correct positions",
       "Step 6: Verify runners-up are in correct positions"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "032",
