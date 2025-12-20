@@ -52,7 +52,7 @@
       "Step 5: Verify error message displays",
       "Step 6: Verify user remains on login page"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "005",
@@ -65,7 +65,7 @@
       "Step 4: Click register button",
       "Step 5: Verify error message 'Email already registered' displays"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "006",
