@@ -165,7 +165,7 @@
       "Step 7: Verify prediction is saved",
       "Step 8: Refresh page and verify prediction persists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "013",
