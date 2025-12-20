@@ -651,7 +651,7 @@
       "Step 6: Verify deadline updated",
       "Step 7: Verify users see new deadline"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "048",
@@ -1014,7 +1014,7 @@
       "Step 6: Navigate to /admin/users",
       "Step 7: Verify consistent admin theme"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "075",
