@@ -721,7 +721,7 @@
       "Step 4: Count total number of teams",
       "Step 5: Verify 48 teams exist"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "053",
@@ -1039,7 +1039,7 @@
       "Step 3: View matches",
       "Step 4: Verify flag emoji or icon next to team name"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "077",
@@ -1177,7 +1177,7 @@
       "Step 6: Navigate directly to /admin",
       "Step 7: Verify redirect to /login"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "085",
