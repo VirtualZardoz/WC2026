@@ -136,7 +136,7 @@
       "Step 4: Verify each group has 6 matches",
       "Step 5: Verify team names are displayed for both home and away"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "011",
@@ -1352,7 +1352,7 @@
       "Step 4: Verify no duplicate match numbers",
       "Step 5: Verify matches ordered correctly by number"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "098",
