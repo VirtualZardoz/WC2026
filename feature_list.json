@@ -896,7 +896,7 @@
       "Step 4: Verify progression paths visible",
       "Step 5: Verify Final match at center/end of bracket"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "066",
@@ -1339,7 +1339,7 @@
       "Step 5: Verify dialog is modal and styled",
       "Step 6: Verify confirm/cancel buttons visible"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "097",

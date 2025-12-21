@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import MatchCard from '@/components/MatchCard';
+import KnockoutBracket from '@/components/KnockoutBracket';
 
 interface Team {
   id: string;
@@ -53,6 +54,7 @@ export default function PredictionsClient({
   initialTab = 'group',
 }: PredictionsClientProps) {
   const [activeTab, setActiveTab] = useState<'group' | 'knockout'>(initialTab);
+  const [knockoutView, setKnockoutView] = useState<'grid' | 'bracket'>('bracket');
   const [predictedCount, setPredictedCount] = useState(initialPredicted);
   const [timeLeft, setTimeLeft] = useState<string>('');
 
@@ -220,29 +222,64 @@ export default function PredictionsClient({
       {/* Knockout Stage */}
       {activeTab === 'knockout' && (
         <div className="space-y-8">
-          {stageOrder.map((stage) => {
-            const matches = knockoutByStage[stage];
-            if (!matches || matches.length === 0) return null;
+          <div className="flex justify-end mb-4">
+            <div className="inline-flex rounded-md shadow-sm" role="group">
+              <button
+                type="button"
+                onClick={() => setKnockoutView('bracket')}
+                className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
+                  knockoutView === 'bracket'
+                    ? 'bg-primary-500 text-white border-primary-500'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                Bracket View
+              </button>
+              <button
+                type="button"
+                onClick={() => setKnockoutView('grid')}
+                className={`px-4 py-2 text-sm font-medium rounded-r-lg border-t border-b border-r ${
+                  knockoutView === 'grid'
+                    ? 'bg-primary-500 text-white border-primary-500'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                Grid View
+              </button>
+            </div>
+          </div>
 
-            return (
-              <div key={stage}>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
-                  {stageNames[stage]}
-                </h2>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {matches.map((match) => (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      isLocked={isLocked}
-                      onSaved={handlePredictionSaved}
-                      isKnockout
-                    />
-                  ))}
+          {knockoutView === 'bracket' ? (
+            <KnockoutBracket
+              knockoutMatches={knockoutMatches}
+              isLocked={isLocked}
+              onSaved={handlePredictionSaved}
+            />
+          ) : (
+            stageOrder.map((stage) => {
+              const matches = knockoutByStage[stage];
+              if (!matches || matches.length === 0) return null;
+
+              return (
+                <div key={stage}>
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+                    {stageNames[stage]}
+                  </h2>
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {matches.map((match) => (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        isLocked={isLocked}
+                        onSaved={handlePredictionSaved}
+                        isKnockout
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       )}
     </div>

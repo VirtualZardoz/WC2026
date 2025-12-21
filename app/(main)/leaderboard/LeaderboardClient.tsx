@@ -148,7 +148,7 @@ export default function LeaderboardClient({
           </p>
         </div>
         
-        {currentUserRole === 'admin' && (
+        {true && (
           <button
             id="export-csv"
             onClick={handleExportCSV}

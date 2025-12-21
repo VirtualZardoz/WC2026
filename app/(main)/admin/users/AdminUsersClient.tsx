@@ -62,6 +62,34 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
     }
   };
 
+  const resetPassword = async (userId: string, userName: string) => {
+    if (!confirm(`Are you sure you want to reset the password for ${userName || 'this user'}?`)) {
+      return;
+    }
+
+    setUpdatingUser(userId);
+    try {
+      const response = await fetch('/api/admin/users/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        alert(data.error || 'Failed to reset password');
+        return;
+      }
+
+      const data = await response.json();
+      alert(`Password reset successfully!\n\nNew password: ${data.newPassword}\n\nPlease provide this password to the user.`);
+    } catch (err) {
+      alert('An unexpected error occurred');
+    } finally {
+      setUpdatingUser(null);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -184,24 +212,26 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
                     {formatDate(user.createdAt)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                    <button
-                      onClick={() => toggleRole(user.id, user.role)}
-                      disabled={updatingUser === user.id}
-                      className={`btn-secondary text-xs ${
-                        updatingUser === user.id ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
-                    >
-                      {updatingUser === user.id ? (
-                        <>
-                          <span className="spinner mr-1"></span>
-                          Updating...
-                        </>
-                      ) : user.role === 'admin' ? (
-                        'Make User'
-                      ) : (
-                        'Make Admin'
-                      )}
-                    </button>
+                    <div className="flex justify-end space-x-2">
+                      <button
+                        onClick={() => toggleRole(user.id, user.role)}
+                        disabled={updatingUser === user.id}
+                        className={`btn-secondary text-xs ${
+                          updatingUser === user.id ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                      >
+                        {updatingUser === user.id ? 'Updating...' : user.role === 'admin' ? 'Make User' : 'Make Admin'}
+                      </button>
+                      <button
+                        onClick={() => resetPassword(user.id, user.name || '')}
+                        disabled={updatingUser === user.id}
+                        className={`btn-secondary text-xs text-red-600 hover:text-red-700 ${
+                          updatingUser === user.id ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                      >
+                        Reset Pass
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
