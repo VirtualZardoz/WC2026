@@ -37,8 +37,10 @@ interface Match {
 interface MatchCardProps {
   match: Match;
   isLocked: boolean;
-  onSaved?: () => void;
+  onSaved?: (matchId: string, prediction: { predictedHome: number; predictedAway: number; predictedWinner: string | null }) => void;
   isKnockout?: boolean;
+  predictedHomeTeam?: Team | null;
+  predictedAwayTeam?: Team | null;
 }
 
 export default function MatchCard({
@@ -46,6 +48,8 @@ export default function MatchCard({
   isLocked,
   onSaved,
   isKnockout = false,
+  predictedHomeTeam,
+  predictedAwayTeam,
 }: MatchCardProps) {
   const prediction = match.predictions[0];
 
@@ -62,10 +66,18 @@ export default function MatchCard({
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
-  const homeName = match.homeTeam?.name ?? match.homePlaceholder ?? 'TBD';
-  const awayName = match.awayTeam?.name ?? match.awayPlaceholder ?? 'TBD';
-  const homeCode = match.homeTeam?.code?.toLowerCase() ?? '';
-  const awayCode = match.awayTeam?.code?.toLowerCase() ?? '';
+  // Use predicted team if no actual team is assigned
+  const effectiveHomeTeam = match.homeTeam || predictedHomeTeam || null;
+  const effectiveAwayTeam = match.awayTeam || predictedAwayTeam || null;
+
+  const homeName = effectiveHomeTeam?.name ?? match.homePlaceholder ?? 'TBD';
+  const awayName = effectiveAwayTeam?.name ?? match.awayPlaceholder ?? 'TBD';
+  const homeCode = effectiveHomeTeam?.code?.toLowerCase() ?? '';
+  const awayCode = effectiveAwayTeam?.code?.toLowerCase() ?? '';
+
+  // Show indicator when displaying predicted teams
+  const showingPredictedHome = !match.homeTeam && predictedHomeTeam;
+  const showingPredictedAway = !match.awayTeam && predictedAwayTeam;
 
   // Convert 3-letter FIFA codes to 2-letter ISO codes for flagcdn
   const fifaToIso: { [key: string]: string } = {
@@ -129,8 +141,12 @@ export default function MatchCard({
       }
 
       setSaved(true);
-      if (!prediction && onSaved) {
-        onSaved();
+      if (onSaved) {
+        onSaved(match.id, {
+          predictedHome: home,
+          predictedAway: away,
+          predictedWinner: isKnockout && isDraw ? winner : null,
+        });
       }
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
@@ -201,9 +217,18 @@ export default function MatchCard({
           ) : (
             <span className="w-6 h-4 flex-shrink-0 bg-slate-200 rounded-sm" />
           )}
-          <span className="font-medium text-slate-900 dark:text-white flex-1 min-w-0 truncate">
-            {homeName}
-          </span>
+          <div className="flex-1 min-w-0">
+            <span className={`font-medium flex-1 min-w-0 block ${
+              showingPredictedHome
+                ? 'text-primary-600 dark:text-primary-400'
+                : 'text-slate-900 dark:text-white'
+            } ${!effectiveHomeTeam ? 'text-sm' : ''}`}>
+              {homeName}
+            </span>
+            {showingPredictedHome && (
+              <span className="text-xs text-primary-500">Your prediction</span>
+            )}
+          </div>
           <input
             type="number"
             min="0"
@@ -223,9 +248,18 @@ export default function MatchCard({
           ) : (
             <span className="w-6 h-4 flex-shrink-0 bg-slate-200 rounded-sm" />
           )}
-          <span className="font-medium text-slate-900 dark:text-white flex-1 min-w-0 truncate">
-            {awayName}
-          </span>
+          <div className="flex-1 min-w-0">
+            <span className={`font-medium flex-1 min-w-0 block ${
+              showingPredictedAway
+                ? 'text-primary-600 dark:text-primary-400'
+                : 'text-slate-900 dark:text-white'
+            } ${!effectiveAwayTeam ? 'text-sm' : ''}`}>
+              {awayName}
+            </span>
+            {showingPredictedAway && (
+              <span className="text-xs text-primary-500">Your prediction</span>
+            )}
+          </div>
           <input
             type="number"
             min="0"

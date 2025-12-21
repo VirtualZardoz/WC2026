@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import MatchCard from './MatchCard';
 
 interface Team {
@@ -35,16 +35,25 @@ interface Match {
   venue: string | null;
 }
 
+interface PredictedQualifiers {
+  winners: { [group: string]: Team | null };
+  runnersUp: { [group: string]: Team | null };
+  bestThirds: Team[];
+  isComplete: { [key: string]: boolean };
+}
+
 interface KnockoutBracketProps {
   knockoutMatches: Match[];
   isLocked: boolean;
-  onSaved?: () => void;
+  onSaved?: (matchId: string, prediction: { predictedHome: number; predictedAway: number; predictedWinner: string | null }) => void;
+  predictedQualifiers?: PredictedQualifiers;
 }
 
 export default function KnockoutBracket({
   knockoutMatches,
   isLocked,
   onSaved,
+  predictedQualifiers,
 }: KnockoutBracketProps) {
   // Organize matches by stage
   const stages = {
@@ -64,16 +73,144 @@ export default function KnockoutBracket({
     final: 'Final',
   };
 
-  const renderMatch = (match: Match) => (
-    <div key={match.id} className="w-64 flex-shrink-0">
-      <MatchCard
-        match={match}
-        isLocked={isLocked}
-        onSaved={onSaved}
-        isKnockout
-      />
-    </div>
-  );
+  // Build predicted teams map for knockout matches
+  const predictedTeams = useMemo(() => {
+    if (!predictedQualifiers) return {};
+
+    const result: { [matchId: string]: { home: Team | null; away: Team | null } } = {};
+    const matchByNumber: { [num: number]: Match } = {};
+    const predictedWinners: { [matchNum: number]: Team | null } = {};
+    const predictedLosers: { [matchNum: number]: Team | null } = {};
+
+    knockoutMatches.forEach(m => {
+      matchByNumber[m.matchNumber] = m;
+    });
+
+    // Map stage codes to match number offsets
+    const stageOffsets: { [key: string]: number } = {
+      'R32': 72, // Match 73 = R32 M1, so offset is 72
+      'R16': 88, // Match 89 = R16 M1, so offset is 88
+      'QF': 96,  // Match 97 = QF M1, so offset is 96
+      'SF': 100, // Match 101 = SF M1, so offset is 100
+    };
+
+    // Helper to resolve placeholder to team
+    const resolveTeam = (placeholder: string | null, match: Match): Team | null => {
+      if (!placeholder) return null;
+
+      // Handle "Winner A", "Winner B" for group winners
+      if (placeholder.startsWith('Winner ') && placeholder.split(' ')[1].length === 1) {
+        const group = placeholder.split(' ')[1];
+        return predictedQualifiers.winners[group] || null;
+      }
+      if (placeholder.startsWith('Runner-up ')) {
+        const group = placeholder.split(' ')[1];
+        return predictedQualifiers.runnersUp[group] || null;
+      }
+      if (placeholder.startsWith('3rd ')) {
+        // Find which 3rd place slot this is
+        const r32ThirdMatches = stages.round32
+          .filter(m => m.awayPlaceholder?.startsWith('3rd '))
+          .sort((a, b) => a.matchNumber - b.matchNumber);
+
+        const idx = r32ThirdMatches.findIndex(m => m.id === match.id);
+        if (idx >= 0 && predictedQualifiers.bestThirds[idx]) {
+          return predictedQualifiers.bestThirds[idx];
+        }
+        return null;
+      }
+      // Handle "Winner R32 M1", "Winner R16 M2", etc.
+      const winnerMatch = placeholder.match(/^Winner (R32|R16|QF|SF) M(\d+)$/);
+      if (winnerMatch) {
+        const [, stage, matchNum] = winnerMatch;
+        const matchNumber = stageOffsets[stage] + parseInt(matchNum);
+        return predictedWinners[matchNumber] || null;
+      }
+      // Handle "Loser SF M1", "Loser SF M2" for third place
+      const loserMatch = placeholder.match(/^Loser (SF) M(\d+)$/);
+      if (loserMatch) {
+        const [, stage, matchNum] = loserMatch;
+        const matchNumber = stageOffsets[stage] + parseInt(matchNum);
+        return predictedLosers[matchNumber] || null;
+      }
+      // Legacy format: "Winner Match X"
+      if (placeholder.startsWith('Winner Match ')) {
+        const num = parseInt(placeholder.split(' ')[2]);
+        return predictedWinners[num] || null;
+      }
+      if (placeholder.startsWith('Loser Match ')) {
+        const num = parseInt(placeholder.split(' ')[2]);
+        return predictedLosers[num] || null;
+      }
+      return null;
+    };
+
+    // Process matches in order to cascade predictions
+    const sortedMatches = [...knockoutMatches].sort((a, b) => a.matchNumber - b.matchNumber);
+
+    for (const match of sortedMatches) {
+      // Get home and away teams (from actual assignment or predicted from group stage)
+      let homeTeam = match.homeTeam;
+      let awayTeam = match.awayTeam;
+
+      if (!homeTeam && match.homePlaceholder) {
+        homeTeam = resolveTeam(match.homePlaceholder, match);
+      }
+      if (!awayTeam && match.awayPlaceholder) {
+        awayTeam = resolveTeam(match.awayPlaceholder, match);
+      }
+
+      result[match.id] = { home: homeTeam, away: awayTeam };
+
+      // Calculate predicted winner for cascade
+      const prediction = match.predictions[0];
+      if (prediction && homeTeam && awayTeam) {
+        const homeScore = prediction.predictedHome;
+        const awayScore = prediction.predictedAway;
+
+        let winner: Team | null = null;
+        let loser: Team | null = null;
+
+        if (homeScore > awayScore) {
+          winner = homeTeam;
+          loser = awayTeam;
+        } else if (awayScore > homeScore) {
+          winner = awayTeam;
+          loser = homeTeam;
+        } else {
+          // Draw - check predictedWinner
+          if (prediction.predictedWinner === 'home') {
+            winner = homeTeam;
+            loser = awayTeam;
+          } else if (prediction.predictedWinner === 'away') {
+            winner = awayTeam;
+            loser = homeTeam;
+          }
+        }
+
+        predictedWinners[match.matchNumber] = winner;
+        predictedLosers[match.matchNumber] = loser;
+      }
+    }
+
+    return result;
+  }, [knockoutMatches, predictedQualifiers, stages.round32]);
+
+  const renderMatch = (match: Match) => {
+    const predicted = predictedTeams[match.id];
+    return (
+      <div key={match.id} className="w-64 flex-shrink-0">
+        <MatchCard
+          match={match}
+          isLocked={isLocked}
+          onSaved={onSaved}
+          isKnockout
+          predictedHomeTeam={predicted?.home || null}
+          predictedAwayTeam={predicted?.away || null}
+        />
+      </div>
+    );
+  };
 
   return (
     <div className="overflow-x-auto pb-8">

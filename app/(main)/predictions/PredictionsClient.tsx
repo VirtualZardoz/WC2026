@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import MatchCard from '@/components/MatchCard';
 import KnockoutBracket from '@/components/KnockoutBracket';
 
@@ -36,6 +36,19 @@ interface Match {
   venue: string | null;
 }
 
+interface TeamStanding {
+  id: string;
+  team: Team;
+  pts: number;
+  gp: number;
+  w: number;
+  d: number;
+  l: number;
+  gf: number;
+  ga: number;
+  gd: number;
+}
+
 interface PredictionsClientProps {
   matchesByGroup: { [key: string]: Match[] };
   knockoutMatches: Match[];
@@ -46,9 +59,79 @@ interface PredictionsClientProps {
   initialTab?: 'group' | 'knockout';
 }
 
+// Calculate predicted standings for a group based on user predictions
+function calculatePredictedGroupStandings(groupMatches: Match[]): TeamStanding[] {
+  const teams: { [key: string]: TeamStanding } = {};
+
+  // Initialize teams from group matches
+  groupMatches.forEach((match) => {
+    if (match.homeTeamId && match.homeTeam && !teams[match.homeTeamId]) {
+      teams[match.homeTeamId] = {
+        id: match.homeTeamId,
+        team: match.homeTeam,
+        pts: 0, gp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0,
+      };
+    }
+    if (match.awayTeamId && match.awayTeam && !teams[match.awayTeamId]) {
+      teams[match.awayTeamId] = {
+        id: match.awayTeamId,
+        team: match.awayTeam,
+        pts: 0, gp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0,
+      };
+    }
+  });
+
+  // Calculate points from predictions
+  groupMatches.forEach((match) => {
+    const prediction = match.predictions[0];
+    if (!prediction || !match.homeTeamId || !match.awayTeamId) return;
+    if (!teams[match.homeTeamId] || !teams[match.awayTeamId]) return;
+
+    const homeGoals = prediction.predictedHome;
+    const awayGoals = prediction.predictedAway;
+
+    teams[match.homeTeamId].gp++;
+    teams[match.awayTeamId].gp++;
+    teams[match.homeTeamId].gf += homeGoals;
+    teams[match.homeTeamId].ga += awayGoals;
+    teams[match.awayTeamId].gf += awayGoals;
+    teams[match.awayTeamId].ga += homeGoals;
+
+    if (homeGoals > awayGoals) {
+      teams[match.homeTeamId].pts += 3;
+      teams[match.homeTeamId].w++;
+      teams[match.awayTeamId].l++;
+    } else if (homeGoals < awayGoals) {
+      teams[match.awayTeamId].pts += 3;
+      teams[match.awayTeamId].w++;
+      teams[match.homeTeamId].l++;
+    } else {
+      teams[match.homeTeamId].pts += 1;
+      teams[match.awayTeamId].pts += 1;
+      teams[match.homeTeamId].d++;
+      teams[match.awayTeamId].d++;
+    }
+  });
+
+  // Finalize GD and sort
+  const standings = Object.values(teams).map((team) => ({
+    ...team,
+    gd: team.gf - team.ga,
+  }));
+
+  standings.sort((a, b) => {
+    if (b.pts !== a.pts) return b.pts - a.pts;
+    if (b.gd !== a.gd) return b.gd - a.gd;
+    if (b.gf !== a.gf) return b.gf - a.gf;
+    return a.team.name.localeCompare(b.team.name);
+  });
+
+  return standings;
+}
+
 export default function PredictionsClient({
-  matchesByGroup,
-  knockoutMatches,
+  matchesByGroup: initialMatchesByGroup,
+  knockoutMatches: initialKnockoutMatches,
   totalMatches,
   predictedMatches: initialPredicted,
   isLocked,
@@ -59,6 +142,9 @@ export default function PredictionsClient({
   const [knockoutView, setKnockoutView] = useState<'grid' | 'bracket'>('bracket');
   const [predictedCount, setPredictedCount] = useState(initialPredicted);
   const [timeLeft, setTimeLeft] = useState<string>('');
+  const [matchesByGroup, setMatchesByGroup] = useState(initialMatchesByGroup);
+  const [knockoutMatches, setKnockoutMatches] = useState(initialKnockoutMatches);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Countdown timer
   useEffect(() => {
@@ -90,13 +176,80 @@ export default function PredictionsClient({
     return () => clearInterval(interval);
   }, [deadline]);
 
-  const handlePredictionSaved = () => {
+  const handlePredictionSaved = useCallback((matchId: string, prediction: { predictedHome: number; predictedAway: number; predictedWinner: string | null }) => {
+    // Update the match predictions in our local state
+    const allGroupMatches = Object.values(matchesByGroup).flat();
+    const groupMatch = allGroupMatches.find(m => m.id === matchId);
+
+    if (groupMatch) {
+      // Update group match prediction
+      setMatchesByGroup(prev => {
+        const updated = { ...prev };
+        Object.keys(updated).forEach(group => {
+          updated[group] = updated[group].map(m =>
+            m.id === matchId
+              ? { ...m, predictions: [{ id: 'temp', ...prediction }] }
+              : m
+          );
+        });
+        return updated;
+      });
+    } else {
+      // Update knockout match prediction
+      setKnockoutMatches(prev => prev.map(m =>
+        m.id === matchId
+          ? { ...m, predictions: [{ id: 'temp', ...prediction }] }
+          : m
+      ));
+    }
+
     setPredictedCount((prev) => prev + 1);
-  };
+    setRefreshTrigger(prev => prev + 1);
+  }, [matchesByGroup]);
 
   const progressPercent = Math.round((predictedCount / totalMatches) * 100);
 
   const groups = Object.keys(matchesByGroup).sort();
+
+  // Calculate predicted standings and qualifiers for knockout stage
+  const predictedQualifiers = useMemo(() => {
+    const standings: { [key: string]: TeamStanding[] } = {};
+    const isComplete: { [key: string]: boolean } = {};
+    const winners: { [group: string]: Team | null } = {};
+    const runnersUp: { [group: string]: Team | null } = {};
+    const thirds: TeamStanding[] = [];
+
+    groups.forEach(group => {
+      const groupMatches = matchesByGroup[group];
+      const predictedCount = groupMatches.filter(m => m.predictions.length > 0).length;
+      isComplete[group] = predictedCount === 6;
+
+      if (isComplete[group]) {
+        standings[group] = calculatePredictedGroupStandings(groupMatches);
+        winners[group] = standings[group][0]?.team || null;
+        runnersUp[group] = standings[group][1]?.team || null;
+        if (standings[group][2]) {
+          thirds.push(standings[group][2]);
+        }
+      } else {
+        standings[group] = [];
+        winners[group] = null;
+        runnersUp[group] = null;
+      }
+    });
+
+    // Sort third-place teams to find best 8
+    thirds.sort((a, b) => {
+      if (b.pts !== a.pts) return b.pts - a.pts;
+      if (b.gd !== a.gd) return b.gd - a.gd;
+      if (b.gf !== a.gf) return b.gf - a.gf;
+      return 0;
+    });
+
+    const bestThirds = thirds.slice(0, 8).map(s => s.team);
+
+    return { standings, winners, runnersUp, bestThirds, isComplete };
+  }, [matchesByGroup, groups, refreshTrigger]);
 
   // Organize knockout matches by stage
   const knockoutByStage: { [key: string]: Match[] } = {};
@@ -256,6 +409,7 @@ export default function PredictionsClient({
               knockoutMatches={knockoutMatches}
               isLocked={isLocked}
               onSaved={handlePredictionSaved}
+              predictedQualifiers={predictedQualifiers}
             />
           ) : (
             stageOrder.map((stage) => {
