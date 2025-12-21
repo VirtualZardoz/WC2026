@@ -1027,7 +1027,7 @@
       "Step 4: Verify loading indicator while saving",
       "Step 5: Verify button disabled during load"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "076",
@@ -1074,7 +1074,7 @@
       "Step 13: Logout and login again",
       "Step 14: Verify predictions persisted"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "079",
