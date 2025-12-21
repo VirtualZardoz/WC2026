@@ -261,7 +261,7 @@
       "Step 6: Attempt to save a prediction",
       "Step 7: Verify save is prevented"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "019",
@@ -636,7 +636,7 @@
       "Step 4: Verify CSV file downloads",
       "Step 5: Verify CSV contains rank, name, points data"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "047",
@@ -774,7 +774,7 @@
       "Step 4: Refresh leaderboard tab",
       "Step 5: Verify points updated immediately"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "057",
