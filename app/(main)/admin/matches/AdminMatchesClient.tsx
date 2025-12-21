@@ -29,13 +29,18 @@ interface Match {
 
 interface AdminMatchesClientProps {
   matches: Match[];
+  teams: Team[];
 }
 
-export default function AdminMatchesClient({ matches }: AdminMatchesClientProps) {
+export default function AdminMatchesClient({ matches, teams }: AdminMatchesClientProps) {
   const router = useRouter();
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('pending');
   const [stageFilter, setStageFilter] = useState<string>('all');
+  const [bulkMode, setBulkMode] = useState(false);
+  const [bulkResults, setBulkResults] = useState<{ [matchId: string]: { home: string, away: string, winnerId?: string | null } }>({});
   const [editingMatch, setEditingMatch] = useState<string | null>(null);
+  const [overridingMatch, setOverridingMatch] = useState<{ id: string; slot: 'home' | 'away' } | null>(null);
+
   const [homeScore, setHomeScore] = useState<string>('');
   const [awayScore, setAwayScore] = useState<string>('');
   const [saving, setSaving] = useState(false);
@@ -76,7 +81,74 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
     setWinnerId(null);
   };
 
+  const toggleBulkMode = () => {
+    if (bulkMode) {
+      setBulkResults({});
+    }
+    setBulkMode(!bulkMode);
+  };
+
+  const handleBulkChange = (matchId: string, field: 'home' | 'away', value: string) => {
+    setBulkResults(prev => ({
+      ...prev,
+      [matchId]: {
+        ...prev[matchId],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleBulkWinnerChange = (matchId: string, winnerId: string | null) => {
+    setBulkResults(prev => ({
+      ...prev,
+      [matchId]: {
+        ...prev[matchId],
+        winnerId
+      }
+    }));
+  };
+
+  const saveBulkResults = async () => {
+    const results = Object.entries(bulkResults)
+      .filter(([_, data]) => data.home !== '' && data.away !== '')
+      .map(([matchId, data]) => ({
+        matchId,
+        homeScore: parseInt(data.home),
+        awayScore: parseInt(data.away),
+        winnerId: data.winnerId
+      }));
+
+    if (results.length === 0) {
+      alert('No results to save');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const response = await fetch('/api/admin/matches/bulk-result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ results }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        alert(data.error || 'Failed to save bulk results');
+        return;
+      }
+
+      setBulkResults({});
+      setBulkMode(false);
+      router.refresh();
+    } catch (err) {
+      alert('An unexpected error occurred');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const confirmSave = (match: Match) => {
+
     const home = parseInt(homeScore);
     const away = parseInt(awayScore);
 
@@ -136,6 +208,36 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
     }
   };
 
+  const handleOverride = async (teamId: string) => {
+    if (!overridingMatch) return;
+
+    setSaving(true);
+    try {
+      const response = await fetch('/api/admin/matches/override', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          matchId: overridingMatch.id,
+          teamId,
+          slot: overridingMatch.slot,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        alert(data.error || 'Failed to override team');
+        return;
+      }
+
+      setOverridingMatch(null);
+      router.refresh();
+    } catch (err) {
+      alert('An unexpected error occurred');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const stageNames: { [key: string]: string } = {
     group: 'Group Stage',
     round32: 'Round of 32',
@@ -153,13 +255,32 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-          Enter Match Results
-        </h1>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">
-          {pendingCount} matches pending results
-        </p>
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+            Enter Match Results
+          </h1>
+          <p className="mt-2 text-slate-600 dark:text-slate-400">
+            {pendingCount} matches pending results
+          </p>
+        </div>
+        <div className="flex space-x-2">
+          <button
+            onClick={toggleBulkMode}
+            className={`btn-${bulkMode ? 'secondary' : 'primary'}`}
+          >
+            {bulkMode ? 'Cancel Bulk Entry' : 'Bulk Entry by Day'}
+          </button>
+          {bulkMode && (
+            <button
+              onClick={saveBulkResults}
+              disabled={saving}
+              className="btn-primary"
+            >
+              {saving ? 'Saving...' : 'Save All Results'}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Filters */}
@@ -243,17 +364,83 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
                     <span className="font-medium text-slate-900 dark:text-white">
                       {match.homeTeam?.flagEmoji}{' '}
                       {match.homeTeam?.name ?? match.homePlaceholder}
+                      {!match.homeTeamId && match.stage !== 'group' && (
+                        <button
+                          onClick={() => setOverridingMatch({ id: match.id, slot: 'home' })}
+                          className="ml-2 text-[10px] text-primary-600 hover:underline"
+                        >
+                          Override
+                        </button>
+                      )}
                     </span>
                     <span className="text-slate-400">vs</span>
                     <span className="font-medium text-slate-900 dark:text-white">
                       {match.awayTeam?.name ?? match.awayPlaceholder}{' '}
                       {match.awayTeam?.flagEmoji}
+                      {!match.awayTeamId && match.stage !== 'group' && (
+                        <button
+                          onClick={() => setOverridingMatch({ id: match.id, slot: 'away' })}
+                          className="ml-2 text-[10px] text-primary-600 hover:underline"
+                        >
+                          Override
+                        </button>
+                      )}
                     </span>
                   </div>
+
                 </div>
 
                 {/* Result display or edit */}
-                {editingMatch === match.id ? (
+                {bulkMode ? (
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        value={bulkResults[match.id]?.home ?? ''}
+                        onChange={(e) => handleBulkChange(match.id, 'home', e.target.value)}
+                        className="w-16 input text-center"
+                        placeholder="0"
+                      />
+                      <span className="text-slate-400">-</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        value={bulkResults[match.id]?.away ?? ''}
+                        onChange={(e) => handleBulkChange(match.id, 'away', e.target.value)}
+                        className="w-16 input text-center"
+                        placeholder="0"
+                      />
+                    </div>
+                    {match.stage !== 'group' && bulkResults[match.id]?.home !== '' && bulkResults[match.id]?.away !== '' && parseInt(bulkResults[match.id]?.home) === parseInt(bulkResults[match.id]?.away) && (
+                      <div className="flex items-center space-x-2 mt-1">
+                        <span className="text-xs text-slate-500">Winner:</span>
+                        <button
+                          onClick={() => handleBulkWinnerChange(match.id, match.homeTeamId)}
+                          className={`px-2 py-1 text-xs rounded ${
+                            bulkResults[match.id]?.winnerId === match.homeTeamId
+                              ? 'bg-primary-500 text-white'
+                              : 'bg-slate-200 dark:bg-slate-700'
+                          }`}
+                        >
+                          {match.homeTeam?.name ?? 'Home'}
+                        </button>
+                        <button
+                          onClick={() => handleBulkWinnerChange(match.id, match.awayTeamId)}
+                          className={`px-2 py-1 text-xs rounded ${
+                            bulkResults[match.id]?.winnerId === match.awayTeamId
+                              ? 'bg-primary-500 text-white'
+                              : 'bg-slate-200 dark:bg-slate-700'
+                          }`}
+                        >
+                          {match.awayTeam?.name ?? 'Away'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : editingMatch === match.id ? (
                   <div className="flex flex-col items-end gap-2">
                     <div className="flex items-center space-x-2">
                       <input
@@ -339,7 +526,43 @@ export default function AdminMatchesClient({ matches }: AdminMatchesClientProps)
         </div>
       )}
 
+      {/* Override Modal */}
+      {overridingMatch && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 max-w-md w-full max-h-[80vh] flex flex-col">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
+              Override Team ({overridingMatch.slot})
+            </h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">
+              Select a team to manually place in this knockout slot.
+            </p>
+            <div className="flex-1 overflow-y-auto space-y-2 mb-6">
+              {teams.map((team) => (
+                <button
+                  key={team.id}
+                  onClick={() => handleOverride(team.id)}
+                  disabled={saving}
+                  className="w-full text-left p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
+                >
+                  <span>{team.flagEmoji}</span>
+                  <span className="flex-1">{team.name}</span>
+                  <span className="text-xs text-slate-400">{team.code}</span>
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setOverridingMatch(null)}
+              className="btn-secondary w-full"
+              disabled={saving}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Confirmation Modal */}
+
       {confirmModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 max-w-md w-full">

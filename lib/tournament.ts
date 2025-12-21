@@ -214,3 +214,14 @@ export async function advanceKnockoutWinner(matchId: string, winnerId: string) {
     });
   }
 }
+
+/**
+ * Manually overrides a team in a knockout match
+ */
+export async function overrideKnockoutTeam(matchId: string, teamId: string, slot: 'home' | 'away') {
+  await prisma.match.update({
+    where: { id: matchId },
+    data: slot === 'home' ? { homeTeamId: teamId } : { awayTeamId: teamId },
+  });
+}
+

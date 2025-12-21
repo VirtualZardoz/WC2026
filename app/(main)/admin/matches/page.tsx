@@ -15,6 +15,12 @@ async function getMatches() {
   return matches;
 }
 
+async function getTeams() {
+  return await prisma.team.findMany({
+    orderBy: { name: 'asc' },
+  });
+}
+
 export default async function AdminMatchesPage() {
   const session = await getServerSession(authOptions);
 
@@ -22,7 +28,8 @@ export default async function AdminMatchesPage() {
     redirect('/login');
   }
 
-  const matches = await getMatches();
+  const [matches, teams] = await Promise.all([getMatches(), getTeams()]);
 
-  return <AdminMatchesClient matches={matches} />;
+  return <AdminMatchesClient matches={matches} teams={teams} />;
 }
+

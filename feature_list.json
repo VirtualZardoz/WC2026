@@ -761,7 +761,7 @@
       "Step 5: Save all at once",
       "Step 6: Verify all results saved correctly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "056",
@@ -788,7 +788,7 @@
       "Step 5: Save override",
       "Step 6: Verify bracket updated correctly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "058",
@@ -1325,7 +1325,7 @@
       "Step 5: Refresh both tabs",
       "Step 6: Verify last save wins without errors"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "096",
