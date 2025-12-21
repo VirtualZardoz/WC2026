@@ -1476,7 +1476,7 @@
       "Step 4: Verify only fully-predicted groups show team names",
       "Step 5: Missing knockout predictions show 'Winner of Match X'"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "107",
@@ -1489,6 +1489,6 @@
       "Step 4: Cascading changes propagate through knockout rounds",
       "Step 5: No page refresh required for updates"
     ],
-    "passes": false
+    "passes": true
   }
 ]
