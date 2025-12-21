@@ -999,7 +999,7 @@
       "Step 4: Verify star icon or badge visible",
       "Step 5: Verify clearly distinguishable from regular matches"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "074",
@@ -1052,7 +1052,7 @@
       "Step 4: Verify team names visible",
       "Step 5: Verify statistics visible per match"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "078",
@@ -1162,7 +1162,7 @@
       "Step 6: Navigate directly to /predictions/knockout",
       "Step 7: Verify knockout filter applied"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "084",
@@ -1191,7 +1191,7 @@
       "Step 5: Enter prediction",
       "Step 6: Save and verify persistence"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "086",
@@ -1205,7 +1205,7 @@
       "Step 5: Enter prediction",
       "Step 6: Save and verify persistence"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "087",
