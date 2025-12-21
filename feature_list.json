@@ -1130,7 +1130,7 @@
       "Step 9: Verify user gets 1 point for correct draw",
       "Step 10: Verify user does not get bonus for wrong winner"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "082",
@@ -1147,7 +1147,7 @@
       "Step 8: Verify user3 has 0 points (wrong result)",
       "Step 9: Verify ranking order is user1, user2, user3"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "083",
@@ -1219,7 +1219,7 @@
       "Step 5: Verify can see: predicted score, actual score, points earned",
       "Step 6: Verify scoring reason visible (exact/correct result/wrong)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "088",
