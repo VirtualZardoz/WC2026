@@ -922,7 +922,7 @@
       "Step 4: Verify inputs are usable",
       "Step 5: Verify button is accessible"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "068",
@@ -935,7 +935,7 @@
       "Step 4: Verify groups/matches visible without horizontal scroll",
       "Step 5: Verify inputs are usable on mobile"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "069",
@@ -948,7 +948,7 @@
       "Step 4: Verify filter buttons accessible",
       "Step 5: Verify user can see their position"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "070",
@@ -1245,7 +1245,7 @@
       "Step 4: Verify layout adjusts appropriately",
       "Step 5: Verify all functionality accessible"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "090",
