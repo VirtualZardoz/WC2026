@@ -1093,7 +1093,7 @@
       "Step 10: Mark one completed match as bonus match",
       "Step 11: Verify bonus tracking updates"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "080",
@@ -1112,7 +1112,7 @@
       "Step 10: Check leaderboard reflects all points",
       "Step 11: Verify detailed breakdown for each user"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "081",
