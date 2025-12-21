@@ -1,0 +1,53 @@
+# HAL9000 Docker Compose Template
+# ================================
+# This template is copied to each project directory and customized.
+# Variables like ${...} are replaced by the ExecutionEnvironment class.
+
+version: '3.8'
+
+services:
+  hal9000-runtime:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BASE_IMAGE: node:20-slim
+
+    container_name: hal9000-world-cup-pronostics
+
+    # Resource limits for safety
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    # Volume mount for project directory
+    volumes:
+      - ./:/project:rw
+
+    # Network configuration
+    networks:
+      - hal9000-net
+
+    # Environment variables
+    environment:
+      - NODE_ENV=development
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+
+    # Keep container running
+    tty: true
+    stdin_open: true
+
+    # Restart policy
+    restart: unless-stopped
+
+networks:
+  hal9000-net:
+    driver: bridge
+    # Network isolation: when true, container cannot access external network
+    internal: false

@@ -13,6 +13,8 @@ interface LeaderboardEntry {
   predictedCount: number;
   groupPoints: number;
   knockoutPoints: number;
+  bonusMatchExact: number;
+  bonusMatchPoints: number;
 }
 
 async function getLeaderboard(): Promise<LeaderboardEntry[]> {
@@ -24,6 +26,12 @@ async function getLeaderboard(): Promise<LeaderboardEntry[]> {
     },
   });
 
+  const bonusMatches = await prisma.match.findMany({
+    where: { isBonusMatch: true },
+    select: { id: true }
+  });
+  const bonusMatchIds = new Set(bonusMatches.map(m => m.id));
+
   // Calculate leaderboard entries
   const leaderboard: LeaderboardEntry[] = users.map((user) => {
     let totalPoints = 0;
@@ -31,6 +39,8 @@ async function getLeaderboard(): Promise<LeaderboardEntry[]> {
     let knockoutPoints = 0;
     let exactScores = 0;
     let correctResults = 0;
+    let bonusMatchExact = 0;
+    let bonusMatchPoints = 0;
 
     user.predictions.forEach((pred) => {
       totalPoints += pred.pointsEarned;
@@ -40,23 +50,31 @@ async function getLeaderboard(): Promise<LeaderboardEntry[]> {
         knockoutPoints += pred.pointsEarned;
       }
 
-      if (pred.pointsEarned === 3) {
+      if (pred.pointsEarned === 3 || pred.pointsEarned === 4) {
         exactScores++;
-      } else if (pred.pointsEarned === 1 || pred.pointsEarned === 2 || pred.pointsEarned === 4) {
-        // Correct result (1) or Correct result + bonus (1+1=2) or Exact + bonus (3+1=4)
+      } else if (pred.pointsEarned === 1 || pred.pointsEarned === 2) {
         correctResults++;
+      }
+
+      if (bonusMatchIds.has(pred.matchId)) {
+        bonusMatchPoints += pred.pointsEarned;
+        if (pred.pointsEarned >= 3) {
+          bonusMatchExact++;
+        }
       }
     });
 
     return {
       id: user.id,
-      name: user.name,
+      name: user.name || 'Anonymous',
       email: user.email,
       totalPoints,
       groupPoints,
       knockoutPoints,
       exactScores,
       correctResults,
+      bonusMatchExact,
+      bonusMatchPoints,
       predictedCount: user.predictions.length,
     };
   });
@@ -78,11 +96,14 @@ async function getLeaderboard(): Promise<LeaderboardEntry[]> {
 export default async function LeaderboardPage() {
   const session = await getServerSession(authOptions);
   const leaderboard = await getLeaderboard();
+  const bonusMatchesCount = await prisma.match.count({ where: { isBonusMatch: true } });
 
   return (
     <LeaderboardClient
       leaderboard={leaderboard}
       currentUserId={session?.user?.id}
+      currentUserRole={session?.user?.role}
+      bonusMatchesCount={bonusMatchesCount}
     />
   );
 }

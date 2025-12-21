@@ -11,21 +11,27 @@ interface LeaderboardEntry {
   exactScores: number;
   correctResults: number;
   predictedCount: number;
-  groupPoints?: number;
-  knockoutPoints?: number;
+  groupPoints: number;
+  knockoutPoints: number;
+  bonusMatchExact: number;
+  bonusMatchPoints: number;
 }
 
 interface LeaderboardClientProps {
   leaderboard: LeaderboardEntry[];
   currentUserId?: string;
+  currentUserRole?: string;
+  bonusMatchesCount: number;
 }
 
-type SortField = 'points' | 'exactScores' | 'name';
+type SortField = 'points' | 'exactScores' | 'name' | 'bonus';
 type PhaseFilter = 'all' | 'group' | 'knockout';
 
 export default function LeaderboardClient({
   leaderboard,
   currentUserId,
+  currentUserRole,
+  bonusMatchesCount,
 }: LeaderboardClientProps) {
   const [sortField, setSortField] = useState<SortField>('points');
   const [sortAsc, setSortAsc] = useState(false);
@@ -41,8 +47,8 @@ export default function LeaderboardClient({
   };
 
   const getPoints = (entry: LeaderboardEntry) => {
-    if (phase === 'group') return entry.groupPoints || 0;
-    if (phase === 'knockout') return entry.knockoutPoints || 0;
+    if (phase === 'group') return entry.groupPoints;
+    if (phase === 'knockout') return entry.knockoutPoints;
     return entry.totalPoints;
   };
 
@@ -58,26 +64,56 @@ export default function LeaderboardClient({
       case 'name':
         comparison = a.name.localeCompare(b.name);
         break;
+      case 'bonus':
+        comparison = b.bonusMatchPoints - a.bonusMatchPoints;
+        break;
     }
     return sortAsc ? -comparison : comparison;
   });
 
-  // Calculate ranks (tied users share same rank)
-  const rankedLeaderboard = sortedLeaderboard.map((entry, index) => {
-    return { ...entry, rank: 0 }; // Initialize
-  });
-
-  // Recalculate ranks properly
+  // Calculate ranks
   let currentRank = 0;
   let currentVal = -1;
-  rankedLeaderboard.forEach((entry, index) => {
+  const rankedLeaderboard = sortedLeaderboard.map((entry, index) => {
     const val = getPoints(entry);
     if (val !== currentVal) {
       currentRank = index + 1;
       currentVal = val;
     }
-    entry.rank = currentRank;
+    return { ...entry, rank: currentRank };
   });
+
+  const handleExportCSV = () => {
+    const headers = ['Rank', 'Name', 'Email', 'Total Points', 'Exact Scores', 'Correct Results', 'Group Points', 'Knockout Points', 'Bonus Match Points', 'Bonus Exact', 'Predictions'];
+    const rows = rankedLeaderboard.map(e => [
+      e.rank,
+      e.name,
+      e.email,
+      e.totalPoints,
+      e.exactScores,
+      e.correctResults,
+      e.groupPoints,
+      e.knockoutPoints,
+      e.bonusMatchPoints,
+      e.bonusMatchExact,
+      `${e.predictedCount}/104`
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `leaderboard_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const SortHeader = ({
     field,
@@ -102,13 +138,28 @@ export default function LeaderboardClient({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-          Leaderboard
-        </h1>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">
-          Current standings for the prediction competition
-        </p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+            Leaderboard
+          </h1>
+          <p className="mt-2 text-slate-600 dark:text-slate-400">
+            Current standings for the prediction competition
+          </p>
+        </div>
+        
+        {currentUserRole === 'admin' && (
+          <button
+            id="export-csv"
+            onClick={handleExportCSV}
+            className="btn-secondary flex items-center"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Export CSV
+          </button>
+        )}
       </div>
 
       {/* Filters and Stats */}
@@ -171,15 +222,13 @@ export default function LeaderboardClient({
             <table className="table">
               <thead>
                 <tr>
-                  <th className="px-4 py-3 bg-slate-100 dark:bg-slate-700 font-semibold text-slate-700 dark:text-slate-200">
+                  <th className="px-4 py-3 bg-slate-100 dark:bg-slate-700 font-semibold text-slate-700 dark:text-slate-200 w-20">
                     Rank
                   </th>
                   <SortHeader field="name">Name</SortHeader>
                   <SortHeader field="points">Points</SortHeader>
-                  <SortHeader field="exactScores">Exact Scores</SortHeader>
-                  <th className="px-4 py-3 bg-slate-100 dark:bg-slate-700 font-semibold text-slate-700 dark:text-slate-200">
-                    Correct Results
-                  </th>
+                  <SortHeader field="exactScores">Exact</SortHeader>
+                  <SortHeader field="bonus">Bonus ⭐</SortHeader>
                   <th className="px-4 py-3 bg-slate-100 dark:bg-slate-700 font-semibold text-slate-700 dark:text-slate-200">
                     Predictions
                   </th>
@@ -223,11 +272,11 @@ export default function LeaderboardClient({
                       >
                         {entry.name}
                         {entry.id === currentUserId && (
-                          <span className="ml-2 badge badge-info">You</span>
+                          <span className="ml-2 badge badge-info text-[10px] py-0 px-1">You</span>
                         )}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 font-bold text-lg">
+                    <td className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 font-bold">
                       {getPoints(entry)}
                     </td>
                     <td className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
@@ -236,11 +285,19 @@ export default function LeaderboardClient({
                       </span>
                     </td>
                     <td className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-                      <span className="text-amber-600">
-                        {entry.correctResults}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-amber-600 font-bold">
+                          {entry.bonusMatchPoints} pts
+                        </span>
+                        <span className="text-[10px] text-slate-500">
+                          {entry.bonusMatchExact}/{bonusMatchesCount} exact
+                        </span>
+                      </div>
+                      {entry.bonusMatchExact === bonusMatchesCount && bonusMatchesCount > 0 && (
+                        <span className="inline-block mt-1 badge badge-warning text-[8px] py-0 px-1">Perfect Bonus!</span>
+                      )}
                     </td>
-                    <td className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 text-slate-500">
+                    <td className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-sm">
                       {entry.predictedCount}/104
                     </td>
                   </tr>

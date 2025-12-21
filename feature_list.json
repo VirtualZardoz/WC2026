@@ -543,7 +543,7 @@
       "Step 4: Verify match-by-match points visible",
       "Step 5: Verify accuracy percentage shown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "040",
@@ -596,7 +596,7 @@
       "Step 4: Verify bonus match section/display visible",
       "Step 5: Verify shows 'X/Y exact on bonus matches' per user"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "044",

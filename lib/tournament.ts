@@ -151,11 +151,17 @@ export async function updateKnockoutBracket() {
       });
       const bestThirds = thirds.slice(0, 8);
 
-      if (match.homePlaceholder?.startsWith('3rd ')) {
-         // Placeholder might be "3rd C/D/E" or similar
-         // Since we don't have the full matrix, we just assign in order for now
-         const matchIdx = knockoutMatches.indexOf(match);
-         // This is a placeholder logic
+      if (match.awayPlaceholder?.startsWith('3rd ')) {
+        const placeholder = match.awayPlaceholder;
+        // Simplified assignment: assign top 8 thirds to the 8 "3rd" slots in match order
+        const r32MatchesWithThirds = knockoutMatches
+          .filter(m => m.awayPlaceholder?.startsWith('3rd '))
+          .sort((a, b) => a.matchNumber - b.matchNumber);
+        
+        const thirdIdx = r32MatchesWithThirds.findIndex(m => m.id === match.id);
+        if (thirdIdx !== -1 && bestThirds[thirdIdx]) {
+          awayTeamId = bestThirds[thirdIdx].id;
+        }
       }
     }
 
