@@ -623,7 +623,7 @@
       "Step 5: Verify new password generated or set",
       "Step 6: Test user can login with new password"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "046",
@@ -693,7 +693,7 @@
       "Step 7: Logout and login with new password",
       "Step 8: Verify login successful"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "051",
@@ -1365,7 +1365,7 @@
       "Step 4: Login and check deadline",
       "Step 5: Verify deadline persisted"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "099",
