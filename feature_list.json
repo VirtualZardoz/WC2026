@@ -1232,7 +1232,7 @@
       "Step 4: View user detail on leaderboard",
       "Step 5: Verify accuracy shows 70% (7/10 correct predictions)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "089",
@@ -1311,7 +1311,7 @@
       "Step 4: If still tied, verify tiebreaker by Goals For",
       "Step 5: Verify correct team advances"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "095",
