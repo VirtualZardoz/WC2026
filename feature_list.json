@@ -1271,7 +1271,7 @@
       "Step 4: Verify 401 Unauthorized response",
       "Step 5: Login and verify same endpoints work"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "092",
@@ -1378,7 +1378,7 @@
       "Step 4: Verify 'Predictions locked' message displayed",
       "Step 5: Verify message is clear and prominent"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "100",
