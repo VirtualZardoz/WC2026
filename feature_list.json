@@ -397,7 +397,7 @@
       "Step 3: Login as admin and enter knockout result",
       "Step 4: Verify bonus point for correct qualifier prediction"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "029",
@@ -451,7 +451,7 @@
       "Step 3: Verify 8 best third-placed teams calculated",
       "Step 4: Verify these teams placed in correct Round of 32 slots"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "033",
