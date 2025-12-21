@@ -53,3 +53,33 @@ prisma/dev.db-journal
 # Logs
 logs/
 *.log
+
+# HAL9000 development artifacts
+.claude_settings.json
+.project_type
+app_spec.txt
+feature_list.json
+init.sh
+stall_log.json
+claude-progress.txt
+
+# HAL9000 debug/test scripts
+check*.js
+test*.js
+verify*.js
+verify*.ts
+fetch*.js
+do_*.js
+set-*.js
+query_*.js
+mark_*.js
+list_*.js
+find_*.js
+get-*.js
+show-*.js
+
+# Spec files (keep knockout-bracket-spec.md if you want)
+# knockout-bracket-spec.md
+
+# Migration scripts (keep if needed for seeding)
+# migrate-real-fixtures.js

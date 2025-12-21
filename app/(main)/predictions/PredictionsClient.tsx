@@ -32,6 +32,8 @@ interface Match {
   awayTeam: Team | null;
   isBonusMatch: boolean;
   predictions: Prediction[];
+  matchDate: string | null;
+  venue: string | null;
 }
 
 interface PredictionsClientProps {
@@ -123,7 +125,7 @@ export default function PredictionsClient({
           My Predictions
         </h1>
         <p className="mt-2 text-slate-600 dark:text-slate-400">
-          Enter your predictions for all 104 matches
+          Enter your predictions for all {totalMatches} matches
         </p>
       </div>
 
@@ -182,7 +184,7 @@ export default function PredictionsClient({
               : 'border-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
-          Group Stage (72 matches)
+          Group Stage ({Object.values(matchesByGroup).flat().length} matches)
         </button>
         <button
           onClick={() => setActiveTab('knockout')}
@@ -192,7 +194,7 @@ export default function PredictionsClient({
               : 'border-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
-          Knockout Stage (32 matches)
+          Knockout Stage ({knockoutMatches.length} matches)
         </button>
       </div>
 

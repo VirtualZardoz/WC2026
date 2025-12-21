@@ -38,6 +38,7 @@ model Match {
   homePlaceholder String?
   awayPlaceholder String?
   matchDate       DateTime?
+  venue           String?
   realScoreHome   Int?
   realScoreAway   Int?
   isBonusMatch    Boolean      @default(false)

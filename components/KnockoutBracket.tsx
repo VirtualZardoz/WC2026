@@ -31,6 +31,8 @@ interface Match {
   awayTeam: Team | null;
   isBonusMatch: boolean;
   predictions: Prediction[];
+  matchDate: string | null;
+  venue: string | null;
 }
 
 interface KnockoutBracketProps {

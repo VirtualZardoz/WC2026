@@ -30,6 +30,8 @@ interface Match {
   awayTeam: Team | null;
   isBonusMatch: boolean;
   predictions: Prediction[];
+  matchDate: string | null;
+  venue: string | null;
 }
 
 interface MatchCardProps {
@@ -62,8 +64,22 @@ export default function MatchCard({
 
   const homeName = match.homeTeam?.name ?? match.homePlaceholder ?? 'TBD';
   const awayName = match.awayTeam?.name ?? match.awayPlaceholder ?? 'TBD';
-  const homeFlag = match.homeTeam?.flagEmoji ?? '';
-  const awayFlag = match.awayTeam?.flagEmoji ?? '';
+  const homeCode = match.homeTeam?.code?.toLowerCase() ?? '';
+  const awayCode = match.awayTeam?.code?.toLowerCase() ?? '';
+
+  // Convert 3-letter FIFA codes to 2-letter ISO codes for flagcdn
+  const fifaToIso: { [key: string]: string } = {
+    'mex': 'mx', 'rsa': 'za', 'kor': 'kr', 'can': 'ca', 'qat': 'qa', 'sui': 'ch',
+    'bra': 'br', 'mar': 'ma', 'hai': 'ht', 'sco': 'gb-sct', 'usa': 'us', 'par': 'py',
+    'aus': 'au', 'ger': 'de', 'cuw': 'cw', 'civ': 'ci', 'ecu': 'ec', 'ned': 'nl',
+    'jpn': 'jp', 'tun': 'tn', 'bel': 'be', 'egy': 'eg', 'irn': 'ir', 'nzl': 'nz',
+    'esp': 'es', 'cpv': 'cv', 'ksa': 'sa', 'uru': 'uy', 'fra': 'fr', 'sen': 'sn',
+    'nor': 'no', 'arg': 'ar', 'alg': 'dz', 'aut': 'at', 'jor': 'jo', 'por': 'pt',
+    'uzb': 'uz', 'col': 'co', 'eng': 'gb-eng', 'cro': 'hr', 'gha': 'gh', 'pan': 'pa',
+  };
+  const getIsoCode = (code: string) => fifaToIso[code] || code;
+  const homeFlagUrl = homeCode && !homeCode.startsWith('tbd') ? `https://flagcdn.com/24x18/${getIsoCode(homeCode)}.png` : null;
+  const awayFlagUrl = awayCode && !awayCode.startsWith('tbd') ? `https://flagcdn.com/24x18/${getIsoCode(awayCode)}.png` : null;
 
   const isDraw =
     homeScore !== '' &&
@@ -124,6 +140,19 @@ export default function MatchCard({
     }
   };
 
+  // Format match date
+  const formatMatchDate = (dateStr: string | null) => {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
   return (
     <div
       className={`match-card ${match.isBonusMatch ? 'bonus' : ''} ${
@@ -131,7 +160,7 @@ export default function MatchCard({
       }`}
     >
       {/* Match header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-2">
         <span className="text-xs text-slate-500">Match #{match.matchNumber}</span>
         {match.isBonusMatch && (
           <span className="badge badge-warning">
@@ -140,11 +169,38 @@ export default function MatchCard({
         )}
       </div>
 
+      {/* Date and venue */}
+      {(match.matchDate || match.venue) && (
+        <div className="mb-3 text-xs text-slate-500 space-y-0.5">
+          {match.matchDate && (
+            <div className="flex items-center gap-1">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>{formatMatchDate(match.matchDate)}</span>
+            </div>
+          )}
+          {match.venue && (
+            <div className="flex items-center gap-1">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="truncate">{match.venue}</span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Teams and scores */}
       <div className="space-y-3">
         {/* Home team */}
         <div className="flex items-center gap-3">
-          <span className="text-lg flex-shrink-0">{homeFlag}</span>
+          {homeFlagUrl ? (
+            <img src={homeFlagUrl} alt="" className="w-6 h-4 flex-shrink-0 object-cover rounded-sm" />
+          ) : (
+            <span className="w-6 h-4 flex-shrink-0 bg-slate-200 rounded-sm" />
+          )}
           <span className="font-medium text-slate-900 dark:text-white flex-1 min-w-0 truncate">
             {homeName}
           </span>
@@ -162,7 +218,11 @@ export default function MatchCard({
 
         {/* Away team */}
         <div className="flex items-center gap-3">
-          <span className="text-lg flex-shrink-0">{awayFlag}</span>
+          {awayFlagUrl ? (
+            <img src={awayFlagUrl} alt="" className="w-6 h-4 flex-shrink-0 object-cover rounded-sm" />
+          ) : (
+            <span className="w-6 h-4 flex-shrink-0 bg-slate-200 rounded-sm" />
+          )}
           <span className="font-medium text-slate-900 dark:text-white flex-1 min-w-0 truncate">
             {awayName}
           </span>

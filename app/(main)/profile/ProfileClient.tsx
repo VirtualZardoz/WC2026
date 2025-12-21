@@ -133,7 +133,7 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
             </div>
           </div>
           <div className="mt-4 text-center text-sm text-slate-500">
-            {stats.totalPredictions}/104 matches predicted
+            {stats.totalPredictions}/134 matches predicted
           </div>
         </div>
 

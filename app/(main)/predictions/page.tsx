@@ -16,7 +16,11 @@ async function getMatchesWithPredictions(userId: string) {
     orderBy: { matchNumber: 'asc' },
   });
 
-  return matches;
+  // Serialize dates for client component
+  return matches.map(m => ({
+    ...m,
+    matchDate: m.matchDate?.toISOString() || null,
+  }));
 }
 
 async function getTournament() {
