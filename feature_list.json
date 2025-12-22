@@ -1556,6 +1556,6 @@
       "Step 3: Verify user is redirected away from page",
       "Step 4: Verify error or access denied message appears"
     ],
-    "passes": true
+    "passes": false
   }
 ]
