@@ -1544,7 +1544,7 @@
       "Step 4: Verify delete button is disabled OR error message appears",
       "Step 5: Verify admin account still exists in the table"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "112",
