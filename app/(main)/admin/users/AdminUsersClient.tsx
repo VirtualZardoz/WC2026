@@ -21,6 +21,13 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
   const [filter, setFilter] = useState<'all' | 'admin' | 'user'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [updatingUser, setUpdatingUser] = useState<string | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [createFormData, setCreateFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: 'user'
+  });
 
   const filteredUsers = users.filter((user) => {
     // Role filter
@@ -90,6 +97,61 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
     }
   };
 
+  const createUser = async () => {
+    if (!createFormData.name || !createFormData.email || !createFormData.password) {
+      alert('All fields are required');
+      return;
+    }
+
+    setUpdatingUser('creating');
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(createFormData),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        alert(data.error || 'Failed to create user');
+        return;
+      }
+
+      setShowCreateForm(false);
+      setCreateFormData({ name: '', email: '', password: '', role: 'user' });
+      router.refresh();
+    } catch (err) {
+      alert('An unexpected error occurred');
+    } finally {
+      setUpdatingUser(null);
+    }
+  };
+
+  const deleteUser = async (userId: string, userName: string) => {
+    if (!confirm(`Are you sure you want to delete ${userName || 'this user'}? This action cannot be undone.`)) {
+      return;
+    }
+
+    setUpdatingUser(userId);
+    try {
+      const response = await fetch(`/api/admin/users?userId=${userId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        alert(data.error || 'Failed to delete user');
+        return;
+      }
+
+      router.refresh();
+    } catch (err) {
+      alert('An unexpected error occurred');
+    } finally {
+      setUpdatingUser(null);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -105,12 +167,22 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-          Manage Users
-        </h1>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">
-          {users.length} total users ({adminCount} admins, {userCount} users)
-        </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+              Manage Users
+            </h1>
+            <p className="mt-2 text-slate-600 dark:text-slate-400">
+              {users.length} total users ({adminCount} admins, {userCount} users)
+            </p>
+          </div>
+          <button
+            onClick={() => setShowCreateForm(true)}
+            className="btn-primary"
+          >
+            Create User
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -230,6 +302,17 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
                         }`}
                       >
                         Reset Pass
+                      </button>
+                      <button
+                        onClick={() => deleteUser(user.id, user.name || '')}
+                        disabled={updatingUser === user.id || user.id === users.find(u => u.email === 'admin@example.com')?.id}
+                        className={`btn-secondary text-xs text-red-600 hover:text-red-700 ${
+                          updatingUser === user.id || user.id === users.find(u => u.email === 'admin@example.com')?.id
+                            ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                        title={user.id === users.find(u => u.email === 'admin@example.com')?.id ? 'Cannot delete yourself' : 'Delete user'}
+                      >
+                        {updatingUser === user.id ? 'Deleting...' : 'Delete'}
                       </button>
                     </div>
                   </td>
