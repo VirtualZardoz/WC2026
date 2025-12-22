@@ -1490,5 +1490,72 @@
       "Step 5: No page refresh required for updates"
     ],
     "passes": true
+  },
+  {
+    "id": "108",
+    "category": "functional",
+    "description": "Admin users page displays all registered users",
+    "steps": [
+      "Step 1: Login as admin user (admin@example.com)",
+      "Step 2: Navigate to /admin/users",
+      "Step 3: Verify page loads without errors",
+      "Step 4: Verify table displays all users with columns: Name, Email, Role, Created date",
+      "Step 5: Verify each user row has Edit and Delete action buttons"
+    ],
+    "passes": true
+  },
+  {
+    "id": "109",
+    "category": "functional",
+    "description": "Admin can create a new user",
+    "steps": [
+      "Step 1: Login as admin user",
+      "Step 2: Navigate to /admin/users",
+      "Step 3: Click Create User button",
+      "Step 4: Fill form with name, email, password, and role (USER)",
+      "Step 5: Submit form",
+      "Step 6: Verify success notification appears",
+      "Step 7: Verify new user appears in the users table"
+    ],
+    "passes": false
+  },
+  {
+    "id": "110",
+    "category": "functional",
+    "description": "Admin can delete another user",
+    "steps": [
+      "Step 1: Login as admin user",
+      "Step 2: Navigate to /admin/users",
+      "Step 3: Click Delete button on a non-admin user row",
+      "Step 4: Confirm deletion in the confirmation dialog",
+      "Step 5: Verify success notification appears",
+      "Step 6: Verify user is removed from the table"
+    ],
+    "passes": false
+  },
+  {
+    "id": "111",
+    "category": "functional",
+    "description": "Admin cannot delete themselves",
+    "steps": [
+      "Step 1: Login as admin user (admin@example.com)",
+      "Step 2: Navigate to /admin/users",
+      "Step 3: Attempt to delete own account row",
+      "Step 4: Verify delete button is disabled OR error message appears",
+      "Step 5: Verify admin account still exists in the table"
+    ],
+    "passes": false
+  },
+  {
+    "id": "112",
+    "category": "functional",
+    "description": "Non-admin users cannot access admin users page",
+    "steps": [
+      "Step 1: Login as non-admin user",
+      "Step 2: Navigate directly to /admin/users",
+      "Step 3: Verify user is redirected away from page",
+      "Step 4: Verify error or access denied message appears"
+    ],
+    "passes": true
   }
 ]
