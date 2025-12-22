@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useEffect, useState } from 'react';
 import MatchCard from './MatchCard';
 
 interface Team {
@@ -55,6 +55,10 @@ export default function KnockoutBracket({
   onSaved,
   predictedQualifiers,
 }: KnockoutBracketProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [maxScroll, setMaxScroll] = useState(0);
+
   // Organize matches by stage
   const stages = {
     round32: knockoutMatches.filter(m => m.stage === 'round32').sort((a, b) => a.matchNumber - b.matchNumber),
@@ -65,12 +69,30 @@ export default function KnockoutBracket({
     third: knockoutMatches.filter(m => m.stage === 'third'),
   };
 
-  const stageNames: { [key: string]: string } = {
-    round32: 'Round of 32',
-    round16: 'Round of 16',
-    quarter: 'Quarter-finals',
-    semi: 'Semi-finals',
-    final: 'Final',
+  // Update scroll state
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const updateScroll = () => {
+      setScrollLeft(container.scrollLeft);
+      setMaxScroll(container.scrollWidth - container.clientWidth);
+    };
+
+    updateScroll();
+    container.addEventListener('scroll', updateScroll);
+    window.addEventListener('resize', updateScroll);
+
+    return () => {
+      container.removeEventListener('scroll', updateScroll);
+      window.removeEventListener('resize', updateScroll);
+    };
+  }, []);
+
+  const handleScrollbarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = Number(e.target.value);
+    }
   };
 
   // Build predicted teams map for knockout matches
@@ -88,17 +110,16 @@ export default function KnockoutBracket({
 
     // Map stage codes to match number offsets
     const stageOffsets: { [key: string]: number } = {
-      'R32': 72, // Match 73 = R32 M1, so offset is 72
-      'R16': 88, // Match 89 = R16 M1, so offset is 88
-      'QF': 96,  // Match 97 = QF M1, so offset is 96
-      'SF': 100, // Match 101 = SF M1, so offset is 100
+      'R32': 72,
+      'R16': 88,
+      'QF': 96,
+      'SF': 100,
     };
 
     // Helper to resolve placeholder to team
     const resolveTeam = (placeholder: string | null, match: Match): Team | null => {
       if (!placeholder) return null;
 
-      // Handle "Winner A", "Winner B" for group winners
       if (placeholder.startsWith('Winner ') && placeholder.split(' ')[1].length === 1) {
         const group = placeholder.split(' ')[1];
         return predictedQualifiers.winners[group] || null;
@@ -108,7 +129,6 @@ export default function KnockoutBracket({
         return predictedQualifiers.runnersUp[group] || null;
       }
       if (placeholder.startsWith('3rd ')) {
-        // Find which 3rd place slot this is
         const r32ThirdMatches = stages.round32
           .filter(m => m.awayPlaceholder?.startsWith('3rd '))
           .sort((a, b) => a.matchNumber - b.matchNumber);
@@ -119,21 +139,18 @@ export default function KnockoutBracket({
         }
         return null;
       }
-      // Handle "Winner R32 M1", "Winner R16 M2", etc.
       const winnerMatch = placeholder.match(/^Winner (R32|R16|QF|SF) M(\d+)$/);
       if (winnerMatch) {
         const [, stage, matchNum] = winnerMatch;
         const matchNumber = stageOffsets[stage] + parseInt(matchNum);
         return predictedWinners[matchNumber] || null;
       }
-      // Handle "Loser SF M1", "Loser SF M2" for third place
       const loserMatch = placeholder.match(/^Loser (SF) M(\d+)$/);
       if (loserMatch) {
         const [, stage, matchNum] = loserMatch;
         const matchNumber = stageOffsets[stage] + parseInt(matchNum);
         return predictedLosers[matchNumber] || null;
       }
-      // Legacy format: "Winner Match X"
       if (placeholder.startsWith('Winner Match ')) {
         const num = parseInt(placeholder.split(' ')[2]);
         return predictedWinners[num] || null;
@@ -145,11 +162,9 @@ export default function KnockoutBracket({
       return null;
     };
 
-    // Process matches in order to cascade predictions
     const sortedMatches = [...knockoutMatches].sort((a, b) => a.matchNumber - b.matchNumber);
 
     for (const match of sortedMatches) {
-      // Get home and away teams (from actual assignment or predicted from group stage)
       let homeTeam = match.homeTeam;
       let awayTeam = match.awayTeam;
 
@@ -162,7 +177,6 @@ export default function KnockoutBracket({
 
       result[match.id] = { home: homeTeam, away: awayTeam };
 
-      // Calculate predicted winner for cascade
       const prediction = match.predictions[0];
       if (prediction && homeTeam && awayTeam) {
         const homeScore = prediction.predictedHome;
@@ -178,7 +192,6 @@ export default function KnockoutBracket({
           winner = awayTeam;
           loser = homeTeam;
         } else {
-          // Draw - check predictedWinner
           if (prediction.predictedWinner === 'home') {
             winner = homeTeam;
             loser = awayTeam;
@@ -196,66 +209,179 @@ export default function KnockoutBracket({
     return result;
   }, [knockoutMatches, predictedQualifiers, stages.round32]);
 
-  const renderMatch = (match: Match) => {
+  // Match card dimensions
+  const CARD_HEIGHT = 180; // Approximate height of match card
+  const CARD_GAP = 16; // Gap between cards in same round
+
+  const renderMatch = (match: Match, index: number, totalInRound: number, roundMultiplier: number) => {
     const predicted = predictedTeams[match.id];
+
+    // Calculate vertical spacing - each subsequent round has double the spacing
+    const baseSpacing = CARD_HEIGHT + CARD_GAP;
+    const spacing = baseSpacing * roundMultiplier;
+    const offset = (spacing - CARD_HEIGHT) / 2;
+
     return (
-      <div key={match.id} className="w-64 flex-shrink-0">
-        <MatchCard
-          match={match}
-          isLocked={isLocked}
-          onSaved={onSaved}
-          isKnockout
-          predictedHomeTeam={predicted?.home || null}
-          predictedAwayTeam={predicted?.away || null}
-        />
+      <div
+        key={match.id}
+        className="flex-shrink-0"
+        style={{
+          marginTop: index === 0 ? offset : CARD_GAP,
+          marginBottom: index === totalInRound - 1 ? offset : 0,
+          height: index === 0 && totalInRound > 1 ? undefined : (index < totalInRound - 1 ? spacing - CARD_GAP : undefined),
+        }}
+      >
+        <div className="w-56">
+          <MatchCard
+            match={match}
+            isLocked={isLocked}
+            onSaved={onSaved}
+            isKnockout
+            predictedHomeTeam={predicted?.home || null}
+            predictedAwayTeam={predicted?.away || null}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  // Render a round column with proper bracket spacing
+  const renderRound = (matches: Match[], title: string, roundIndex: number) => {
+    // roundIndex: 0 = R32, 1 = R16, 2 = QF, 3 = SF, 4 = Final
+    const multiplier = Math.pow(2, roundIndex);
+    const topOffset = ((CARD_HEIGHT + CARD_GAP) * multiplier - CARD_HEIGHT) / 2;
+
+    return (
+      <div className="flex flex-col flex-shrink-0">
+        <h3 className="text-center font-bold text-slate-700 dark:text-slate-300 mb-4 sticky top-0 bg-slate-50 dark:bg-slate-900 py-2 z-10">
+          {title}
+        </h3>
+        <div
+          className="flex flex-col"
+          style={{ paddingTop: topOffset }}
+        >
+          {matches.map((match, idx) => {
+            const spacing = (CARD_HEIGHT + CARD_GAP) * multiplier;
+            return (
+              <div
+                key={match.id}
+                style={{
+                  height: idx < matches.length - 1 ? spacing : undefined,
+                }}
+              >
+                <div className="w-56">
+                  <MatchCard
+                    match={match}
+                    isLocked={isLocked}
+                    onSaved={onSaved}
+                    isKnockout
+                    predictedHomeTeam={predictedTeams[match.id]?.home || null}
+                    predictedAwayTeam={predictedTeams[match.id]?.away || null}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="overflow-x-auto pb-8">
-      <div className="flex gap-8 min-w-max p-4">
-        {/* Round of 32 */}
-        <div className="flex flex-col gap-4">
-          <h3 className="text-center font-bold text-slate-700 dark:text-slate-300 mb-2">{stageNames.round32}</h3>
-          <div className="flex flex-col gap-4">
-            {stages.round32.map(renderMatch)}
+    <div className="relative">
+      {/* Sticky scroll indicator at top */}
+      {maxScroll > 0 && (
+        <div className="sticky top-0 z-20 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg mb-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-slate-500 whitespace-nowrap">◀ Scroll</span>
+            <input
+              type="range"
+              min="0"
+              max={maxScroll}
+              value={scrollLeft}
+              onChange={handleScrollbarChange}
+              className="w-full h-2 bg-slate-300 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer"
+            />
+            <span className="text-xs text-slate-500 whitespace-nowrap">Scroll ▶</span>
+          </div>
+          <div className="flex justify-between text-xs text-slate-400 mt-1 px-8">
+            <span>R32</span>
+            <span>R16</span>
+            <span>QF</span>
+            <span>SF</span>
+            <span>Final</span>
           </div>
         </div>
+      )}
 
-        {/* Round of 16 */}
-        <div className="flex flex-col gap-4 pt-16">
-          <h3 className="text-center font-bold text-slate-700 dark:text-slate-300 mb-2">{stageNames.round16}</h3>
-          <div className="flex flex-col gap-[calc(256px+32px)]"> {/* Approximate spacing */}
-             {stages.round16.map(renderMatch)}
-          </div>
-        </div>
+      {/* Bracket container */}
+      <div
+        ref={scrollContainerRef}
+        className="overflow-x-auto pb-8"
+        style={{ scrollbarWidth: 'thin' }}
+      >
+        <div className="flex gap-8 min-w-max p-4">
+          {/* Round of 32 */}
+          {renderRound(stages.round32, 'Round of 32', 0)}
 
-        {/* Quarters */}
-        <div className="flex flex-col gap-4 pt-48">
-          <h3 className="text-center font-bold text-slate-700 dark:text-slate-300 mb-2">{stageNames.quarter}</h3>
-          <div className="flex flex-col gap-[calc(512px+64px)]">
-            {stages.quarter.map(renderMatch)}
-          </div>
-        </div>
+          {/* Connector lines placeholder */}
+          <div className="w-8 flex-shrink-0" />
 
-        {/* Semis */}
-        <div className="flex flex-col gap-4 pt-[200px]">
-          <h3 className="text-center font-bold text-slate-700 dark:text-slate-300 mb-2">{stageNames.semi}</h3>
-          <div className="flex flex-col gap-[calc(1024px+128px)]">
-            {stages.semi.map(renderMatch)}
-          </div>
-        </div>
+          {/* Round of 16 */}
+          {renderRound(stages.round16, 'Round of 16', 1)}
 
-        {/* Final & Third Place */}
-        <div className="flex flex-col gap-12 pt-[400px]">
-          <div>
-            <h3 className="text-center font-bold text-primary-600 mb-2">{stageNames.final}</h3>
-            {stages.final.map(renderMatch)}
-          </div>
-          <div>
-            <h3 className="text-center font-bold text-slate-500 mb-2">Third Place</h3>
-            {stages.third.map(renderMatch)}
+          {/* Connector lines placeholder */}
+          <div className="w-8 flex-shrink-0" />
+
+          {/* Quarter-finals */}
+          {renderRound(stages.quarter, 'Quarter-finals', 2)}
+
+          {/* Connector lines placeholder */}
+          <div className="w-8 flex-shrink-0" />
+
+          {/* Semi-finals */}
+          {renderRound(stages.semi, 'Semi-finals', 3)}
+
+          {/* Connector lines placeholder */}
+          <div className="w-8 flex-shrink-0" />
+
+          {/* Final & Third Place */}
+          <div className="flex flex-col flex-shrink-0">
+            <h3 className="text-center font-bold text-primary-600 mb-4 sticky top-0 bg-slate-50 dark:bg-slate-900 py-2 z-10">
+              Final
+            </h3>
+            <div style={{ paddingTop: ((CARD_HEIGHT + CARD_GAP) * 8 - CARD_HEIGHT) / 2 }}>
+              <div className="w-56">
+                {stages.final.map(match => (
+                  <MatchCard
+                    key={match.id}
+                    match={match}
+                    isLocked={isLocked}
+                    onSaved={onSaved}
+                    isKnockout
+                    predictedHomeTeam={predictedTeams[match.id]?.home || null}
+                    predictedAwayTeam={predictedTeams[match.id]?.away || null}
+                  />
+                ))}
+              </div>
+
+              {/* Third place below final */}
+              <div className="mt-12">
+                <h4 className="text-center font-semibold text-slate-500 mb-2">Third Place</h4>
+                {stages.third.map(match => (
+                  <div key={match.id} className="w-56">
+                    <MatchCard
+                      match={match}
+                      isLocked={isLocked}
+                      onSaved={onSaved}
+                      isKnockout
+                      predictedHomeTeam={predictedTeams[match.id]?.home || null}
+                      predictedAwayTeam={predictedTeams[match.id]?.away || null}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

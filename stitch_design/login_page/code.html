@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>World Cup 2026 Predictor - Login</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0995ec",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101b22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111518] dark:text-white min-h-screen flex flex-col font-display">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#f0f3f5] dark:border-[#2a3b47] px-6 lg:px-10 py-3 bg-white dark:bg-[#111518]">
+<div class="flex items-center gap-4 text-[#111518] dark:text-white">
+<div class="size-8 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined !text-[32px]">sports_soccer</span>
+</div>
+<h2 class="text-[#111518] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">World Cup 2026 Predictor</h2>
+</div>
+<div class="flex items-center gap-4">
+<span class="hidden sm:inline text-sm font-medium text-[#111518] dark:text-white">Don't have an account?</span>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-primary/10 hover:bg-primary/20 text-primary text-sm font-bold leading-normal tracking-[0.015em] transition-colors">
+<span class="truncate">Sign Up</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
+<!-- Abstract Background Pattern -->
+<div class="absolute inset-0 z-0 opacity-5 dark:opacity-10 pointer-events-none" style="background-image: radial-gradient(#0995ec 1px, transparent 1px); background-size: 32px 32px;">
+</div>
+<div class="w-full max-w-[1000px] bg-white dark:bg-[#1a2630] rounded-xl shadow-sm border border-[#e5e7eb] dark:border-[#2a3b47] overflow-hidden flex flex-col md:flex-row relative z-10 min-h-[600px]">
+<!-- Left Side: Hero Image/Branding -->
+<div class="hidden md:flex w-1/2 bg-primary/5 relative flex-col justify-between p-10 overflow-hidden">
+<!-- Background Image -->
+<div class="absolute inset-0 z-0">
+<img alt="Football stadium atmosphere with vibrant lighting" class="w-full h-full object-cover opacity-80 mix-blend-multiply filter brightness-90" data-alt="Football stadium atmosphere with vibrant lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFz9Lflf5ZGmmo7bYEFpas54i1wCi0VxJ8d3BxrXgm30HEb37vkEM8nk3sea-ViZPVf4THW33aJQCwN0nlqrhWWj7Os5VB-a1NatTd9GYcRFcSLTTBFqSZ_oT5ng1qC-QIEwPuaCqwO7vrH1wuerqrZkI8pm1zmu2PXmt1rbdrBpkR6Bhxq1UG6ftPtKPPCYtDo4NbXb2Y-hzF_A84A9tptH5n42ctIvaoVyDvxmdNX0sR03ZYjeXxzfsu0KCfiHpzlRU6YlKC0XE"/>
+<div class="absolute inset-0 bg-primary/30 mix-blend-multiply"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+<div class="relative z-10 mt-auto">
+<div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-lg flex items-center justify-center mb-6 border border-white/30 text-white">
+<span class="material-symbols-outlined">emoji_events</span>
+</div>
+<h1 class="text-white text-3xl font-bold leading-tight mb-3">Join the League</h1>
+<p class="text-white/80 text-base font-medium leading-relaxed max-w-sm">
+                        Predict every match of the 2026 World Cup. Compete with friends, climb the leaderboard, and prove your football knowledge.
+                    </p>
+</div>
+</div>
+<!-- Right Side: Login Form -->
+<div class="w-full md:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
+<div class="mb-8">
+<h2 class="text-[#111518] dark:text-white text-[28px] font-bold leading-tight tracking-[-0.015em] mb-2">Welcome Back</h2>
+<p class="text-[#5f7b8c] dark:text-[#9ca3af] text-base">Enter your details to access your dashboard.</p>
+</div>
+<form action="#" class="space-y-6" method="POST">
+<!-- Email Field -->
+<div class="space-y-2">
+<label class="text-[#111518] dark:text-white text-sm font-medium leading-normal" for="email">Email Address</label>
+<div class="relative">
+<input class="form-input w-full rounded-lg border border-[#dbe2e6] dark:border-[#374151] bg-white dark:bg-[#111518] text-[#111518] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary h-12 px-4 placeholder:text-[#5f7b8c] dark:placeholder:text-[#6b7280] text-base" id="email" placeholder="name@example.com" type="email"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 text-[#5f7b8c]">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</div>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<label class="text-[#111518] dark:text-white text-sm font-medium leading-normal" for="password">Password</label>
+<a class="text-primary text-sm font-semibold hover:underline" href="#">Forgot password?</a>
+</div>
+<div class="relative flex w-full rounded-lg border border-[#dbe2e6] dark:border-[#374151] bg-white dark:bg-[#111518] focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+<input class="form-input flex-1 min-w-0 border-0 bg-transparent text-[#111518] dark:text-white focus:ring-0 h-12 px-4 placeholder:text-[#5f7b8c] dark:placeholder:text-[#6b7280] text-base" id="password" placeholder="Enter your password" type="password"/>
+<button class="px-4 text-[#5f7b8c] hover:text-[#111518] dark:hover:text-white transition-colors flex items-center justify-center" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Actions -->
+<div class="pt-2">
+<button class="w-full cursor-pointer flex items-center justify-center overflow-hidden rounded-lg h-12 bg-primary hover:bg-primary/90 transition-colors text-white text-base font-bold leading-normal tracking-[0.015em] shadow-md shadow-primary/20" type="submit">
+                            Sign In
+                        </button>
+</div>
+</form>
+<div class="mt-8 pt-8 border-t border-[#f0f3f5] dark:border-[#2a3b47] text-center">
+<p class="text-[#5f7b8c] dark:text-[#9ca3af] text-sm">
+                        New to the 2026 Predictor? 
+                        <a class="text-primary font-bold hover:underline ml-1" href="#">Create an account</a>
+</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer simple -->
+<footer class="py-6 text-center text-[#5f7b8c] dark:text-[#6b7280] text-xs">
+<p>© 2026 World Cup Predictor League. All rights reserved.</p>
+</footer>
+</body></html>

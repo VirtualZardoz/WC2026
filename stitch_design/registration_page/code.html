@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registration - World Cup Predictor '26</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0995ec",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101b22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem", 
+                        "lg": "0.5rem", 
+                        "xl": "0.75rem", 
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', "Noto Sans", sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111518] dark:text-white min-h-screen flex flex-col font-display">
+<div class="relative flex min-h-screen w-full flex-col justify-center items-center overflow-hidden">
+<!-- Background with Overlay -->
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover opacity-10 dark:opacity-5 grayscale" data-alt="Blurred football stadium crowd background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbsNDf2JOBqwenSQ01o-L5n0B71mlsf_8ruorxcri7cqkI1qshQXfRMTs9jDVea5jSCx4juvK3k7Vmt93ncENgfr28379_NXJMnAc337EJziPMFC1pv4k3IP20RNCxW3nv9uXWY4qJdF73s8MLCrnaPBfridsIdqAcLGKBgNP-Rd-Zcruuepch2ck3-rZ-HJoSDSyEtHaJS3NI6dmWRAX9VaqD1g1MiGsXfvMJc6E1wSjAkNSN8YnhuWA9Ai3JqqK6GgrddHMQFuM"/>
+</div>
+<!-- Registration Card -->
+<div class="relative z-10 w-full max-w-[520px] px-4 py-6">
+<div class="bg-white dark:bg-[#1a2632] rounded-xl shadow-xl border border-[#e5e7eb] dark:border-[#2a3b47] overflow-hidden">
+<!-- Header Section -->
+<div class="px-8 pt-10 pb-6 flex flex-col items-center">
+<!-- Logo Icon -->
+<div class="mb-5 text-primary">
+<svg class="size-12" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_6_543)">
+<path d="M42.1739 20.1739L27.8261 5.82609C29.1366 7.13663 28.3989 10.1876 26.2002 13.7654C24.8538 15.9564 22.9595 18.3449 20.6522 20.6522C18.3449 22.9595 15.9564 24.8538 13.7654 26.2002C10.1876 28.3989 7.13663 29.1366 5.82609 27.8261L20.1739 42.1739C21.4845 43.4845 24.5355 42.7467 28.1133 40.548C30.3042 39.2016 32.6927 37.3073 35 35C37.3073 32.6927 39.2016 30.3042 40.548 28.1133C42.7467 24.5355 43.4845 21.4845 42.1739 20.1739Z" fill="currentColor"></path>
+<path clip-rule="evenodd" d="M7.24189 26.4066C7.31369 26.4411 7.64204 26.5637 8.52504 26.3738C9.59462 26.1438 11.0343 25.5311 12.7183 24.4963C14.7583 23.2426 17.0256 21.4503 19.238 19.238C21.4503 17.0256 23.2426 14.7583 24.4963 12.7183C25.5311 11.0343 26.1438 9.59463 26.3738 8.52504C26.5637 7.64204 26.4411 7.31369 26.4066 7.24189C26.345 7.21246 26.143 7.14535 25.6664 7.1918C24.9745 7.25925 23.9954 7.5498 22.7699 8.14278C20.3369 9.32007 17.3369 11.4915 14.4142 14.4142C11.4915 17.3369 9.32007 20.3369 8.14278 22.7699C7.5498 23.9954 7.25925 24.9745 7.1918 25.6664C7.14534 26.143 7.21246 26.345 7.24189 26.4066ZM29.9001 10.7285C29.4519 12.0322 28.7617 13.4172 27.9042 14.8126C26.465 17.1544 24.4686 19.6641 22.0664 22.0664C19.6641 24.4686 17.1544 26.465 14.8126 27.9042C13.4172 28.7617 12.0322 29.4519 10.7285 29.9001L21.5754 40.747C21.6001 40.7606 21.8995 40.931 22.8729 40.7217C23.9424 40.4916 25.3821 39.879 27.0661 38.8441C29.1062 37.5904 31.3734 35.7982 33.5858 33.5858C35.7982 31.3734 37.5904 29.1062 38.8441 27.0661C39.879 25.3821 40.4916 23.9425 40.7216 22.8729C40.931 21.8995 40.7606 21.6001 40.747 21.5754L29.9001 10.7285ZM29.2403 4.41187L43.5881 18.7597C44.9757 20.1473 44.9743 22.1235 44.6322 23.7139C44.2714 25.3919 43.4158 27.2666 42.252 29.1604C40.8128 31.5022 38.8165 34.012 36.4142 36.4142C34.012 38.8165 31.5022 40.8128 29.1604 42.252C27.2666 43.4158 25.3919 44.2714 23.7139 44.6322C22.1235 44.9743 20.1473 44.9757 18.7597 43.5881L4.41187 29.2403C3.29027 28.1187 3.08209 26.5973 3.21067 25.2783C3.34099 23.9415 3.8369 22.4852 4.54214 21.0277C5.96129 18.0948 8.43335 14.7382 11.5858 11.5858C14.7382 8.43335 18.0948 5.9613 21.0277 4.54214C22.4852 3.8369 23.9415 3.34099 25.2783 3.21067C26.5973 3.08209 28.1187 3.29028 29.2403 4.41187Z" fill="currentColor" fill-rule="evenodd"></path>
+</g>
+<defs>
+<clippath id="clip0_6_543"><rect fill="white" height="48" width="48"></rect></clippath>
+</defs>
+</svg>
+</div>
+<h2 class="text-[#111518] dark:text-white text-3xl font-black leading-tight tracking-[-0.033em] text-center">Create your account</h2>
+<p class="text-[#5f7b8c] dark:text-[#93adc8] text-base font-normal leading-normal text-center mt-2 max-w-sm">Join the competition and predict the World Cup 2026 matches.</p>
+</div>
+<!-- Form Section -->
+<div class="px-8 pb-10">
+<form class="flex flex-col gap-5">
+<!-- Full Name -->
+<div class="flex flex-col">
+<label class="text-[#111518] dark:text-gray-200 text-sm font-semibold leading-normal pb-2" for="fullname">Full Name</label>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] dark:text-white focus:outline-0 focus:ring-1 focus:ring-primary border border-[#dbe2e6] dark:border-[#3e5060] bg-white dark:bg-[#253341] focus:border-primary h-12 placeholder:text-[#5f7b8c] dark:placeholder:text-[#6b8596] px-4 text-base font-normal leading-normal transition-colors" id="fullname" placeholder="Lionel Messi" type="text" value=""/>
+</div>
+<!-- Email -->
+<div class="flex flex-col">
+<label class="text-[#111518] dark:text-gray-200 text-sm font-semibold leading-normal pb-2" for="email">Email Address</label>
+<div class="relative">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] dark:text-white focus:outline-0 focus:ring-1 focus:ring-primary border border-[#dbe2e6] dark:border-[#3e5060] bg-white dark:bg-[#253341] focus:border-primary h-12 placeholder:text-[#5f7b8c] dark:placeholder:text-[#6b8596] px-4 text-base font-normal leading-normal transition-colors" id="email" placeholder="name@example.com" type="email" value=""/>
+</div>
+</div>
+<!-- Password -->
+<div class="flex flex-col">
+<label class="text-[#111518] dark:text-gray-200 text-sm font-semibold leading-normal pb-2" for="password">Password</label>
+<div class="relative">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] dark:text-white focus:outline-0 focus:ring-1 focus:ring-primary border border-[#dbe2e6] dark:border-[#3e5060] bg-white dark:bg-[#253341] focus:border-primary h-12 placeholder:text-[#5f7b8c] dark:placeholder:text-[#6b8596] px-4 pr-12 text-base font-normal leading-normal transition-colors" id="password" placeholder="Create a password" type="password" value=""/>
+<button class="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-[#5f7b8c] hover:text-[#111518] dark:hover:text-white transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+</div>
+</div>
+<!-- Confirm Password -->
+<div class="flex flex-col">
+<label class="text-[#111518] dark:text-gray-200 text-sm font-semibold leading-normal pb-2" for="confirm_password">Confirm Password</label>
+<div class="relative">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] dark:text-white focus:outline-0 focus:ring-1 focus:ring-primary border border-[#dbe2e6] dark:border-[#3e5060] bg-white dark:bg-[#253341] focus:border-primary h-12 placeholder:text-[#5f7b8c] dark:placeholder:text-[#6b8596] px-4 pr-12 text-base font-normal leading-normal transition-colors" id="confirm_password" placeholder="Confirm your password" type="password" value=""/>
+<button class="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-[#5f7b8c] hover:text-[#111518] dark:hover:text-white transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-xl">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Create Account Button -->
+<button class="mt-4 flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary hover:bg-primary/90 text-white text-base font-bold leading-normal tracking-[0.015em] transition-all shadow-md" type="button">
+                            Create Account
+                        </button>
+<!-- Log In Link -->
+<div class="mt-2 text-center">
+<p class="text-[#5f7b8c] dark:text-[#93adc8] text-sm font-normal">
+                                Already have an account? 
+                                <a class="text-primary hover:text-primary/80 font-bold hover:underline transition-colors" href="#">Log In</a>
+</p>
+</div>
+</form>
+</div>
+</div>
+<!-- Footer text -->
+<div class="mt-8 text-center">
+<p class="text-xs text-[#5f7b8c] dark:text-[#93adc8] opacity-70">
+                    © 2026 World Cup Predictor. All rights reserved.
+                </p>
+</div>
+</div>
+</div>
+</body></html>

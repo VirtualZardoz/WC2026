@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile - WC2026 Predictor</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0995ec",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101b22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem", 
+                        "lg": "0.5rem", 
+                        "xl": "0.75rem", 
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white min-h-screen flex flex-col overflow-x-hidden">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800 px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-4 text-slate-900 dark:text-white">
+<div class="size-8 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">sports_soccer</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">WC2026 Predictor</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="hidden md:flex items-center gap-9">
+<a class="text-slate-600 hover:text-primary dark:text-slate-400 dark:hover:text-primary text-sm font-medium leading-normal transition-colors" href="#">Dashboard</a>
+<a class="text-slate-600 hover:text-primary dark:text-slate-400 dark:hover:text-primary text-sm font-medium leading-normal transition-colors" href="#">Leaderboard</a>
+<a class="text-slate-600 hover:text-primary dark:text-slate-400 dark:hover:text-primary text-sm font-medium leading-normal transition-colors" href="#">Matches</a>
+<a class="text-primary text-sm font-bold leading-normal" href="#">Profile</a>
+</nav>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-slate-100 dark:ring-slate-800 cursor-pointer" data-alt="User profile picture thumbnail showing a person smiling" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC0hL1MKxkiq59XnnKqFN_3nb95rcVn3JZ-czkHfzw3Mpjvxz80RifmxpyprG2a3uPz6lwUcFusR7sbcMpLjdp2lh5SkFfKpcIdbT0pHeqL4rscLjMfru5mQGwnrPjDuFtlI9bu-OVI4YHLMYnSAA4jpQt_pRlHLYxVI8WR7BeDHFhIXqSy-WoAr9OD5d3f-_fgZb9AgpPFJA0cVg--qWvBfWgrjVvYEqy6I-TWtITbBdMclbRLtCFx6YNxQ4540v5oIAe3Cu-cxnA");'>
+</div>
+</div>
+</header>
+<!-- Main Content Layout -->
+<div class="flex flex-1 flex-col py-8 px-4 md:px-10 lg:px-40">
+<div class="mx-auto flex flex-col max-w-[960px] w-full gap-6">
+<!-- Breadcrumbs -->
+<div class="flex flex-wrap gap-2 px-4">
+<a class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 text-sm font-medium leading-normal flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[18px]">home</span> Home
+                </a>
+<span class="text-slate-400 text-sm font-medium leading-normal">/</span>
+<span class="text-slate-900 dark:text-white text-sm font-medium leading-normal">Profile</span>
+</div>
+<!-- Page Heading -->
+<div class="flex flex-wrap justify-between gap-3 px-4">
+<p class="text-slate-900 dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">My Profile</p>
+</div>
+<!-- Profile Header Card -->
+<div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6 mx-4">
+<div class="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+<div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-24 w-24 ring-4 ring-slate-50 dark:ring-slate-700 shadow-md" data-alt="Large profile picture of John Doe" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDlsGzKymrhUe_rRhGwPeWY-IM0TLK9LrGwd5wD4Gm1qgcWCeYZpZ4SHM3_kDHIvCRJJPkhlzG_yPEagAdMMss3hhjfjBRhcotDcc2nEQOhC3ljWDNt_2ztllDOuNgMLQCn7qyaIBP10aDJDIn8ThvcTceND-FcClrVdJHwM6_SoC-_4P9rCARXtY0HJEoUUOQfoew8z2bHvravGRKE_FeV--W3QX_mQUddUByaY2VleIeY5_yrp8K9qcAfeqXnO8dkMactUDQ8SuM");'>
+</div>
+<div class="flex flex-col justify-center gap-1">
+<h3 class="text-slate-900 dark:text-white text-2xl font-bold leading-tight">John Doe</h3>
+<p class="text-slate-500 dark:text-slate-400 text-base">john.doe@example.com</p>
+<div class="flex items-center justify-center sm:justify-start gap-2 mt-2">
+<span class="material-symbols-outlined text-slate-400 text-[18px]">calendar_month</span>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Predictor since: Nov 2024</p>
+</div>
+</div>
+</div>
+<button class="w-full md:w-auto flex items-center justify-center gap-2 cursor-pointer overflow-hidden rounded-lg h-10 px-6 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-900 dark:text-white text-sm font-bold transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+<span class="truncate">Edit Profile</span>
+</button>
+</div>
+</div>
+<!-- Statistics Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4">
+<!-- Total Points (Primary Emphasis) -->
+<div class="flex flex-col justify-between gap-2 rounded-lg p-6 bg-gradient-to-br from-primary to-[#077cc4] text-white shadow-lg shadow-primary/20">
+<div class="flex justify-between items-start">
+<p class="text-white/90 text-sm font-semibold uppercase tracking-wider">Total Points</p>
+<span class="material-symbols-outlined text-white/80">emoji_events</span>
+</div>
+<div>
+<p class="text-4xl font-black leading-tight tracking-tight">1,240</p>
+<p class="text-xs text-white/80 mt-1 font-medium">Top 5% of players</p>
+</div>
+</div>
+<!-- Global Rank -->
+<div class="flex flex-col justify-between gap-2 rounded-lg p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Global Rank</p>
+<span class="material-symbols-outlined text-primary">leaderboard</span>
+</div>
+<p class="text-slate-900 dark:text-white text-3xl font-bold leading-tight">#4</p>
+</div>
+<!-- Accuracy -->
+<div class="flex flex-col justify-between gap-2 rounded-lg p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-start">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Accuracy</p>
+<span class="material-symbols-outlined text-green-500">percent</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-slate-900 dark:text-white text-3xl font-bold leading-tight">62%</p>
+<span class="text-xs font-medium text-green-600 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded">+2%</span>
+</div>
+</div>
+<!-- Detailed Stats Breakdown (Split) -->
+<div class="flex flex-col gap-4">
+<div class="flex flex-1 items-center justify-between rounded-lg px-5 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase">Exact Scores</p>
+<p class="text-slate-900 dark:text-white text-xl font-bold">12</p>
+</div>
+<span class="material-symbols-outlined text-purple-500 bg-purple-50 dark:bg-purple-900/20 p-2 rounded-full text-[20px]">target</span>
+</div>
+<div class="flex flex-1 items-center justify-between rounded-lg px-5 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase">Correct Results</p>
+<p class="text-slate-900 dark:text-white text-xl font-bold">45</p>
+</div>
+<span class="material-symbols-outlined text-blue-500 bg-blue-50 dark:bg-blue-900/20 p-2 rounded-full text-[20px]">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Security Section -->
+<div class="px-4">
+<div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+<div class="border-b border-slate-100 dark:border-slate-700 px-6 py-4">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400">lock</span>
+                            Security
+                        </h3>
+</div>
+<div class="p-6 md:p-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-2">
+<h4 class="text-base font-semibold text-slate-900 dark:text-white">Change Password</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 max-w-xs">
+                                    Ensure your account is secure by using a long, random password.
+                                </p>
+</div>
+<form class="flex flex-col gap-5 w-full max-w-md">
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="current-password">Current Password</label>
+<div class="relative">
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm p-3 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="current-password" placeholder="Enter current password" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="new-password">New Password</label>
+<div class="relative">
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm p-3 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="new-password" placeholder="Enter new password" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="confirm-password">Confirm New Password</label>
+<div class="relative">
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm p-3 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" id="confirm-password" placeholder="Confirm new password" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+</div>
+<div class="pt-2">
+<button class="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-sky-600 text-white text-sm font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex justify-center items-center gap-2" type="submit">
+<span class="material-symbols-outlined text-[20px]">save</span>
+                                        Update Password
+                                    </button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

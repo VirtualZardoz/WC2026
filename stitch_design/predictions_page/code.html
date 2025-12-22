@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Predictions - WC 2026</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0995ec",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101b22",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#18242b", // Slightly lighter than background-dark
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Hide number input spinners */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex">
+<!-- Sidebar -->
+<aside class="hidden md:flex flex-col w-64 h-full bg-surface-light dark:bg-surface-dark border-r border-slate-200 dark:border-slate-800">
+<div class="p-6 flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 shadow-sm relative overflow-hidden" data-alt="WC 2026 Logo showing abstract trophy shape">
+<img alt="Logo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxYIi8Fji-gBhpAMGiUVWUtmxJQqIhr3R5UtGGJSSciG4lA6lW-wPTFTHiBCrLIm0nDkzdfX1jtn4kRFsy55R8oECZu7QwiyNVQIU1yVN0XC_hEcfkOPT5xgALw1XDqAMBW9dgGhAWIvKHcnMmr_21u6XFIk_K1gx5bUL9yrkVM0bNNZ0HvkUO8jUfZPsm-WP7x_nVmZRCcqRV8nP4GWeBPFHHIguAKhpaTA6oPTUq32rjm5EABue-m4mBiKGAdJGh1xNb0E3Ymj0"/>
+</div>
+<h1 class="text-xl font-bold tracking-tight">Predictor 2026</h1>
+</div>
+<nav class="flex-1 flex flex-col gap-2 px-4 py-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary dark:text-primary" href="#">
+<span class="material-symbols-outlined fill-1">sports_soccer</span>
+<span class="font-medium">Predictions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-medium">Leaderboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-medium">My Leagues</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-medium">Rules</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" data-alt="User Avatar">
+<img alt="User" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGIvmymM-XEGErizmObM38FJNvc0bbgM117bbCOMDjiG4iaMXSuZsUYnUFbUj-SRznSFZ7o0UdfxReSRGLJM8ISd6bzPCHP2Ry9KtcKEbSpTcBOYzsGKM8BBbuYnqhC27wMwEdrptFPCeQ9jzX3_s1CXpDtKNdve6UbkzX1JOfx8i6o5XycIH2mC5BLGW0mvKkZMcxfNuul4XzQUedCYJTFJJzlkoL1gezf9jKmnTghYdE8p4E-7oP1Ea3QY8X5U_p4wWamqBayRQ"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold">Alex Morgan</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Pro Predictor</span>
+</div>
+<button class="ml-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full relative overflow-hidden">
+<!-- Mobile Header (Visible only on small screens) -->
+<header class="md:hidden flex items-center justify-between px-4 py-3 bg-surface-light dark:bg-surface-dark border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">sports_soccer</span>
+<h2 class="font-bold text-lg">Predictor 2026</h2>
+</div>
+<button class="text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<!-- Main Scrollable Area -->
+<div class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark">
+<div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 pb-24">
+<!-- Page Heading & Status Bar -->
+<div class="flex flex-col xl:flex-row xl:items-end justify-between gap-6 mb-8">
+<div class="flex flex-col gap-2">
+<h1 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">My Predictions</h1>
+<p class="text-slate-500 dark:text-slate-400 text-base">Submit scores for all matches. Good luck!</p>
+</div>
+<!-- Stats & Timer Card -->
+<div class="flex flex-col sm:flex-row gap-4 bg-surface-light dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800/50">
+<!-- Progress -->
+<div class="flex flex-col justify-center min-w-[200px] gap-2 border-r-0 sm:border-r border-slate-200 dark:border-slate-700 pr-0 sm:pr-6">
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Progress</span>
+<span class="text-sm font-bold text-primary">45/104</span>
+</div>
+<div class="h-2.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 43%"></div>
+</div>
+<p class="text-xs text-slate-400 mt-1">43% Complete</p>
+</div>
+<!-- Timer -->
+<div class="flex items-center gap-3 pl-0 sm:pl-2">
+<div class="flex flex-col items-center">
+<div class="bg-slate-100 dark:bg-slate-800 rounded px-2 py-1 min-w-[36px] text-center">
+<span class="text-lg font-bold font-mono text-slate-800 dark:text-white">14</span>
+</div>
+<span class="text-[10px] uppercase mt-1 text-slate-500">Days</span>
+</div>
+<span class="font-bold text-slate-300 dark:text-slate-600 -mt-4">:</span>
+<div class="flex flex-col items-center">
+<div class="bg-slate-100 dark:bg-slate-800 rounded px-2 py-1 min-w-[36px] text-center">
+<span class="text-lg font-bold font-mono text-slate-800 dark:text-white">03</span>
+</div>
+<span class="text-[10px] uppercase mt-1 text-slate-500">Hrs</span>
+</div>
+<span class="font-bold text-slate-300 dark:text-slate-600 -mt-4">:</span>
+<div class="flex flex-col items-center">
+<div class="bg-slate-100 dark:bg-slate-800 rounded px-2 py-1 min-w-[36px] text-center">
+<span class="text-lg font-bold font-mono text-slate-800 dark:text-white">45</span>
+</div>
+<span class="text-[10px] uppercase mt-1 text-slate-500">Min</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Stage Filters -->
+<div class="sticky top-0 z-20 bg-background-light dark:bg-background-dark pt-2 pb-4 mb-2">
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="bg-surface-light dark:bg-surface-dark p-1 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm inline-flex">
+<button class="px-5 py-2 rounded-md bg-primary text-white font-medium shadow-sm transition-all text-sm">Group Stage</button>
+<button class="px-5 py-2 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition-all text-sm">Knockout Stage</button>
+</div>
+<!-- Filter Groups (Scrollable on mobile) -->
+<div class="flex items-center gap-2 overflow-x-auto no-scrollbar mask-gradient max-w-full lg:max-w-2xl">
+<span class="text-xs font-semibold text-slate-400 mr-2 uppercase tracking-wide">Jump to:</span>
+<button class="size-8 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-md shadow-primary/30">A</button>
+<button class="size-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary text-slate-600 dark:text-slate-300 text-xs font-bold flex items-center justify-center shrink-0 transition-colors">B</button>
+<button class="size-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary text-slate-600 dark:text-slate-300 text-xs font-bold flex items-center justify-center shrink-0 transition-colors">C</button>
+<button class="size-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary text-slate-600 dark:text-slate-300 text-xs font-bold flex items-center justify-center shrink-0 transition-colors">D</button>
+<button class="size-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary text-slate-600 dark:text-slate-300 text-xs font-bold flex items-center justify-center shrink-0 transition-colors">E</button>
+<button class="size-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary text-slate-600 dark:text-slate-300 text-xs font-bold flex items-center justify-center shrink-0 transition-colors">F</button>
+</div>
+</div>
+</div>
+<!-- Matches Content -->
+<div class="space-y-8">
+<!-- Group A Section -->
+<div class="scroll-mt-32" id="group-a">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-1 h-6 bg-primary rounded-full"></div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Group A</h3>
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">Completed 2/6</span>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+<!-- Match Card 1 (Filled) -->
+<div class="group bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 p-4 sm:p-5 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3 opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-green-500 text-xl" title="Prediction Saved">check_circle</span>
+</div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex flex-col gap-1">
+<span class="text-xs font-bold uppercase tracking-wider text-slate-400">Match 1 • June 11</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Estadio Azteca, Mexico City</span>
+</div>
+</div>
+<div class="flex items-center justify-between gap-2 sm:gap-6">
+<!-- Team Home -->
+<div class="flex-1 flex flex-col items-center gap-3 text-center">
+<div class="size-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm" data-alt="Flag of Mexico">
+<img alt="Mexico Flag" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSv93hVqdSLoD2L_jyuOKlYGEq96FTlbHnCbs_sWSiEwUZ0rFVXW3qCzIAJwxJM5ibsoS4gRJmRyGRmKi3JlsV52w-hUTpm8fljBIZsixoHpegBMM5nsfQS0A914766Bh1_MxMxw0y6PGvrrGJJ1jdsxfnuioHQssuAY8NNawGh5ktgqwsr1IvCDYOF7fRkurf4g3JIwKq8BMX2D8C-U8duXiMaLsJJtVPJGtT_mT7SIkWriYv_XhqUQ0wzzBWnMexvalhIYBKLik"/>
+</div>
+<span class="text-sm sm:text-base font-bold text-slate-800 dark:text-white truncate w-full">Mexico</span>
+</div>
+<!-- Score Inputs -->
+<div class="flex items-center gap-3">
+<input class="w-14 h-12 sm:w-16 sm:h-14 text-center text-xl sm:text-2xl font-black bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white" max="99" min="0" type="number" value="2"/>
+<span class="text-slate-300 dark:text-slate-600 font-bold text-lg">-</span>
+<input class="w-14 h-12 sm:w-16 sm:h-14 text-center text-xl sm:text-2xl font-black bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white" max="99" min="0" type="number" value="0"/>
+</div>
+<!-- Team Away -->
+<div class="flex-1 flex flex-col items-center gap-3 text-center">
+<div class="size-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm" data-alt="Flag of TBA Team">
+<img alt="TBA Flag" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm9MhbcS1_nwXtPlnxzyiCpkj6l6SrMiZRdRY3IU4PaSCaap_OvVb6mhfjOcQFdnDf1NG5Q7LR7tlcGvM7kaA4XxQ3p7wMjivIywdipPQpscDCeeJR8YHGo8ByZVe_aJ8hYBWejgbewO8VwNZ_iKY0Jdf-f-ylkQRpetsivT-NObIDjnio7vHiokDhdA2VEznJifNrsPmXgfL6GAGRIcPpTINuEsdzJpFwt_SqZRN3TGj1VGOIGoYEv2WSufIQ5L08Lw8PC3OabXY"/>
+</div>
+<span class="text-sm sm:text-base font-bold text-slate-800 dark:text-white truncate w-full">TBA</span>
+</div>
+</div>
+</div>
+<!-- Match Card 2 (Empty) -->
+<div class="group bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 p-4 sm:p-5 relative">
+<div class="flex justify-between items-start mb-6">
+<div class="flex flex-col gap-1">
+<span class="text-xs font-bold uppercase tracking-wider text-slate-400">Match 2 • June 12</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">SoFi Stadium, Los Angeles</span>
+</div>
+</div>
+<div class="flex items-center justify-between gap-2 sm:gap-6">
+<!-- Team Home -->
+<div class="flex-1 flex flex-col items-center gap-3 text-center">
+<div class="size-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm" data-alt="Flag of USA">
+<img alt="USA Flag" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxGa-sL_VzLuX1bOu2Z7XoyI7ANN0ENKg0b5rf5zjoWgzQWT0pmVG2ArLvH00T3JGyEgBTq2zQiE9IulK2NOoX6Dv1zgFKNJMNKMDkbH_faqEw-P7XDWA2cE7PiRB4w4QA5T99vtiJxnhx5c1mgh_YzjoCB-hhp0vQA1EIqKojJGiznYcUuMOQ3RgHrB1Rgs746UOi3RxlMuBq1Zcxzwv3Gw9Hb9tJcwWBGcaFyBVBpVuu2CTnVaa4l0IERkrWFIf0CAUIFQWw42U"/>
+</div>
+<span class="text-sm sm:text-base font-bold text-slate-800 dark:text-white truncate w-full">USA</span>
+</div>
+<!-- Score Inputs -->
+<div class="flex items-center gap-3">
+<input class="w-14 h-12 sm:w-16 sm:h-14 text-center text-xl sm:text-2xl font-black bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-300" max="99" min="0" placeholder="-" type="number"/>
+<span class="text-slate-300 dark:text-slate-600 font-bold text-lg">-</span>
+<input class="w-14 h-12 sm:w-16 sm:h-14 text-center text-xl sm:text-2xl font-black bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-300" max="99" min="0" placeholder="-" type="number"/>
+</div>
+<!-- Team Away -->
+<div class="flex-1 flex flex-col items-center gap-3 text-center">
+<div class="size-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm" data-alt="Flag of Italy">
+<img alt="Italy Flag" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYW3mkY1jcAJPmeKmnTesaEmPtmY4KABLEc4qxAoRtSni8by9-bSvqoKkDQlRdjrZ39JWKsSsgyrkAZS4RPRBWxo2afjs8N5IPCREfj6pyFTrG8DlUMCUiBjhEG9cxOk6ydSZd7BtmpCnwhwhEnmlqom81LRiLDvI6Nw4RVX9QYo1dKzxiH9fzfFSrADx-H6xC0vBtOcLWdhrbzWgnUs8FgxcAMu7Gbrm0PxJ-DhFxv1qUJ2QfNjyy3Wq5YeHHGswjgoO-gXuatuY"/>
+</div>
+<span class="text-sm sm:text-base font-bold text-slate-800 dark:text-white truncate w-full">Italy</span>
+</div>
+</div>
+</div>
+<!-- Match Card 3 (Empty) -->
+<div class="group bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200 p-4 sm:p-5 relative">
+<div class="flex justify-between items-start mb-6">
+<div class="flex flex-col gap-1">
+<span class="text-xs font-bold uppercase tracking-wider text-slate-400">Match 3 • June 12</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">BMO Field, Toronto</span>
+</div>
+</div>
+<div class="flex items-center justify-between gap-2 sm:gap-6">
+<!-- Team Home -->
+<div class="flex-1 flex flex-col items-center gap-3 text-center">
+<div class="size-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm" data-alt="Flag of Canada">
+<img alt="Canada Flag" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBs516ulD0BlqHzgIawenO6VxIkCdhqjbvbdKbELzjdRO5mENSOf2s2k8smP_ModMXWdcG3RoTzAsdZiwyovi09kqdLsBgBGfCWl2LLzp40Lz6ZqmEylEOGmNcG7-QauhhJ7z60N0GC0McLKL61NKsxuE6V_kPvemQD7RdcmwkCt_-QWY4vxA0pzx5zpKXqh65c73I_C5Fu0QSHEZd0qPXG28ZKs0xQnThQTg8D0PyNMHhWpRVJltC3UUWgfQxltLE2xbzwj3zPVAU"/>
+</div>
+<span class="text-sm sm:text-base font-bold text-slate-800 dark:text-white truncate w-full">Canada</span>
+</div>
+<!-- Score Inputs -->
+<div class="flex items-center gap-3">
+<input class="w-14 h-12 sm:w-16 sm:h-14 text-center text-xl sm:text-2xl font-black bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-300" max="99" min="0" placeholder="-" type="number"/>
+<span class="text-slate-300 dark:text-slate-600 font-bold text-lg">-</span>
+<input class="w-14 h-12 sm:w-16 sm:h-14 text-center text-xl sm:text-2xl font-black bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all text-slate-900 dark:text-white placeholder-slate-300" max="99" min="0" placeholder="-" type="number"/>
+</div>
+<!-- Team Away -->
+<div class="flex-1 flex flex-col items-center gap-3 text-center">
+<div class="size-12 rounded-full overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm" data-alt="Flag of France">
+<img alt="France Flag" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArLaGt34tV2mkBNfKyy2c74wSF0MN0xVJc0TjNMaqmE5hGKmIvNCwEkJdtbM4a6rk7AZnlxCuIzuWUapAQivcGRC9-CjRfJ_A7bDdAXSnuoA1xZnlfo7Qa0gFUZ7jbVvWYq5sERh8Zx7GLkAnUocc4Awt_zJbaU9_7qLOPMNPVTpjafEVnBw3lAB4pWPLa-3fxvHiqQhyDouPtH9pyXm6_uAyPFzpnoOPiUKvxoSQqDzTfR9IWUNYmAB20nVVWZhNTpi2i7Cj7qFg"/>
+</div>
+<span class="text-sm sm:text-base font-bold text-slate-800 dark:text-white truncate w-full">France</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Knockout Example (Simulated Visual) -->
+<div class="scroll-mt-32 pt-8 border-t border-slate-200 dark:border-slate-800" id="knockout-example">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-1 h-6 bg-purple-500 rounded-full"></div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Round of 32 (Preview)</h3>
+<span class="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 px-2 py-1 rounded">Knockout Rules Apply</span>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+<!-- Knockout Card -->
+<div class="group bg-surface-light dark:bg-surface-dark rounded-xl border border-purple-200 dark:border-purple-900/50 shadow-sm transition-all duration-200 p-4 sm:p-5 relative ring-1 ring-purple-500/10">
+<div class="flex justify-between items-start mb-6">
+<div class="flex flex-col gap-1">
+<span class="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">Match 49 • June 28</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Mercedes-Benz Stadium, Atlanta</span>
+</div>
+</div>
+<div class="flex items-center justify-between gap-2 sm:gap-6">
+<div class="flex-1 flex flex-col items-center gap-3 text-center">
+<div class="size-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400 border border-slate-200 dark:border-slate-700" data-alt="Placeholder for Group A Winner">1A</div>
+<span class="text-sm sm:text-base font-bold text-slate-800 dark:text-white truncate w-full">Winner Grp A</span>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-14 h-12 sm:w-16 sm:h-14 text-center text-xl sm:text-2xl font-black bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-slate-900 dark:text-white" type="number" value="1"/>
+<span class="text-slate-300 dark:text-slate-600 font-bold text-lg">-</span>
+<input class="w-14 h-12 sm:w-16 sm:h-14 text-center text-xl sm:text-2xl font-black bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-slate-900 dark:text-white" type="number" value="1"/>
+</div>
+<div class="flex-1 flex flex-col items-center gap-3 text-center">
+<div class="size-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400 border border-slate-200 dark:border-slate-700" data-alt="Placeholder for Group B Runner up">2B</div>
+<span class="text-sm sm:text-base font-bold text-slate-800 dark:text-white truncate w-full">Runner-up Grp B</span>
+</div>
+</div>
+<!-- Winner Selection (Visible because Draw) -->
+<div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+<p class="text-xs text-center text-slate-500 dark:text-slate-400 mb-3 font-medium">Match ends in a draw. Select winner:</p>
+<div class="flex justify-center gap-4">
+<label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+<input class="text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600" name="match_49_winner" type="radio"/>
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Winner Grp A</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+<input checked="" class="text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600" name="match_49_winner" type="radio"/>
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Runner-up Grp B</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Global Save Action (Fixed Bottom) -->
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-surface-light/90 dark:bg-surface-dark/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 flex justify-between items-center z-30">
+<div class="hidden sm:flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm">
+<span class="material-symbols-outlined text-base">info</span>
+<span>Unsaved changes will be lost.</span>
+</div>
+<div class="flex gap-3 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">Reset</button>
+<button class="flex-1 sm:flex-none px-8 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">save</span>
+                    Save All
+                 </button>
+</div>
+</div>
+</main>
+</body></html>

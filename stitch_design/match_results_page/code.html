@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Match Results - WC26 Predictor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0995ec",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101b22",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#182630",
+                        "text-main-light": "#111518",
+                        "text-main-dark": "#e0e6eb",
+                        "text-sub-light": "#5f7b8c",
+                        "text-sub-dark": "#9ab3c0",
+                        "border-light": "#dbe2e6",
+                        "border-dark": "#2a3b47",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark font-display antialiased min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark shadow-sm">
+<div class="px-4 md:px-10 py-3 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">sports_soccer</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-tight text-text-main-light dark:text-text-main-dark">WC26 Predictor</h2>
+</div>
+<nav class="hidden md:flex flex-1 justify-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-bold text-primary" href="#">Matches</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Leaderboard</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Rules</a>
+</nav>
+<div class="flex items-center gap-3">
+<button class="hidden sm:flex size-10 items-center justify-center rounded-lg bg-background-light dark:bg-background-dark hover:bg-gray-200 dark:hover:bg-gray-700 text-text-main-light dark:text-text-main-dark transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-white dark:border-gray-700 shadow-sm cursor-pointer" data-alt="User profile picture placeholder" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCHIe7MW8G_Pg7cbMRZ7pOKg_67zQQwYPSH4j2xO8yPGi-AxF5FBKvEb2v_Q-Em6T2nFe6bPzF1eOL20NERPs1ntSd6dscQY6bwRTM_OKceWfAWsS3IpTKalQqoU0lwg2pMOnvXVo6QhSep-RdjQ18uUhTA1XBBeUKby-Ycava4pUi1Gk6Z7OcnQ2qFKlv0HAIytyP-tpxjofKWtaR8n7Vk3ihyFwwxspI8EYTiBTqA_wAP_xqHHEJeKj3Re4dWSoSdcvwuOY-6oEk");'></div>
+</div>
+</div>
+</header>
+<main class="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-8">
+<!-- Page Heading -->
+<div class="flex flex-col gap-3">
+<h1 class="text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] text-text-main-light dark:text-text-main-dark">Match Results</h1>
+<p class="text-text-sub-light dark:text-text-sub-dark text-base md:text-lg max-w-2xl">
+                Official scores and community prediction statistics for FIFA World Cup 2026. See how your predictions stacked up against reality.
+            </p>
+</div>
+<!-- Filter Chips -->
+<div class="flex flex-wrap gap-3 pb-2 border-b border-border-light dark:border-border-dark">
+<button class="flex h-9 items-center justify-center gap-x-2 rounded-lg bg-primary text-white px-4 shadow-md transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[18px]">view_list</span>
+<span class="text-sm font-bold">All Matches</span>
+</button>
+<button class="flex h-9 items-center justify-center gap-x-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-gray-50 dark:hover:bg-gray-700 px-4 transition-colors">
+<span class="text-sm font-medium">Group Stage</span>
+</button>
+<button class="flex h-9 items-center justify-center gap-x-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-gray-50 dark:hover:bg-gray-700 px-4 transition-colors">
+<span class="text-sm font-medium">Round of 32</span>
+</button>
+<button class="flex h-9 items-center justify-center gap-x-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-gray-50 dark:hover:bg-gray-700 px-4 transition-colors">
+<span class="text-sm font-medium">Knockout Stage</span>
+</button>
+<button class="flex h-9 items-center justify-center gap-x-2 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-gray-50 dark:hover:bg-gray-700 px-4 transition-colors">
+<span class="text-sm font-medium">Finals</span>
+</button>
+</div>
+<!-- Latest/Featured Result Card (Optional Highlight) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 shadow-sm border border-border-light dark:border-border-dark flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-1 rounded">Latest Result</span>
+<h3 class="mt-2 text-sm text-text-sub-light dark:text-text-sub-dark">Match 64 • Final • MetLife Stadium</h3>
+</div>
+<span class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium">Result Finalized</span>
+</div>
+<div class="flex items-center justify-between gap-4 py-4">
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="size-16 rounded-full bg-gray-100 dark:bg-gray-700 bg-center bg-cover shadow-inner" data-alt="Flag of Argentina" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBrFl5ILy003pHRilyAGENuslFnsj30LgK_ZbtAkKfqJqKovaRqjjUo0vR1-Ew6SXsUrq6wSSJBVN6n9XMgCTrezf0XJ68b18fyqN9N5Uz9PC_6UNQoFw6joI1Poe3dtHCgmvIwWNoNIW-ZEIXJRofFjPlmHRyJrCb24mrsKlMwgK61umf74FncENCFLN7UWIoxW-mf_FH9V9BP5IbEKCXWSKvbL446nyLkGbRa64ANEMhzoshbKLFaIjgCb0L8YNrM7QrFHlIUSrk");'></div>
+<span class="font-bold text-lg text-center">Argentina</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="text-4xl font-black text-text-main-light dark:text-text-main-dark">2 - 1</span>
+<span class="text-xs font-medium text-text-sub-light dark:text-text-sub-dark bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">FT</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="size-16 rounded-full bg-gray-100 dark:bg-gray-700 bg-center bg-cover shadow-inner" data-alt="Flag of France" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDzfYi4gXR2JFd3ryJCQ6Sw4abwBqebH93Ft_kYF9YN3Fu-UpyZxNXeJW6PukdvzLjxB8j0Qd7ysjXdXYOouEBf8DIEHHKiESzPAyFyq9s0UhLYKOAWFvsmNBZ0bGgoYkuFrhoj6Jqk84Vav4x82DZDerMj5_-5MjKF9pXTKUYhBo1G8tXBLXOlg38pTMDS1hAdDT4XwgbLqJIlQB2DQ4Hqqwt3pdYwMjnCeWUxknzTJtI7ke4Dz11Us1Q9BUyZc5qDkRdV3SX45lg");'></div>
+<span class="font-bold text-lg text-center">France</span>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-border-light dark:border-border-dark flex gap-4">
+<div class="flex-1 bg-background-light dark:bg-background-dark rounded-lg p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">target</span>
+<div class="flex flex-col">
+<span class="text-xs text-text-sub-light dark:text-text-sub-dark">Exact Score</span>
+<span class="font-bold text-sm">12 Users (5%)</span>
+</div>
+</div>
+<div class="flex-1 bg-background-light dark:bg-background-dark rounded-lg p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-green-600">check_circle</span>
+<div class="flex flex-col">
+<span class="text-xs text-text-sub-light dark:text-text-sub-dark">Correct Result</span>
+<span class="font-bold text-sm">145 Users (62%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Stats Summary Card -->
+<div class="bg-primary text-white rounded-xl p-6 shadow-md flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-10 -top-10 text-white/10">
+<span class="material-symbols-outlined text-[200px]">trophy</span>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-1">Competition Overview</h3>
+<p class="text-white/80 text-sm">Total stats across all 64 matches played so far.</p>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-8 relative z-10">
+<div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+<div class="text-3xl font-black">182</div>
+<div class="text-sm font-medium text-white/80">Goals Scored</div>
+</div>
+<div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+<div class="text-3xl font-black">42%</div>
+<div class="text-sm font-medium text-white/80">Avg. Accuracy</div>
+</div>
+<div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 col-span-2 flex items-center justify-between">
+<div>
+<div class="text-2xl font-black">Match 64</div>
+<div class="text-sm font-medium text-white/80">Most Predicted Match</div>
+</div>
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Results Table -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-bold text-text-main-light dark:text-text-main-dark">Recent Matches</h3>
+<div class="flex items-center gap-2">
+<span class="text-sm text-text-sub-light dark:text-text-sub-dark">Sort by:</span>
+<select class="bg-transparent text-sm font-medium border-none focus:ring-0 cursor-pointer text-primary p-0 pr-6">
+<option>Date (Newest)</option>
+<option>Date (Oldest)</option>
+<option>Most Goals</option>
+</select>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-gray-50 dark:bg-gray-800 border-b border-border-light dark:border-border-dark">
+<tr>
+<th class="py-3 px-4 md:px-6 text-xs font-semibold uppercase text-text-sub-light dark:text-text-sub-dark tracking-wider w-1/4">Match Info</th>
+<th class="py-3 px-4 text-xs font-semibold uppercase text-text-sub-light dark:text-text-sub-dark tracking-wider text-right w-1/6">Home</th>
+<th class="py-3 px-4 text-xs font-semibold uppercase text-text-sub-light dark:text-text-sub-dark tracking-wider text-center w-24">Score</th>
+<th class="py-3 px-4 text-xs font-semibold uppercase text-text-sub-light dark:text-text-sub-dark tracking-wider text-left w-1/6">Away</th>
+<th class="py-3 px-4 md:px-6 text-xs font-semibold uppercase text-text-sub-light dark:text-text-sub-dark tracking-wider w-1/4">Stats</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-light dark:divide-border-dark">
+<!-- Row 1 -->
+<tr class="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<td class="py-4 px-4 md:px-6">
+<div class="flex flex-col gap-1">
+<span class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Match 63 • Third Place</span>
+<div class="flex items-center gap-2 text-xs text-text-sub-light dark:text-text-sub-dark">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span>July 18, 2026</span>
+<span class="hidden md:inline">•</span>
+<span class="hidden md:flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">stadium</span> Hard Rock Stadium
+                                            </span>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center justify-end gap-3">
+<span class="font-semibold text-text-main-light dark:text-text-main-dark hidden sm:block">Croatia</span>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark sm:hidden">CRO</span>
+<div class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-center bg-cover border border-black/10" data-alt="Flag of Croatia" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB8H1rl3CeGirMEyGwtEFBSemcG0GObXfCOZB2hU-Kp_sbZF8BnlhE9ME56VBTKVrtZuP3nYZ7n4tL5u2rR1mPokxAX1aOUKhg-97NyCpwr2JHiR-EqnhMqCk66bp9LFTO-1doD6ZUTcw-loorjTA7ooCXEYW12R_2wWqH1YjNyz8zNGCWuo4wioEd3p0f8JfY1j8Jx4cKiyzcq-7hMqsofv2XUCT3yFVMfoPF54TWR5KSotHVKOqWc8MLUxL5I68VR2VA5jAZH-AM");'></div>
+</div>
+</td>
+<td class="py-4 px-4 text-center">
+<div class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark font-display font-black text-lg tracking-widest text-text-main-light dark:text-text-main-dark">
+                                        2 - 1
+                                    </div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center justify-start gap-3">
+<div class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-center bg-cover border border-black/10" data-alt="Flag of Morocco" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAapiX7jlfSVORL1fL60NZGwQWMZO3bJyIZT_ZaaIudCWbsnATqrRha7lPUkKiDfSv80j1JVdcZMzelacCBwfVxh9wcEPM09lC_s-Jq811CwLsLSyhEyH8d9vDX8AhwGNF_Q1kolrwBK7l0ULKPJwRmqc0NpGDVite3D0ApTX1vmEQ8B2Yb56qFR7SbjwVCG9sPg85a-U4pk4pXMA_Wo4U9yclk-grkjPEkXW-aD83loXHRc7uziKxRzZW0wTYuWcueJcfalk92hWY");'></div>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark hidden sm:block">Morocco</span>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark sm:hidden">MAR</span>
+</div>
+</td>
+<td class="py-4 px-4 md:px-6">
+<div class="flex flex-col sm:flex-row gap-2">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+<span class="material-symbols-outlined text-[16px]">target</span>
+<span class="text-xs font-bold whitespace-nowrap">8% Exact</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-100 dark:border-green-800">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span class="text-xs font-bold whitespace-nowrap">45% Correct</span>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<td class="py-4 px-4 md:px-6">
+<div class="flex flex-col gap-1">
+<span class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Match 62 • Semi-Final</span>
+<div class="flex items-center gap-2 text-xs text-text-sub-light dark:text-text-sub-dark">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span>July 14, 2026</span>
+<span class="hidden md:inline">•</span>
+<span class="hidden md:flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">stadium</span> AT&amp;T Stadium
+                                            </span>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center justify-end gap-3">
+<span class="font-semibold text-text-main-light dark:text-text-main-dark hidden sm:block">France</span>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark sm:hidden">FRA</span>
+<div class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-center bg-cover border border-black/10" data-alt="Flag of France" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBQH2mwG8THvuoVwnmgU_Hr6RibPal4mC5brTE5KahAqOKuJ1oQJeBt6cPa8Vf_VXRUA7RVWsXw6mZoQiCi3BhgAG3f0ktp7NzQvCIYi1s9L3Oi105Mqgya-9mIejE0gDPw-S_OLSxf-eeapixQRgQvOegxy60M8_tbil8VenZOcsnhHx41V8oVTos31psXritHuBIWrwsbcEuM0On_oViVkWV1eOxcj_n5RKwwARkDj64XlkqaPwiw9CHZkXXHTLn_IW2z-oR9Fwo");'></div>
+</div>
+</td>
+<td class="py-4 px-4 text-center">
+<div class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark font-display font-black text-lg tracking-widest text-text-main-light dark:text-text-main-dark">
+                                        2 - 0
+                                    </div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center justify-start gap-3">
+<div class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-center bg-cover border border-black/10" data-alt="Flag of Morocco" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD3tYwdaiiOauuE8-3eLTI505H8xpfwe3M2mGFEEfP2bCvYMaAUbNrvcNtjIc7izaOgYd7sgS_VYPRWG7CzmBA9-82jZX2nYkzTd_4c3QFFa1D-DKzXjDrE_mQNVHfztT4eH9FS1diexsiPQ0Q_JDQiKArc5hu8WYXNIr8GutnujG-Cad-mxi6x8jrUGOPJp5-ztGEV3ppKpkRh87thdlUfddhWI4lKrHAZrzvp0gA6lsmxECUqQAHxXua7OmF-q9JSnF8rkWoOh0I");'></div>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark hidden sm:block">Morocco</span>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark sm:hidden">MAR</span>
+</div>
+</td>
+<td class="py-4 px-4 md:px-6">
+<div class="flex flex-col sm:flex-row gap-2">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+<span class="material-symbols-outlined text-[16px]">target</span>
+<span class="text-xs font-bold whitespace-nowrap">22% Exact</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-100 dark:border-green-800">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span class="text-xs font-bold whitespace-nowrap">78% Correct</span>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<td class="py-4 px-4 md:px-6">
+<div class="flex flex-col gap-1">
+<span class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Match 61 • Semi-Final</span>
+<div class="flex items-center gap-2 text-xs text-text-sub-light dark:text-text-sub-dark">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span>July 13, 2026</span>
+<span class="hidden md:inline">•</span>
+<span class="hidden md:flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">stadium</span> Mercedes-Benz Stadium
+                                            </span>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center justify-end gap-3">
+<span class="font-semibold text-text-main-light dark:text-text-main-dark hidden sm:block">Argentina</span>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark sm:hidden">ARG</span>
+<div class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-center bg-cover border border-black/10" data-alt="Flag of Argentina" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDujGZ_klVT7BRw-3iWMkwrRQzQG0_abdDUA9Vbj1RbR_m8025htM2UnCrO5QXDfsYqXo2dqoaQYKNyPNRG-VePzjuKsm0OPoGD03WVmBl9GLhxLWukWyHbLHKaHIukDaLNQefGaBpUtf_WhNM3EKfH6CdbmioJEG-_AV2dKHa_zL79DJTyUY6g-19terD9PVDvIruC0ro1i6TdFuCOjuqTtBmpy08LCkdFTJG8lkyaBFYzQhmIcvkYC4vIl63ISyclosvsi2Bd5No");'></div>
+</div>
+</td>
+<td class="py-4 px-4 text-center">
+<div class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark font-display font-black text-lg tracking-widest text-text-main-light dark:text-text-main-dark">
+                                        3 - 0
+                                    </div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center justify-start gap-3">
+<div class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-center bg-cover border border-black/10" data-alt="Flag of Croatia" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCituw_sRX4H9lbHjfew6UNcy_MgYKht5Kb8Xev3G7Z2qusXJuRAEU_MYnAQoutme52DIhHbdvNhCLk3LcjhHf4pGyF8Ok7I-OWBdh6wwtuyAbOSai7s9khRfM1GNn10XUavyocYMXY9M_hif8V2D1qShvYLssTC0sGJZ8S2wzBummIKsF-fc1vT-rHBiDBbit1fTrkItp9y2ruCffsT46t3tMIM6nMTrEpxNn7Qd8XXKyFmYb1tsyiAVPxr8j9Dsml7TXZp9XbJRw");'></div>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark hidden sm:block">Croatia</span>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark sm:hidden">CRO</span>
+</div>
+</td>
+<td class="py-4 px-4 md:px-6">
+<div class="flex flex-col sm:flex-row gap-2">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+<span class="material-symbols-outlined text-[16px]">target</span>
+<span class="text-xs font-bold whitespace-nowrap">15% Exact</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-100 dark:border-green-800">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span class="text-xs font-bold whitespace-nowrap">60% Correct</span>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<td class="py-4 px-4 md:px-6">
+<div class="flex flex-col gap-1">
+<span class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Match 60 • Quarter-Final</span>
+<div class="flex items-center gap-2 text-xs text-text-sub-light dark:text-text-sub-dark">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span>July 10, 2026</span>
+<span class="hidden md:inline">•</span>
+<span class="hidden md:flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">stadium</span> Al Bayt Stadium
+                                            </span>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center justify-end gap-3">
+<span class="font-semibold text-text-main-light dark:text-text-main-dark hidden sm:block">England</span>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark sm:hidden">ENG</span>
+<div class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-center bg-cover border border-black/10" data-alt="Flag of England" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA5woJjQ36I0SH9E-Ixzz7RFsWHBDOu9wF6Kf97bpEcqLdCOH6EPdudwgHyS-lFYb1_8EAqIxiRVnNpK64x5DfnK1viO-dXtJ28YQQilz0pXy4Uc3D4mDnwQylCMMT60DJWT5af8c8krBTnQj3u__q4-tLgV9gqlfT0t3wGmMuBtrjfCxxD_ymIAw5t1A2rMK5KjI7ydzKyM-IiFP52bq-KC6SEOgiHNmWpPYjYkH5cfUgPTG7l6yN7aH4Bk-btfiFF8M9oBg14Ivo");'></div>
+</div>
+</td>
+<td class="py-4 px-4 text-center">
+<div class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark font-display font-black text-lg tracking-widest text-text-main-light dark:text-text-main-dark">
+                                        1 - 2
+                                    </div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center justify-start gap-3">
+<div class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-center bg-cover border border-black/10" data-alt="Flag of France" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDM8ko1ZFsupL5vUlGmWAOR20grS4hQnSArBKdPmHeYLvFReZj-3952hGtJ4zoq8OaJ4V2OAnt6rccRumIUAjptzADBUGusf0NRltgUgryeKjwox42RztulymLKuWkLOkWou18UaWSUAoktLJOnTMM_TwTxkAzf3xPx0elB5vQHvwJ_k5XRLsl2Jaqk0PsHRTq5-s_SNsQmqZ_st3Fi35FRHG87GniZCxXF-uyKXp71qoyR91kSaVdqlJhRLwlTgJVF7cCwsZR_JM");'></div>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark hidden sm:block">France</span>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark sm:hidden">FRA</span>
+</div>
+</td>
+<td class="py-4 px-4 md:px-6">
+<div class="flex flex-col sm:flex-row gap-2">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+<span class="material-symbols-outlined text-[16px]">target</span>
+<span class="text-xs font-bold whitespace-nowrap">12% Exact</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-100 dark:border-green-800">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span class="text-xs font-bold whitespace-nowrap">48% Correct</span>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<td class="py-4 px-4 md:px-6">
+<div class="flex flex-col gap-1">
+<span class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Match 59 • Quarter-Final</span>
+<div class="flex items-center gap-2 text-xs text-text-sub-light dark:text-text-sub-dark">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span>July 10, 2026</span>
+<span class="hidden md:inline">•</span>
+<span class="hidden md:flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">stadium</span> Al Thumama Stadium
+                                            </span>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center justify-end gap-3">
+<span class="font-semibold text-text-main-light dark:text-text-main-dark hidden sm:block">Morocco</span>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark sm:hidden">MAR</span>
+<div class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-center bg-cover border border-black/10" data-alt="Flag of Morocco" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuByI5WgV_G0o4wupPwtDtya-UZReRGpW--NCuCMpL1Q0QJ4PNaDKSBo-iD8IyBDDvkgZC7N_cNarLbr_AWkiQ5_e8gvTfJHbPJx0YylaGWpCoeD9Z8iJocfnze-b71TlK_RqqrvmV_kDUPZbOwOqT7nBXLrLpBnFfC5PR1KOUJbJrGOx_oX3-5tLVrV2cK_4HjXi49iIdp60aJ4qH0lPNqvtkpSXwuDJgzXGFqwUpjSiRMwU885jSDpB0kE_x1qtUnUeOGk3u88WLw");'></div>
+</div>
+</td>
+<td class="py-4 px-4 text-center">
+<div class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark font-display font-black text-lg tracking-widest text-text-main-light dark:text-text-main-dark">
+                                        1 - 0
+                                    </div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center justify-start gap-3">
+<div class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-center bg-cover border border-black/10" data-alt="Flag of Portugal" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCXz0T_AANbz3QTeVhp5uEPiELj6zasRp-7P7OoDkGy8rok_ciCO2UA75vJdBjSA-wiUfyU8pj9PazyzGdDYDADRUqX5pza-Q9wkDq9vUu_6xLojARxq8zbi161KNN_5sqO60w8uPIuBAffUTdWCQjHfmV4YlmqLByMUYsEnHyykXn79wCGKncRwYGJui2oWc52I9anfmRuQLudhcemBxgvlMuOM90uiMwAvLKPVioWPDIwjDYnkRYmmvbmR2xiQRX9_l2VqD2wFm8");'></div>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark hidden sm:block">Portugal</span>
+<span class="font-semibold text-text-main-light dark:text-text-main-dark sm:hidden">POR</span>
+</div>
+</td>
+<td class="py-4 px-4 md:px-6">
+<div class="flex flex-col sm:flex-row gap-2">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+<span class="material-symbols-outlined text-[16px]">target</span>
+<span class="text-xs font-bold whitespace-nowrap">5% Exact</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-100 dark:border-green-800">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span class="text-xs font-bold whitespace-nowrap">23% Correct</span>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<button class="w-full md:w-auto md:self-center bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark px-6 py-3 rounded-lg font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
+<span>Load More Results</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+</main>
+<footer class="mt-auto bg-surface-light dark:bg-surface-dark border-t border-border-light dark:border-border-dark py-8 px-4">
+<div class="max-w-[960px] mx-auto flex flex-col items-center gap-4 text-center">
+<div class="flex items-center gap-2 text-text-main-light dark:text-text-main-dark">
+<span class="material-symbols-outlined text-primary">sports_soccer</span>
+<span class="font-bold">WC26 Predictor</span>
+</div>
+<p class="text-sm text-text-sub-light dark:text-text-sub-dark">
+                © 2026 Prediction League. Not affiliated with FIFA.
+            </p>
+</div>
+</footer>
+</body></html>

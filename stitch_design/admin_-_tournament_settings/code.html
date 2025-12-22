@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin - Tournament Settings</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;family=Noto+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0995ec",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101b22",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#182631",
+                        "text-main-light": "#111518",
+                        "text-main-dark": "#ffffff",
+                        "text-sub-light": "#5f7b8c",
+                        "text-sub-dark": "#94a3b8",
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#2d3b46",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main-light dark:text-text-main-dark overflow-hidden">
+<div class="flex h-screen w-full flex-row">
+<!-- Side Navigation -->
+<aside class="flex w-72 flex-col justify-between border-r border-border-light bg-surface-light p-4 dark:bg-surface-dark dark:border-border-dark flex-shrink-0 overflow-y-auto">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3 items-center mb-6">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-12 shadow-sm" data-alt="FIFA World Cup 2026 logo abstract geometric" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBpmp_kjUmJMjbTpVhmA_KU1HvdCs_L3bePzUn8uE9RC18Di3jpwHrpQ1HhG_3z9-isV0l6-_XqF1M73H1MRaUJDTV1oTbcFH2AfL-XGTSgEFwVIQdbRM7h4Sw3IWgONCyDC6l342vHAnf12kGh45gas2zUU1CJdnXhyAYXw_hjJMuCCCjwZpY4K8n0cI2RkFFL0jjXfmo4Xg_cA4ePyDoQkyFMZZ7tZx9QOxb0YiPbpMBFs09-lRPvXu2ZqwcgDJwB9tMHHbdWuFA");'></div>
+<div class="flex flex-col">
+<h1 class="text-text-main-light dark:text-text-main-dark text-base font-bold leading-normal">Admin Console</h1>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs font-normal leading-normal">FIFA World Cup 2026</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-sub-light dark:text-text-sub-dark group-hover:text-primary" style="font-size: 24px;">dashboard</span>
+<p class="text-text-main-light dark:text-text-main-dark text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-sub-light dark:text-text-sub-dark group-hover:text-primary" style="font-size: 24px;">trophy</span>
+<p class="text-text-main-light dark:text-text-main-dark text-sm font-medium leading-normal">Matches</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-sub-light dark:text-text-sub-dark group-hover:text-primary" style="font-size: 24px;">groups</span>
+<p class="text-text-main-light dark:text-text-main-dark text-sm font-medium leading-normal">Users</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 dark:bg-primary/20" href="#">
+<span class="material-symbols-outlined text-primary" style="font-size: 24px; font-variation-settings: 'FILL' 1;">settings</span>
+<p class="text-primary text-sm font-bold leading-normal">Settings</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-4">
+<div class="h-px bg-border-light dark:bg-border-dark w-full"></div>
+<div class="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-background-light dark:hover:bg-background-dark/50 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-text-sub-light dark:text-text-sub-dark" style="font-size: 24px;">logout</span>
+<p class="text-text-sub-light dark:text-text-sub-dark text-sm font-medium leading-normal">Log Out</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark">
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-8 pb-32">
+<div class="max-w-[1080px] mx-auto flex flex-col gap-8">
+<!-- Breadcrumbs & Heading -->
+<div class="flex flex-col gap-4">
+<div class="flex flex-wrap gap-2 items-center">
+<a class="text-text-sub-light dark:text-text-sub-dark text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<span class="text-text-sub-light dark:text-text-sub-dark text-sm font-medium">/</span>
+<span class="text-text-main-light dark:text-text-main-dark text-sm font-medium">Settings</span>
+</div>
+<div class="flex flex-col gap-2">
+<h1 class="text-text-main-light dark:text-text-main-dark text-3xl font-black leading-tight tracking-[-0.033em]">Tournament Settings</h1>
+<p class="text-text-sub-light dark:text-text-sub-dark text-base font-normal">Manage deadlines, bonus matches, and team qualifications.</p>
+</div>
+</div>
+<!-- Card 1: Time Management -->
+<section class="flex flex-col gap-4 rounded-xl border border-border-light bg-surface-light p-6 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:shadow-none">
+<div class="flex flex-col gap-1 pb-4 border-b border-border-light dark:border-border-dark">
+<h2 class="text-text-main-light dark:text-text-main-dark text-lg font-bold">Prediction Deadline</h2>
+<p class="text-text-sub-light dark:text-text-sub-dark text-sm">Set the final global deadline for user submissions.</p>
+</div>
+<div class="flex flex-col lg:flex-row gap-8 pt-2">
+<!-- Calendar Picker -->
+<div class="flex-shrink-0 w-full max-w-[320px]">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center p-1 justify-between mb-2">
+<button class="p-1 hover:bg-background-light dark:hover:bg-background-dark rounded-full transition-colors">
+<span class="material-symbols-outlined text-text-main-light dark:text-text-main-dark" style="font-size: 18px;">chevron_left</span>
+</button>
+<p class="text-text-main-light dark:text-text-main-dark text-base font-bold leading-tight flex-1 text-center">June 2026</p>
+<button class="p-1 hover:bg-background-light dark:hover:bg-background-dark rounded-full transition-colors">
+<span class="material-symbols-outlined text-text-main-light dark:text-text-main-dark" style="font-size: 18px;">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-7 gap-y-1">
+<!-- Days Header -->
+<p class="text-text-sub-light dark:text-text-sub-dark text-[13px] font-bold flex h-10 items-center justify-center">S</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-[13px] font-bold flex h-10 items-center justify-center">M</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-[13px] font-bold flex h-10 items-center justify-center">T</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-[13px] font-bold flex h-10 items-center justify-center">W</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-[13px] font-bold flex h-10 items-center justify-center">T</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-[13px] font-bold flex h-10 items-center justify-center">F</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-[13px] font-bold flex h-10 items-center justify-center">S</p>
+<!-- Dates -->
+<div class="col-start-2 h-10 w-full flex items-center justify-center text-sm text-text-sub-light/50">30</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">1</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">2</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">3</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">4</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">5</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">6</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">7</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">8</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">9</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">10</div>
+<button class="h-10 w-full flex items-center justify-center text-sm text-white bg-primary rounded-full shadow-md shadow-primary/30">11</button>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">12</div>
+<!-- ... more dates omitted for brevity ... -->
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">13</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">14</div>
+<div class="h-10 w-full flex items-center justify-center text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary/10 rounded-full cursor-pointer">15</div>
+</div>
+</div>
+</div>
+<!-- Right Side Controls -->
+<div class="flex flex-col gap-6 flex-1">
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-text-sub-light dark:text-text-sub-dark">Date</label>
+<div class="relative">
+<input class="w-full rounded-lg border border-border-light bg-background-light px-4 py-2.5 text-sm font-medium text-text-main-light outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-text-main-dark" readonly="" type="text" value="June 11, 2026"/>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-text-sub-light dark:text-text-sub-dark" style="font-size: 20px;">calendar_today</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-text-sub-light dark:text-text-sub-dark">Time (UTC)</label>
+<div class="relative">
+<input class="w-full rounded-lg border border-border-light bg-background-light px-4 py-2.5 text-sm font-medium text-text-main-light outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-text-main-dark" type="text" value="20:00"/>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-text-sub-light dark:text-text-sub-dark" style="font-size: 20px;">schedule</span>
+</div>
+</div>
+</div>
+<div class="bg-primary/5 border border-primary/20 rounded-lg p-4 flex flex-col gap-1">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined" style="font-size: 20px;">info</span>
+<span class="text-sm font-bold">User Preview</span>
+</div>
+<p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-1">
+                                        Users will see: <span class="font-mono bg-white dark:bg-black/20 px-1 rounded text-text-main-light dark:text-text-main-dark">12d 14h 32m remaining</span>
+</p>
+</div>
+<div class="mt-auto pt-4 border-t border-border-light dark:border-border-dark flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Emergency Lock</span>
+<span class="text-xs text-text-sub-light dark:text-text-sub-dark">Prevent new predictions immediately</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Card 2: Bonus Matches -->
+<section class="flex flex-col gap-4 rounded-xl border border-border-light bg-surface-light p-6 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:shadow-none">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border-light dark:border-border-dark">
+<div class="flex flex-col gap-1">
+<h2 class="text-text-main-light dark:text-text-main-dark text-lg font-bold">Bonus Matches</h2>
+<p class="text-text-sub-light dark:text-text-sub-dark text-sm">Select 3-5 matches to award double points.</p>
+</div>
+<div class="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full self-start sm:self-auto">
+<span class="text-primary text-sm font-bold">2/5 Selected</span>
+</div>
+</div>
+<!-- Current Selection Chips -->
+<div class="flex flex-wrap gap-2">
+<div class="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 py-1.5 pl-3 pr-2 transition-all">
+<span class="text-xs font-bold text-primary">Match 1: USA vs CAN</span>
+<button class="flex size-5 items-center justify-center rounded-full hover:bg-primary/20 text-primary">
+<span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+</button>
+</div>
+<div class="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 py-1.5 pl-3 pr-2 transition-all">
+<span class="text-xs font-bold text-primary">Match 14: BRA vs FRA</span>
+<button class="flex size-5 items-center justify-center rounded-full hover:bg-primary/20 text-primary">
+<span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+</button>
+</div>
+<div class="flex items-center justify-center rounded-full border border-dashed border-text-sub-light/40 py-1.5 px-3">
+<span class="text-xs font-medium text-text-sub-light dark:text-text-sub-dark italic">Select at least 1 more</span>
+</div>
+</div>
+<!-- Search and List -->
+<div class="flex flex-col gap-3 mt-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-text-sub-light dark:text-text-sub-dark" style="font-size: 20px;">search</span>
+<input class="w-full rounded-lg border border-border-light bg-background-light pl-10 pr-4 py-2 text-sm font-medium text-text-main-light outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-text-main-dark placeholder:text-text-sub-light/70" placeholder="Search matches (e.g., 'Final', 'Group A')" type="text"/>
+</div>
+<div class="flex flex-col gap-2 max-h-[240px] overflow-y-auto pr-2 custom-scrollbar">
+<!-- List Item -->
+<div class="flex items-center justify-between rounded-lg border border-border-light p-3 hover:bg-background-light dark:border-border-dark dark:hover:bg-background-dark/50 transition-colors cursor-pointer group">
+<div class="flex flex-col">
+<p class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Match 23: Spain vs Italy</p>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Group B • June 15, 14:00</p>
+</div>
+<div class="size-5 rounded border border-border-light dark:border-border-dark flex items-center justify-center group-hover:border-primary bg-surface-light dark:bg-surface-dark"></div>
+</div>
+<!-- List Item Selected -->
+<div class="flex items-center justify-between rounded-lg border border-primary bg-primary/5 p-3 cursor-pointer">
+<div class="flex flex-col">
+<p class="text-sm font-bold text-primary">Match 14: Brazil vs France</p>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Group D • June 13, 18:00</p>
+</div>
+<div class="size-5 rounded bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-size: 16px;">check</span>
+</div>
+</div>
+<!-- List Item -->
+<div class="flex items-center justify-between rounded-lg border border-border-light p-3 hover:bg-background-light dark:border-border-dark dark:hover:bg-background-dark/50 transition-colors cursor-pointer group">
+<div class="flex flex-col">
+<p class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Match 40: Germany vs Japan</p>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Group E • June 20, 20:00</p>
+</div>
+<div class="size-5 rounded border border-border-light dark:border-border-dark flex items-center justify-center group-hover:border-primary bg-surface-light dark:bg-surface-dark"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Card 3: Team Qualification -->
+<section class="flex flex-col gap-4 rounded-xl border border-border-light bg-surface-light p-6 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:shadow-none">
+<div class="flex flex-col gap-1 pb-4 border-b border-border-light dark:border-border-dark">
+<h2 class="text-text-main-light dark:text-text-main-dark text-lg font-bold">Qualification Updates</h2>
+<p class="text-text-sub-light dark:text-text-sub-dark text-sm">Map placeholder slot names to actual qualified national teams.</p>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr>
+<th class="p-3 text-xs font-bold uppercase tracking-wider text-text-sub-light dark:text-text-sub-dark w-24">Slot ID</th>
+<th class="p-3 text-xs font-bold uppercase tracking-wider text-text-sub-light dark:text-text-sub-dark">Placeholder</th>
+<th class="p-3 text-xs font-bold uppercase tracking-wider text-text-sub-light dark:text-text-sub-dark">Actual Team Name</th>
+<th class="p-3 text-xs font-bold uppercase tracking-wider text-text-sub-light dark:text-text-sub-dark w-24 text-right">Status</th>
+</tr>
+</thead>
+<tbody class="text-sm divide-y divide-border-light dark:divide-border-dark">
+<tr>
+<td class="p-3 text-text-sub-light font-mono text-xs">PO-A</td>
+<td class="p-3 text-text-main-light dark:text-text-main-dark font-medium">Winner Playoff A</td>
+<td class="p-3">
+<input class="w-full max-w-xs rounded border border-border-light bg-background-light px-3 py-1.5 text-sm text-text-main-light outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-text-main-dark" placeholder="Enter team name..." type="text" value="Ukraine"/>
+</td>
+<td class="p-3 text-right">
+<span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">Set</span>
+</td>
+</tr>
+<tr>
+<td class="p-3 text-text-sub-light font-mono text-xs">PO-B</td>
+<td class="p-3 text-text-main-light dark:text-text-main-dark font-medium">Winner Playoff B</td>
+<td class="p-3">
+<input class="w-full max-w-xs rounded border border-border-light bg-background-light px-3 py-1.5 text-sm text-text-main-light outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-text-main-dark" placeholder="Enter team name..." type="text"/>
+</td>
+<td class="p-3 text-right">
+<span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-400">Pending</span>
+</td>
+</tr>
+<tr>
+<td class="p-3 text-text-sub-light font-mono text-xs">PO-C</td>
+<td class="p-3 text-text-main-light dark:text-text-main-dark font-medium">Winner Playoff C</td>
+<td class="p-3">
+<input class="w-full max-w-xs rounded border border-border-light bg-background-light px-3 py-1.5 text-sm text-text-main-light outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-border-dark dark:bg-background-dark dark:text-text-main-dark" placeholder="Enter team name..." type="text"/>
+</td>
+<td class="p-3 text-right">
+<span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-400">Pending</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</div>
+<!-- Sticky Action Bar -->
+<div class="sticky bottom-0 z-10 w-full border-t border-border-light bg-surface-light px-8 py-4 dark:border-border-dark dark:bg-surface-dark shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:shadow-none">
+<div class="max-w-[1080px] mx-auto flex items-center justify-between">
+<p class="text-sm text-text-sub-light dark:text-text-sub-dark hidden sm:block">
+<span class="material-symbols-outlined align-middle mr-1 text-base">info</span>
+                        Unsaved changes in "Bonus Matches"
+                    </p>
+<div class="flex gap-4 ml-auto sm:ml-0">
+<button class="px-5 py-2.5 rounded-lg text-sm font-bold text-text-sub-light hover:text-text-main-light hover:bg-background-light dark:text-text-sub-dark dark:hover:text-white dark:hover:bg-background-dark transition-colors">
+                            Discard
+                        </button>
+<button class="px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-bold shadow-md shadow-primary/20 hover:bg-primary/90 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                            Save Settings
+                        </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<style>
+        /* Custom scrollbar for webkit */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.5);
+            border-radius: 20px;
+        }
+    </style>
+</body></html>

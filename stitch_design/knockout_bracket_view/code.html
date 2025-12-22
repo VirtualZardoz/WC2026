@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FIFA 2026 Predictor - Knockout Bracket</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#0995ec",
+              "background-light": "#f5f7f8",
+              "background-dark": "#101b22",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom scrollbar for horizontal scrolling bracket */
+        .bracket-scroll::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .bracket-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .bracket-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark .bracket-scroll::-webkit-scrollbar-thumb {
+            background-color: #334155;
+        }
+        
+        /* Connector Lines Helpers */
+        .connector-right {
+            position: absolute;
+            right: -24px;
+            top: 50%;
+            width: 24px;
+            height: 1px;
+            background-color: #cbd5e1; /* gray-300 */
+        }
+        .dark .connector-right {
+            background-color: #374151; /* gray-700 */
+        }
+        
+        .connector-left {
+            position: absolute;
+            left: -24px;
+            top: 50%;
+            width: 24px;
+            height: 1px;
+            background-color: #cbd5e1;
+        }
+        .dark .connector-left {
+            background-color: #374151;
+        }
+
+        .connector-fork-right {
+            position: absolute;
+            right: -24px;
+            width: 24px;
+            border-right: 1px solid #cbd5e1;
+            top: 50%;
+            bottom: -50%; /* Adjust based on gap */
+        }
+        
+        /* Utility to simulate bracket lines */
+        .bracket-line-vertical {
+            width: 1px;
+            background-color: #cbd5e1;
+        }
+        .dark .bracket-line-vertical {
+            background-color: #374151;
+        }
+        
+        .bracket-line-horizontal {
+            height: 1px;
+            background-color: #cbd5e1;
+        }
+        .dark .bracket-line-horizontal {
+            background-color: #374151;
+        }
+        
+        /* Active Path overrides */
+        .path-active {
+            background-color: #0995ec !important;
+            border-color: #0995ec !important;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111518] dark:text-white font-display overflow-x-hidden flex flex-col min-h-screen">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#f0f3f5] dark:border-gray-800 bg-white dark:bg-[#1e2a35] px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-4 text-[#111518] dark:text-white">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">sports_soccer</span>
+</div>
+<h2 class="text-[#111518] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">FIFA 2026 Predictor</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-6 hidden md:flex">
+<a class="text-[#5f7b8c] dark:text-gray-400 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Dashboard</a>
+<a class="text-[#5f7b8c] dark:text-gray-400 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Group Stage</a>
+<a class="text-primary text-sm font-bold leading-normal" href="#">Knockout Bracket</a>
+<a class="text-[#5f7b8c] dark:text-gray-400 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Leaderboard</a>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-[#f0f3f5] dark:border-gray-700" data-alt="User avatar profile picture showing a generic smiling face" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA4q835s7-Xq6fQjFBIbdzeC5KaYjAA20hhBwoFG_rTWxZoRCZ8L3A43Eo4ZQgmtuJIGaEFgAfIcbzgqu4V_Wo_gAVgnwqD5k72azfQkgIJiRC0nqYCw-YWAAlKsA5kgeYiB2Q8_CqcIo424AiN-c5YARZh4e0A4X8Y5fEidqAxBJr5tKh5LXfdM35gclAiadJ9qG02YQxKMVh0_qB4M9HgdcDJ6fRVcekOxfDftV0fBG3RNIB55eb4yr9zKz3i12hGVanLzT-ue6g");'>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col max-w-[1600px] w-full mx-auto p-4 md:p-8">
+<!-- Page Header & Controls -->
+<div class="flex flex-col gap-6 mb-8">
+<div class="flex flex-wrap justify-between items-end gap-4">
+<div class="flex flex-col gap-2">
+<h1 class="text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] text-[#111518] dark:text-white">My Knockout Bracket</h1>
+<p class="text-[#5f7b8c] dark:text-gray-400 text-base font-normal">Visualize the path to the trophy. Click matches to enter predictions.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 h-10 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-[20px]">share</span>
+                        Share
+                    </button>
+<button class="flex items-center gap-2 px-6 h-10 rounded-lg bg-primary hover:bg-blue-600 transition-colors text-white text-sm font-bold shadow-md shadow-blue-500/20">
+<span class="material-symbols-outlined text-[20px]">save</span>
+                        Save All Predictions
+                    </button>
+</div>
+</div>
+<!-- Toolbar: Progress & Filters -->
+<div class="bg-white dark:bg-[#1e2a35] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col md:flex-row gap-6 items-center justify-between">
+<!-- Progress -->
+<div class="flex flex-col gap-2 w-full md:w-1/3">
+<div class="flex justify-between items-center text-sm">
+<span class="font-medium text-[#111518] dark:text-white">Predictions Progress</span>
+<span class="font-bold text-primary">85%</span>
+</div>
+<div class="h-2 w-full bg-[#f0f3f5] dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 85%"></div>
+</div>
+<span class="text-xs text-[#5f7b8c] dark:text-gray-400">16 matches left to predict</span>
+</div>
+<!-- View Toggle -->
+<div class="flex h-10 bg-[#f0f3f5] dark:bg-gray-800 p-1 rounded-lg">
+<button class="px-4 rounded-md bg-white dark:bg-[#101b22] shadow-sm text-xs font-bold text-[#111518] dark:text-white transition-all">My Predictions</button>
+<button class="px-4 rounded-md text-[#5f7b8c] dark:text-gray-400 hover:text-[#111518] dark:hover:text-white text-xs font-medium transition-all">Real Results</button>
+</div>
+<!-- Legend -->
+<div class="flex gap-4 text-xs font-medium text-[#5f7b8c] dark:text-gray-400">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span>Winner</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+<span>Pending</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bracket Visualization Area -->
+<!-- Using a Converging (Butterfly) Layout: Left Side -> Center -> Right Side -->
+<div class="relative flex-1 bg-[#fcfdfe] dark:bg-[#0d141a] border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-inner group/bracket">
+<!-- Sticky Headers for Rounds -->
+<div class="absolute top-0 left-0 right-0 z-20 flex justify-between min-w-[1200px] px-8 py-3 bg-white/90 dark:bg-[#1e2a35]/90 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
+<div class="w-48 text-center text-xs font-bold uppercase tracking-wider text-[#5f7b8c]">Round of 16</div>
+<div class="w-48 text-center text-xs font-bold uppercase tracking-wider text-[#5f7b8c]">Quarter-finals</div>
+<div class="w-48 text-center text-xs font-bold uppercase tracking-wider text-[#5f7b8c]">Semi-finals</div>
+<div class="w-64 text-center text-lg font-black uppercase tracking-wider text-primary">Final Match</div>
+<div class="w-48 text-center text-xs font-bold uppercase tracking-wider text-[#5f7b8c]">Semi-finals</div>
+<div class="w-48 text-center text-xs font-bold uppercase tracking-wider text-[#5f7b8c]">Quarter-finals</div>
+<div class="w-48 text-center text-xs font-bold uppercase tracking-wider text-[#5f7b8c]">Round of 16</div>
+</div>
+<!-- Scrollable Canvas -->
+<div class="bracket-scroll overflow-x-auto overflow-y-auto w-full h-[700px] pt-16 pb-10 cursor-grab active:cursor-grabbing">
+<div class="min-w-[1400px] flex justify-center items-center h-full px-10 gap-8 relative">
+<!-- LEFT SIDE: Round of 16 -->
+<div class="flex flex-col justify-around h-[600px] w-48 relative z-10">
+<!-- Match Card 1 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer">
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>M49</span> <span>Jun 27</span>
+</div>
+<div class="p-2 flex flex-col gap-1">
+<div class="flex justify-between items-center group/team">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-orange-500 to-white" data-alt="Netherlands flag placeholder"></div>
+<span class="text-xs font-semibold">NED</span>
+</div>
+<span class="text-xs font-bold w-6 text-center bg-gray-100 dark:bg-gray-800 rounded">3</span>
+</div>
+<div class="flex justify-between items-center opacity-50">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-blue-700 to-red-600" data-alt="USA flag placeholder"></div>
+<span class="text-xs font-medium">USA</span>
+</div>
+<span class="text-xs font-medium w-6 text-center bg-gray-50 dark:bg-gray-900 rounded">1</span>
+</div>
+</div>
+<!-- Connector Out -->
+<div class="absolute right-[-32px] top-1/2 w-8 h-[1px] bg-primary"></div>
+</div>
+<!-- Match Card 2 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-primary/50 transition-all cursor-pointer">
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>M50</span> <span>Jun 27</span>
+</div>
+<div class="p-2 flex flex-col gap-1">
+<div class="flex justify-between items-center opacity-50">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-blue-300 to-white" data-alt="Argentina flag placeholder"></div>
+<span class="text-xs font-medium">ARG</span>
+</div>
+<span class="text-xs font-medium w-6 text-center bg-gray-50 dark:bg-gray-900 rounded">1</span>
+</div>
+<div class="flex justify-between items-center group/team">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-yellow-400 to-green-700" data-alt="Australia flag placeholder"></div>
+<span class="text-xs font-semibold">AUS</span>
+</div>
+<span class="text-xs font-bold w-6 text-center bg-gray-100 dark:bg-gray-800 rounded">2</span>
+</div>
+</div>
+<!-- Connector Out (Inactive) -->
+<div class="absolute right-[-16px] top-1/2 w-4 h-[1px] bg-gray-300 dark:bg-gray-700"></div>
+<div class="absolute right-[-16px] bottom-1/2 w-[1px] h-[calc(100%+32px)] bg-gray-300 dark:bg-gray-700 origin-bottom"></div>
+</div>
+<!-- Match Card 3 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-primary/50 transition-all cursor-pointer">
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>M53</span> <span>Jun 28</span>
+</div>
+<div class="p-2 flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-blue-600 to-white" data-alt="Japan flag placeholder"></div>
+<span class="text-xs font-semibold">JPN</span>
+</div>
+<input class="w-6 h-5 text-center text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-primary focus:ring-0 p-0" placeholder="-" type="text"/>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-red-600 to-white" data-alt="Croatia flag placeholder"></div>
+<span class="text-xs font-semibold">CRO</span>
+</div>
+<input class="w-6 h-5 text-center text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-primary focus:ring-0 p-0" placeholder="-" type="text"/>
+</div>
+</div>
+<!-- Connector Out -->
+<div class="absolute right-[-32px] top-1/2 w-8 h-[1px] bg-gray-300 dark:bg-gray-700"></div>
+</div>
+<!-- Match Card 4 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-primary/50 transition-all cursor-pointer">
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>M54</span> <span>Jun 28</span>
+</div>
+<div class="p-2 flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-yellow-400 to-green-600" data-alt="Brazil flag placeholder"></div>
+<span class="text-xs font-semibold">BRA</span>
+</div>
+<input class="w-6 h-5 text-center text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-primary focus:ring-0 p-0" placeholder="-" type="text"/>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-red-600 to-green-800" data-alt="South Korea flag placeholder"></div>
+<span class="text-xs font-semibold">KOR</span>
+</div>
+<input class="w-6 h-5 text-center text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-primary focus:ring-0 p-0" placeholder="-" type="text"/>
+</div>
+</div>
+<!-- Connector Out -->
+<div class="absolute right-[-32px] top-1/2 w-8 h-[1px] bg-gray-300 dark:bg-gray-700"></div>
+</div>
+</div>
+<!-- LEFT SIDE: Quarters -->
+<div class="flex flex-col justify-around h-[400px] w-48 relative z-10">
+<!-- QF 1 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-md border-l-4 border-l-primary border-y border-r border-gray-200 dark:border-gray-700 w-full transform transition-transform hover:scale-105">
+<!-- Visual Connector Line Vertical from previous round matches -->
+<div class="absolute left-[-32px] top-[-75px] bottom-[-75px] w-[32px] border-l border-t border-b border-gray-300 dark:border-gray-700 rounded-l-xl pointer-events-none z-0"></div>
+<!-- Active path overlay -->
+<div class="absolute left-[-32px] top-[-75px] h-[calc(50%+75px)] w-[32px] border-l border-t border-primary rounded-tl-xl pointer-events-none z-0"></div>
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-tr-lg">
+<span>QF1</span> <span>Jul 3</span>
+</div>
+<div class="p-3 flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-orange-500 to-white" data-alt="Netherlands flag placeholder"></div>
+<span class="text-sm font-bold">NED</span>
+</div>
+<span class="text-xs text-gray-400">?</span>
+</div>
+<div class="flex justify-between items-center opacity-40">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gray-200" data-alt="TBD flag placeholder"></div>
+<span class="text-sm font-medium">TBD</span>
+</div>
+<span class="text-xs text-gray-400">-</span>
+</div>
+</div>
+<!-- Connector Out -->
+<div class="absolute right-[-32px] top-1/2 w-8 h-[1px] bg-primary"></div>
+</div>
+<!-- QF 2 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 w-full opacity-60">
+<!-- Visual Connector Line Vertical from previous round matches -->
+<div class="absolute left-[-32px] top-[-75px] bottom-[-75px] w-[32px] border-l border-t border-b border-gray-300 dark:border-gray-700 rounded-l-xl pointer-events-none z-0"></div>
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>QF2</span> <span>Jul 3</span>
+</div>
+<div class="p-3 flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gray-200" data-alt="TBD flag placeholder"></div>
+<span class="text-sm font-medium">TBD</span>
+</div>
+<span class="text-xs text-gray-400">-</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gray-200" data-alt="TBD flag placeholder"></div>
+<span class="text-sm font-medium">TBD</span>
+</div>
+<span class="text-xs text-gray-400">-</span>
+</div>
+</div>
+</div>
+</div>
+<!-- LEFT SIDE: Semis -->
+<div class="flex flex-col justify-center h-[400px] w-48 relative z-10">
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-md border-l-4 border-l-primary border-y border-r border-gray-200 dark:border-gray-700 w-full p-1">
+<!-- Visual Connector -->
+<div class="absolute left-[-32px] top-[-100px] bottom-[-100px] w-[32px] border-l border-t border-b border-gray-300 dark:border-gray-700 rounded-l-xl pointer-events-none z-0"></div>
+<!-- Active Path -->
+<div class="absolute left-[-32px] top-[-100px] h-[calc(50%+100px)] w-[32px] border-l border-t border-primary rounded-tl-xl pointer-events-none z-0"></div>
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t">
+<span>SF1</span> <span>Jul 9</span>
+</div>
+<div class="p-4 flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-gradient-to-br from-orange-500 to-white ring-2 ring-offset-1 ring-primary/20" data-alt="Netherlands flag placeholder"></div>
+<span class="text-base font-bold">NED</span>
+</div>
+<span class="material-symbols-outlined text-gray-300 text-sm">edit</span>
+</div>
+<div class="h-px bg-gray-100 dark:bg-gray-700 w-full"></div>
+<div class="flex justify-between items-center opacity-40">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-gray-200" data-alt="TBD flag placeholder"></div>
+<span class="text-base font-medium">TBD</span>
+</div>
+</div>
+</div>
+<!-- Connector Out -->
+<div class="absolute right-[-32px] top-1/2 w-8 h-[2px] bg-primary"></div>
+</div>
+</div>
+<!-- CENTER: Final -->
+<div class="flex flex-col justify-center h-[600px] w-72 relative z-20 shrink-0">
+<!-- Trophy Icon above -->
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 text-yellow-500 animate-pulse">
+<span class="material-symbols-outlined text-5xl drop-shadow-lg">emoji_events</span>
+</div>
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-xl shadow-2xl border-2 border-primary w-full overflow-hidden">
+<!-- Connectors from Left and Right -->
+<div class="absolute left-[-32px] top-1/2 w-[32px] h-[2px] bg-primary"></div>
+<div class="absolute right-[-32px] top-1/2 w-[32px] h-[2px] bg-gray-300 dark:bg-gray-700"></div>
+<div class="bg-primary px-4 py-2 flex justify-between items-center text-white">
+<span class="text-xs font-bold uppercase tracking-widest">World Cup Final</span>
+<span class="text-xs opacity-90">Jul 19, 2026</span>
+</div>
+<div class="p-6 flex flex-col gap-6 items-center">
+<!-- Team 1 (Predicted Winner) -->
+<div class="flex flex-col items-center gap-2 w-full p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+<div class="flex items-center justify-between w-full">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-white shadow-md" data-alt="Netherlands flag placeholder"></div>
+<span class="text-2xl font-black text-primary">3</span>
+</div>
+<span class="text-lg font-bold text-[#111518] dark:text-white w-full">Netherlands</span>
+<span class="text-xs font-medium text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full w-fit">Winner</span>
+</div>
+<span class="text-xs font-black text-gray-300">VS</span>
+<!-- Team 2 (Opponent) -->
+<div class="flex flex-col items-center gap-2 w-full p-3 opacity-60 grayscale-[50%] hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer border border-transparent hover:border-gray-200 rounded-lg">
+<div class="flex items-center justify-between w-full">
+<span class="text-2xl font-black text-gray-400">1</span>
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-red-600 shadow-md" data-alt="France flag placeholder"></div>
+</div>
+<span class="text-lg font-bold text-[#111518] dark:text-white w-full text-right">France</span>
+</div>
+</div>
+<!-- Save/Action Footer -->
+<div class="bg-gray-50 dark:bg-[#18232c] px-4 py-3 flex justify-center border-t border-gray-100 dark:border-gray-800">
+<button class="text-xs font-bold text-primary hover:underline">Edit Prediction</button>
+</div>
+</div>
+</div>
+<!-- RIGHT SIDE: Semis -->
+<div class="flex flex-col justify-center h-[400px] w-48 relative z-10">
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 w-full p-1 opacity-80">
+<!-- Visual Connector -->
+<div class="absolute right-[-32px] top-[-100px] bottom-[-100px] w-[32px] border-r border-t border-b border-gray-300 dark:border-gray-700 rounded-r-xl pointer-events-none z-0"></div>
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t">
+<span>SF2</span> <span>Jul 10</span>
+</div>
+<div class="p-4 flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-red-600" data-alt="France flag placeholder"></div>
+<span class="text-base font-bold">FRA</span>
+</div>
+</div>
+<div class="h-px bg-gray-100 dark:bg-gray-700 w-full"></div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-green-600" data-alt="Brazil flag placeholder"></div>
+<span class="text-base font-bold">BRA</span>
+</div>
+</div>
+</div>
+<!-- Connector In -->
+<div class="absolute left-[-32px] top-1/2 w-8 h-[1px] bg-gray-300 dark:bg-gray-700"></div>
+</div>
+</div>
+<!-- RIGHT SIDE: Quarters -->
+<div class="flex flex-col justify-around h-[400px] w-48 relative z-10">
+<!-- QF 3 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 w-full">
+<!-- Visual Connector -->
+<div class="absolute right-[-32px] top-[-75px] bottom-[-75px] w-[32px] border-r border-t border-b border-gray-300 dark:border-gray-700 rounded-r-xl pointer-events-none z-0"></div>
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>QF3</span> <span>Jul 4</span>
+</div>
+<div class="p-3 flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-blue-600 to-red-600" data-alt="France flag placeholder"></div>
+<span class="text-sm font-bold">FRA</span>
+</div>
+<span class="text-xs text-gray-400">?</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-white to-red-600" data-alt="England flag placeholder"></div>
+<span class="text-sm font-medium">ENG</span>
+</div>
+<span class="text-xs text-gray-400">?</span>
+</div>
+</div>
+</div>
+<!-- QF 4 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 w-full">
+<!-- Visual Connector -->
+<div class="absolute right-[-32px] top-[-75px] bottom-[-75px] w-[32px] border-r border-t border-b border-gray-300 dark:border-gray-700 rounded-r-xl pointer-events-none z-0"></div>
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>QF4</span> <span>Jul 4</span>
+</div>
+<div class="p-3 flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-yellow-400 to-green-600" data-alt="Brazil flag placeholder"></div>
+<span class="text-sm font-medium">BRA</span>
+</div>
+<span class="text-xs text-gray-400">-</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-green-600 to-red-600" data-alt="Portugal flag placeholder"></div>
+<span class="text-sm font-medium">POR</span>
+</div>
+<span class="text-xs text-gray-400">-</span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT SIDE: Round of 16 -->
+<div class="flex flex-col justify-around h-[600px] w-48 relative z-10">
+<!-- Match Card R5 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-primary/50 transition-all cursor-pointer">
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>M51</span> <span>Jun 28</span>
+</div>
+<div class="p-2 flex flex-col gap-1">
+<div class="flex justify-between items-center group/team">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-blue-600 to-red-600" data-alt="France flag placeholder"></div>
+<span class="text-xs font-semibold">FRA</span>
+</div>
+<span class="text-xs font-bold w-6 text-center bg-gray-100 dark:bg-gray-800 rounded">2</span>
+</div>
+<div class="flex justify-between items-center opacity-50">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-green-700 to-white" data-alt="Poland flag placeholder"></div>
+<span class="text-xs font-medium">POL</span>
+</div>
+<span class="text-xs font-medium w-6 text-center bg-gray-50 dark:bg-gray-900 rounded">0</span>
+</div>
+</div>
+<!-- Connector Out (Left) -->
+<div class="absolute left-[-32px] top-1/2 w-8 h-[1px] bg-gray-300 dark:bg-gray-700"></div>
+</div>
+<!-- Match Card R6 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-primary/50 transition-all cursor-pointer">
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>M52</span> <span>Jun 28</span>
+</div>
+<div class="p-2 flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-white to-red-600" data-alt="England flag placeholder"></div>
+<span class="text-xs font-semibold">ENG</span>
+</div>
+<input class="w-6 h-5 text-center text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-primary focus:ring-0 p-0" placeholder="-" type="text"/>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-green-600 to-red-600" data-alt="Senegal flag placeholder"></div>
+<span class="text-xs font-semibold">SEN</span>
+</div>
+<input class="w-6 h-5 text-center text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-primary focus:ring-0 p-0" placeholder="-" type="text"/>
+</div>
+</div>
+<!-- Connector Out -->
+<div class="absolute left-[-32px] top-1/2 w-8 h-[1px] bg-gray-300 dark:bg-gray-700"></div>
+</div>
+<!-- Match Card R7 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-primary/50 transition-all cursor-pointer">
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>M55</span> <span>Jun 29</span>
+</div>
+<div class="p-2 flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-red-600 to-yellow-400" data-alt="Spain flag placeholder"></div>
+<span class="text-xs font-semibold">ESP</span>
+</div>
+<input class="w-6 h-5 text-center text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-primary focus:ring-0 p-0" placeholder="-" type="text"/>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-green-600 to-red-600" data-alt="Portugal flag placeholder"></div>
+<span class="text-xs font-semibold">POR</span>
+</div>
+<input class="w-6 h-5 text-center text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-primary focus:ring-0 p-0" placeholder="-" type="text"/>
+</div>
+</div>
+<!-- Connector Out -->
+<div class="absolute left-[-32px] top-1/2 w-8 h-[1px] bg-gray-300 dark:bg-gray-700"></div>
+</div>
+<!-- Match Card R8 -->
+<div class="relative bg-white dark:bg-[#1e2a35] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-primary/50 transition-all cursor-pointer">
+<div class="bg-gray-50 dark:bg-[#18232c] px-2 py-1 flex justify-between text-[10px] text-gray-500 uppercase tracking-wide rounded-t-lg">
+<span>M56</span> <span>Jun 29</span>
+</div>
+<div class="p-2 flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-yellow-400 to-green-600" data-alt="Brazil flag placeholder"></div>
+<span class="text-xs font-semibold">BRA</span>
+</div>
+<input class="w-6 h-5 text-center text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-primary focus:ring-0 p-0" placeholder="-" type="text"/>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-gradient-to-br from-red-600 to-white" data-alt="Switzerland flag placeholder"></div>
+<span class="text-xs font-semibold">SUI</span>
+</div>
+<input class="w-6 h-5 text-center text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-primary focus:ring-0 p-0" placeholder="-" type="text"/>
+</div>
+</div>
+<!-- Connector Out -->
+<div class="absolute left-[-32px] top-1/2 w-8 h-[1px] bg-gray-300 dark:bg-gray-700"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Minimap Hint Overlay (Bottom Right) -->
+<div class="absolute bottom-4 right-4 bg-white dark:bg-[#1e2a35] p-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hidden md:block opacity-90">
+<div class="text-[10px] text-gray-500 mb-1 font-medium text-center">Drag to pan</div>
+<div class="w-24 h-12 bg-gray-100 dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-700 relative overflow-hidden">
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-16 h-[1px] bg-gray-300 dark:bg-gray-600"></div>
+<div class="h-8 w-[1px] bg-gray-300 dark:bg-gray-600"></div>
+</div>
+<!-- Viewport Indicator -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-8 border-2 border-primary rounded bg-primary/10"></div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

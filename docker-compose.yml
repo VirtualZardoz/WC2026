@@ -43,8 +43,8 @@ services:
     tty: true
     stdin_open: true
 
-    # Restart policy
-    restart: unless-stopped
+    # Restart policy: "no" for on-demand launch (stops when HAL9000 session ends)
+    restart: "no"
 
 networks:
   hal9000-net:

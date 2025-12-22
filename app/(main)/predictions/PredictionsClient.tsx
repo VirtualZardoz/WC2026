@@ -211,8 +211,12 @@ export default function PredictionsClient({
 
   const groups = Object.keys(matchesByGroup).sort();
 
-  // Calculate predicted standings and qualifiers for knockout stage
+  // Calculate predicted standings and qualifiers for knockout stage (only when on knockout tab)
   const predictedQualifiers = useMemo(() => {
+    // Skip heavy calculation if not viewing knockout
+    if (activeTab !== 'knockout') {
+      return { standings: {}, winners: {}, runnersUp: {}, bestThirds: [], isComplete: {} };
+    }
     const standings: { [key: string]: TeamStanding[] } = {};
     const isComplete: { [key: string]: boolean } = {};
     const winners: { [group: string]: Team | null } = {};
@@ -249,7 +253,7 @@ export default function PredictionsClient({
     const bestThirds = thirds.slice(0, 8).map(s => s.team);
 
     return { standings, winners, runnersUp, bestThirds, isComplete };
-  }, [matchesByGroup, groups, refreshTrigger]);
+  }, [matchesByGroup, groups, activeTab]);
 
   // Organize knockout matches by stage
   const knockoutByStage: { [key: string]: Match[] } = {};
@@ -259,6 +263,112 @@ export default function PredictionsClient({
     }
     knockoutByStage[match.stage].push(match);
   });
+
+  // Build predicted teams map for knockout matches (for grid view)
+  const predictedTeamsMap = useMemo(() => {
+    // Skip if not viewing knockout grid
+    if (activeTab !== 'knockout' || knockoutView !== 'grid') {
+      return {};
+    }
+
+    const result: { [matchId: string]: { home: Team | null; away: Team | null } } = {};
+    const predictedWinners: { [matchNum: number]: Team | null } = {};
+    const predictedLosers: { [matchNum: number]: Team | null } = {};
+
+    const stageOffsets: { [key: string]: number } = {
+      'R32': 72,
+      'R16': 88,
+      'QF': 96,
+      'SF': 100,
+    };
+
+    const round32Matches = knockoutMatches
+      .filter(m => m.stage === 'round32')
+      .sort((a, b) => a.matchNumber - b.matchNumber);
+
+    const resolveTeam = (placeholder: string | null, match: Match): Team | null => {
+      if (!placeholder) return null;
+
+      if (placeholder.startsWith('Winner ') && placeholder.split(' ')[1].length === 1) {
+        const group = placeholder.split(' ')[1];
+        return predictedQualifiers.winners[group] || null;
+      }
+      if (placeholder.startsWith('Runner-up ')) {
+        const group = placeholder.split(' ')[1];
+        return predictedQualifiers.runnersUp[group] || null;
+      }
+      if (placeholder.startsWith('3rd ')) {
+        const r32ThirdMatches = round32Matches
+          .filter(m => m.awayPlaceholder?.startsWith('3rd '))
+          .sort((a, b) => a.matchNumber - b.matchNumber);
+
+        const idx = r32ThirdMatches.findIndex(m => m.id === match.id);
+        if (idx >= 0 && predictedQualifiers.bestThirds[idx]) {
+          return predictedQualifiers.bestThirds[idx];
+        }
+        return null;
+      }
+      const winnerMatch = placeholder.match(/^Winner (R32|R16|QF|SF) M(\d+)$/);
+      if (winnerMatch) {
+        const [, stage, matchNum] = winnerMatch;
+        const matchNumber = stageOffsets[stage] + parseInt(matchNum);
+        return predictedWinners[matchNumber] || null;
+      }
+      const loserMatch = placeholder.match(/^Loser (SF) M(\d+)$/);
+      if (loserMatch) {
+        const [, stage, matchNum] = loserMatch;
+        const matchNumber = stageOffsets[stage] + parseInt(matchNum);
+        return predictedLosers[matchNumber] || null;
+      }
+      return null;
+    };
+
+    const sortedMatches = [...knockoutMatches].sort((a, b) => a.matchNumber - b.matchNumber);
+
+    for (const match of sortedMatches) {
+      let homeTeam = match.homeTeam;
+      let awayTeam = match.awayTeam;
+
+      if (!homeTeam && match.homePlaceholder) {
+        homeTeam = resolveTeam(match.homePlaceholder, match);
+      }
+      if (!awayTeam && match.awayPlaceholder) {
+        awayTeam = resolveTeam(match.awayPlaceholder, match);
+      }
+
+      result[match.id] = { home: homeTeam, away: awayTeam };
+
+      const prediction = match.predictions[0];
+      if (prediction && homeTeam && awayTeam) {
+        const homeScore = prediction.predictedHome;
+        const awayScore = prediction.predictedAway;
+
+        let winner: Team | null = null;
+        let loser: Team | null = null;
+
+        if (homeScore > awayScore) {
+          winner = homeTeam;
+          loser = awayTeam;
+        } else if (awayScore > homeScore) {
+          winner = awayTeam;
+          loser = homeTeam;
+        } else {
+          if (prediction.predictedWinner === 'home') {
+            winner = homeTeam;
+            loser = awayTeam;
+          } else if (prediction.predictedWinner === 'away') {
+            winner = awayTeam;
+            loser = homeTeam;
+          }
+        }
+
+        predictedWinners[match.matchNumber] = winner;
+        predictedLosers[match.matchNumber] = loser;
+      }
+    }
+
+    return result;
+  }, [knockoutMatches, predictedQualifiers, activeTab, knockoutView]);
 
   const stageOrder = ['round32', 'round16', 'quarter', 'semi', 'third', 'final'];
   const stageNames: { [key: string]: string } = {
@@ -429,6 +539,8 @@ export default function PredictionsClient({
                         isLocked={isLocked}
                         onSaved={handlePredictionSaved}
                         isKnockout
+                        predictedHomeTeam={predictedTeamsMap[match.id]?.home || null}
+                        predictedAwayTeam={predictedTeamsMap[match.id]?.away || null}
                       />
                     ))}
                   </div>
