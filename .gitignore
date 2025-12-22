@@ -59,7 +59,6 @@ logs/
 .project_type
 app_spec.txt
 feature_list.json
-init.sh
 stall_log.json
 claude-progress.txt
 
