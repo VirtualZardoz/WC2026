@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
+import { validatePassword, isCommonPassword } from '@/lib/password-validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,9 +16,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (password.length < 6) {
+    // Password strength validation
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
       return NextResponse.json(
-        { error: 'Password must be at least 6 characters' },
+        { error: passwordValidation.errors.join('. ') },
+        { status: 400 }
+      );
+    }
+
+    // Check for common passwords
+    if (isCommonPassword(password)) {
+      return NextResponse.json(
+        { error: 'This password is too common. Please choose a stronger password.' },
         { status: 400 }
       );
     }

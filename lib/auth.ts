@@ -2,6 +2,7 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import prisma from './prisma';
+import { checkRateLimit, resetRateLimit } from './rate-limit';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,6 +15,17 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Email and password are required');
+        }
+
+        // Rate limiting by email
+        const rateLimitKey = `login:${credentials.email.toLowerCase()}`;
+        const rateLimit = checkRateLimit(rateLimitKey);
+
+        if (!rateLimit.allowed) {
+          if (rateLimit.locked) {
+            throw new Error(`Account locked. Try again in ${Math.ceil(rateLimit.resetIn / 60)} minutes`);
+          }
+          throw new Error('Too many attempts. Please wait before trying again');
         }
 
         const user = await prisma.user.findUnique({
@@ -33,6 +45,9 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid email or password');
         }
 
+        // Successful login - reset rate limit
+        resetRateLimit(rateLimitKey);
+
         return {
           id: user.id,
           email: user.email,
@@ -44,7 +59,8 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 24 * 60 * 60, // 24 hours (reduced from 30 days)
+    updateAge: 60 * 60,   // Refresh token every hour if active
   },
   callbacks: {
     async jwt({ token, user }) {

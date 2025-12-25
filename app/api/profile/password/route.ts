@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { validatePassword, isCommonPassword } from '@/lib/password-validation';
 
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -22,9 +23,19 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    if (newPassword.length < 6) {
+    // Password strength validation
+    const passwordValidation = validatePassword(newPassword);
+    if (!passwordValidation.valid) {
       return NextResponse.json(
-        { error: 'New password must be at least 6 characters' },
+        { error: passwordValidation.errors.join('. ') },
+        { status: 400 }
+      );
+    }
+
+    // Check for common passwords
+    if (isCommonPassword(newPassword)) {
+      return NextResponse.json(
+        { error: 'This password is too common. Please choose a stronger password.' },
         { status: 400 }
       );
     }

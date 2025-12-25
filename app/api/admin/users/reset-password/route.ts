@@ -22,8 +22,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate a simple random password
-    const newPassword = Math.random().toString(36).slice(-8);
+    // Generate a strong random password (12 chars, mixed case + numbers + special)
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
+    let newPassword = '';
+    for (let i = 0; i < 12; i++) {
+      newPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
     const passwordHash = await bcrypt.hash(newPassword, 10);
 
     await prisma.user.update({
