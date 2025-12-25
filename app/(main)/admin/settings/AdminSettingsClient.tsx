@@ -28,6 +28,7 @@ interface Settings {
   teams: Team[];
   matches: Match[];
   bonusMatchCount: number;
+  signupEnabled: boolean;
 }
 
 interface Props {
@@ -40,6 +41,7 @@ export default function AdminSettingsClient({ settings }: Props) {
       ? new Date(settings.tournament.predictionDeadline).toISOString().slice(0, 16)
       : ''
   );
+  const [signupEnabled, setSignupEnabled] = useState(settings.signupEnabled);
   const [teams, setTeams] = useState(settings.teams);
   const [bonusMatches, setBonusMatches] = useState<Set<string>>(
     new Set(settings.matches.filter((m) => m.isBonusMatch).map((m) => m.id))
@@ -47,7 +49,31 @@ export default function AdminSettingsClient({ settings }: Props) {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [editingTeam, setEditingTeam] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'deadline' | 'bonus' | 'teams'>('deadline');
+  const [activeTab, setActiveTab] = useState<'general' | 'deadline' | 'bonus' | 'teams'>('general');
+
+  const handleToggleSignup = async () => {
+    setSaving(true);
+    setMessage(null);
+    try {
+      const res = await fetch('/api/admin/settings/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: !signupEnabled }),
+      });
+
+      if (res.ok) {
+        setSignupEnabled(!signupEnabled);
+        setMessage({ type: 'success', text: `Registration ${!signupEnabled ? 'enabled' : 'disabled'}` });
+      } else {
+        const data = await res.json();
+        setMessage({ type: 'error', text: data.error || 'Failed to update setting' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to update setting' });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleSaveDeadline = async () => {
     setSaving(true);
@@ -160,6 +186,16 @@ export default function AdminSettingsClient({ settings }: Props) {
       <div className="border-b border-slate-200 dark:border-slate-700">
         <nav className="-mb-px flex space-x-8">
           <button
+            onClick={() => setActiveTab('general')}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'general'
+                ? 'border-primary-500 text-primary-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            General
+          </button>
+          <button
             onClick={() => setActiveTab('deadline')}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'deadline'
@@ -191,6 +227,41 @@ export default function AdminSettingsClient({ settings }: Props) {
           </button>
         </nav>
       </div>
+
+      {/* General Tab */}
+      {activeTab === 'general' && (
+        <div className="card">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
+            General Settings
+          </h2>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium text-slate-900 dark:text-white">User Registration</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Enable or disable new user signups. Existing users can still log in.
+                </p>
+              </div>
+              <button
+                onClick={handleToggleSignup}
+                disabled={saving}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
+                  signupEnabled ? 'bg-primary-600' : 'bg-slate-200 dark:bg-slate-700'
+                }`}
+                role="switch"
+                aria-checked={signupEnabled}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    signupEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Deadline Tab */}
       {activeTab === 'deadline' && (

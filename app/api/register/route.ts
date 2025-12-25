@@ -2,9 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { validatePassword, isCommonPassword } from '@/lib/password-validation';
+import { isRegistrationEnabled } from '@/lib/feature-flags';
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if registration is enabled
+    const enabled = await isRegistrationEnabled();
+    if (!enabled) {
+      return NextResponse.json(
+        { error: 'Registration is currently disabled' },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const { name, email, password } = body;
 

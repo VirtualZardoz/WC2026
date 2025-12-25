@@ -73,3 +73,10 @@ model Tournament {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}

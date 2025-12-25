@@ -2,9 +2,11 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { isRegistrationEnabled } from '@/lib/feature-flags';
 import AdminSettingsClient from './AdminSettingsClient';
 
 async function getSettings() {
+  const signupEnabled = await isRegistrationEnabled();
   const tournament = await prisma.tournament.findFirst({
     where: { isActive: true },
   });
@@ -25,6 +27,7 @@ async function getSettings() {
   const bonusMatches = matches.filter((m) => m.isBonusMatch);
 
   return {
+    signupEnabled,
     tournament: tournament
       ? {
           id: tournament.id,
