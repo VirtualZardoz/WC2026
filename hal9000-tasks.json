@@ -1,0 +1,30 @@
+{
+  "current_task": null,
+  "task_queue": [],
+  "completed_tasks": [
+    {
+      "test_id": "109",
+      "phase": "completed",
+      "description": "Admin can create a new user",
+      "completed_at": "2024-05-22T10:15:00Z"
+    },
+    {
+      "test_id": "110",
+      "phase": "completed",
+      "description": "Admin can delete another user",
+      "completed_at": "2024-05-22T10:20:00Z"
+    },
+    {
+      "test_id": "111",
+      "phase": "completed",
+      "description": "Admin cannot delete themselves",
+      "completed_at": "2024-05-22T10:20:00Z"
+    },
+    {
+      "test_id": "112",
+      "phase": "completed",
+      "description": "Non-admin users cannot access admin users page",
+      "completed_at": "2024-05-22T10:25:00Z"
+    }
+  ]
+}

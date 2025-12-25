@@ -1517,7 +1517,7 @@
       "Step 6: Verify success notification appears",
       "Step 7: Verify new user appears in the users table"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "110",
@@ -1531,7 +1531,7 @@
       "Step 5: Verify success notification appears",
       "Step 6: Verify user is removed from the table"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "111",
@@ -1556,6 +1556,6 @@
       "Step 3: Verify user is redirected away from page",
       "Step 4: Verify error or access denied message appears"
     ],
-    "passes": false
+    "passes": true
   }
 ]

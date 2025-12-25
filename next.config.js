@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: '/tmp/.next',
   reactStrictMode: true,
   devIndicators: {
     buildActivity: true,

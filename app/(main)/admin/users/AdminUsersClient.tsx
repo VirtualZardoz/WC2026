@@ -322,6 +322,86 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
           </table>
         </div>
       )}
+
+      {/* Create User Modal */}
+      {showCreateForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-slate-800 rounded-lg max-w-md w-full p-6 shadow-xl">
+            <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">Create New User</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  value={createFormData.name}
+                  onChange={(e) => setCreateFormData({ ...createFormData, name: e.target.value })}
+                  className="input w-full"
+                  placeholder="John Doe"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={createFormData.email}
+                  onChange={(e) => setCreateFormData({ ...createFormData, email: e.target.value })}
+                  className="input w-full"
+                  placeholder="john@example.com"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={createFormData.password}
+                  onChange={(e) => setCreateFormData({ ...createFormData, password: e.target.value })}
+                  className="input w-full"
+                  placeholder="********"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Role
+                </label>
+                <select
+                  value={createFormData.role}
+                  onChange={(e) => setCreateFormData({ ...createFormData, role: e.target.value })}
+                  className="input w-full"
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={() => setShowCreateForm(false)}
+                className="btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={createUser}
+                disabled={updatingUser === 'creating'}
+                className="btn-primary"
+              >
+                {updatingUser === 'creating' ? 'Creating...' : 'Create User'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
