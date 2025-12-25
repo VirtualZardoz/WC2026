@@ -2,8 +2,16 @@
 
 # World Cup Pronostics 2026 - Development Environment Setup
 # This script initializes and runs the development environment
+# WARNING: This script can reset the database. NEVER run in production.
 
 set -e
+
+# PRODUCTION SAFETY GUARD
+if [ "$NODE_ENV" = "production" ] || [ "$VERCEL_ENV" = "production" ]; then
+    echo "❌ FATAL: Cannot run init.sh in production!"
+    echo "   This script is for development setup only."
+    exit 1
+fi
 
 # Colors for output
 RED='\033[0;31m'

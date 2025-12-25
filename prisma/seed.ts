@@ -1,6 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
+// PRODUCTION SAFETY GUARD
+// This seed script DELETES ALL DATA. Never run in production.
+if (process.env.NODE_ENV === 'production') {
+  console.error('❌ FATAL: Cannot run seed in production! This would delete all data.');
+  console.error('   If you really need to seed production, use a migration instead.');
+  process.exit(1);
+}
+
 const prisma = new PrismaClient();
 
 // 48 Teams for FIFA World Cup 2026 (hosts + placeholders for other qualified teams)
