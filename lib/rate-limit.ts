@@ -19,14 +19,14 @@ const LOCKOUT_MS = 15 * 60 * 1000; // 15 minute lockout
 // Cleanup old entries periodically (every 5 minutes)
 setInterval(() => {
   const now = Date.now();
-  for (const [key, entry] of rateLimitStore.entries()) {
+  Array.from(rateLimitStore.entries()).forEach(([key, entry]) => {
     if (now - entry.firstAttempt > WINDOW_MS && !entry.lockedUntil) {
       rateLimitStore.delete(key);
     }
     if (entry.lockedUntil && now > entry.lockedUntil) {
       rateLimitStore.delete(key);
     }
-  }
+  });
 }, 5 * 60 * 1000);
 
 export interface RateLimitResult {
