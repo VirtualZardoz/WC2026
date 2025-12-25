@@ -9,6 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./test.db
+      NEXTAUTH_SECRET: ci-test-secret-not-for-production
+      NEXTAUTH_URL: http://localhost:3000
 
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +25,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Setup database
+        run: npx prisma db push
 
       - name: Run linter
         run: npm run lint
