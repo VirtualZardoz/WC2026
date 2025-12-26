@@ -380,136 +380,220 @@ export default function PredictionsClient({
     final: 'Final',
   };
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-          My Predictions
-        </h1>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">
-          Enter your predictions for all {totalMatches} matches
-        </p>
-      </div>
+  // Parse countdown into days, hours, minutes
+  const parseTimeLeft = (time: string) => {
+    const match = time.match(/(\d+)d\s+(\d+)h\s+(\d+)m/);
+    if (match) {
+      return { days: match[1], hours: match[2], mins: match[3] };
+    }
+    return { days: '0', hours: '0', mins: '0' };
+  };
 
-      {/* Progress and Deadline */}
-      <div className="card mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  const countdown = parseTimeLeft(timeLeft);
+
+  // Calculate completion per group
+  const getGroupCompletion = (group: string) => {
+    const matches = matchesByGroup[group];
+    const predicted = matches.filter(m => m.predictions.length > 0).length;
+    return { predicted, total: matches.length };
+  };
+
+  // Scroll to group
+  const scrollToGroup = (group: string) => {
+    const element = document.getElementById(`group-${group.toLowerCase()}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 pb-24">
+      {/* Page Heading & Status Bar */}
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 mb-8">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+            My Predictions
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 text-base">
+            Submit scores for all matches. Good luck!
+          </p>
+        </div>
+
+        {/* Stats & Timer Card */}
+        <div className="flex flex-col sm:flex-row gap-4 bg-surface-light dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800/50">
           {/* Progress */}
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          <div className="flex flex-col justify-center min-w-[200px] gap-2 border-r-0 sm:border-r border-slate-200 dark:border-slate-700 pr-0 sm:pr-6">
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Progress
               </span>
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                {predictedCount}/{totalMatches} ({progressPercent}%)
+              <span className="text-sm font-bold text-primary">
+                {predictedCount}/{totalMatches}
               </span>
             </div>
-            <div className="progress-bar">
+            <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
               <div
-                className="progress-bar-fill"
+                className="h-full bg-primary rounded-full transition-all duration-300"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
+            <p className="text-xs text-slate-400 mt-1">{progressPercent}% Complete</p>
           </div>
 
-          {/* Deadline */}
-          <div className="text-center sm:text-right">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Deadline
-            </p>
-            {isLocked ? (
-              <p className="text-lg font-semibold text-red-600">
-                Predictions Locked
-              </p>
-            ) : (
-              <p className="text-lg font-semibold text-primary-600">
-                {timeLeft}
-              </p>
-            )}
-          </div>
+          {/* Timer */}
+          {!isLocked ? (
+            <div className="flex items-center gap-3 pl-0 sm:pl-2">
+              <div className="flex flex-col items-center">
+                <div className="bg-slate-100 dark:bg-slate-800 rounded px-2 py-1 min-w-[36px] text-center">
+                  <span className="text-lg font-bold font-mono text-slate-800 dark:text-white">
+                    {countdown.days.padStart(2, '0')}
+                  </span>
+                </div>
+                <span className="text-[10px] uppercase mt-1 text-slate-500">Days</span>
+              </div>
+              <span className="font-bold text-slate-300 dark:text-slate-600 -mt-4">:</span>
+              <div className="flex flex-col items-center">
+                <div className="bg-slate-100 dark:bg-slate-800 rounded px-2 py-1 min-w-[36px] text-center">
+                  <span className="text-lg font-bold font-mono text-slate-800 dark:text-white">
+                    {countdown.hours.padStart(2, '0')}
+                  </span>
+                </div>
+                <span className="text-[10px] uppercase mt-1 text-slate-500">Hrs</span>
+              </div>
+              <span className="font-bold text-slate-300 dark:text-slate-600 -mt-4">:</span>
+              <div className="flex flex-col items-center">
+                <div className="bg-slate-100 dark:bg-slate-800 rounded px-2 py-1 min-w-[36px] text-center">
+                  <span className="text-lg font-bold font-mono text-slate-800 dark:text-white">
+                    {countdown.mins.padStart(2, '0')}
+                  </span>
+                </div>
+                <span className="text-[10px] uppercase mt-1 text-slate-500">Min</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 pl-0 sm:pl-2 text-red-500">
+              <span className="material-symbols-outlined">lock</span>
+              <span className="font-bold">Locked</span>
+            </div>
+          )}
         </div>
       </div>
 
       {isLocked && (
-        <div className="alert-warning mb-8">
-          <strong>Predictions are locked.</strong> The deadline has passed and you can no longer edit your predictions.
+        <div className="flex items-center gap-3 p-4 mb-6 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+          <span className="material-symbols-outlined">warning</span>
+          <p><strong>Predictions are locked.</strong> The deadline has passed and you can no longer edit your predictions.</p>
         </div>
       )}
 
-      {/* Tab Navigation */}
-      <div className="flex border-b border-slate-200 dark:border-slate-700 mb-6">
-        <button
-          onClick={() => setActiveTab('group')}
-          className={`px-4 py-2 font-medium text-sm border-b-2 -mb-px transition-colors ${
-            activeTab === 'group'
-              ? 'border-primary-500 text-primary-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          Group Stage ({Object.values(matchesByGroup).flat().length} matches)
-        </button>
-        <button
-          onClick={() => setActiveTab('knockout')}
-          className={`px-4 py-2 font-medium text-sm border-b-2 -mb-px transition-colors ${
-            activeTab === 'knockout'
-              ? 'border-primary-500 text-primary-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
-          }`}
-        >
-          Knockout Stage ({knockoutMatches.length} matches)
-        </button>
+      {/* Stage Filters - Sticky */}
+      <div className="sticky top-0 z-20 bg-background-light dark:bg-background-dark pt-2 pb-4 mb-2">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          {/* Stage Toggle */}
+          <div className="bg-surface-light dark:bg-surface-dark p-1 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm inline-flex">
+            <button
+              onClick={() => setActiveTab('group')}
+              className={`px-5 py-2 rounded-md font-medium transition-all text-sm ${
+                activeTab === 'group'
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              Group Stage
+            </button>
+            <button
+              onClick={() => setActiveTab('knockout')}
+              className={`px-5 py-2 rounded-md font-medium transition-all text-sm ${
+                activeTab === 'knockout'
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              Knockout Stage
+            </button>
+          </div>
+
+          {/* Jump to Group (only show for group stage) */}
+          {activeTab === 'group' && (
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar max-w-full lg:max-w-2xl">
+              <span className="text-xs font-semibold text-slate-400 mr-2 uppercase tracking-wide whitespace-nowrap">
+                Jump to:
+              </span>
+              {groups.map((group) => (
+                <button
+                  key={group}
+                  onClick={() => scrollToGroup(group)}
+                  className="size-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary text-slate-600 dark:text-slate-300 text-xs font-bold flex items-center justify-center shrink-0 transition-colors"
+                >
+                  {group}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Group Stage */}
       {activeTab === 'group' && (
         <div className="space-y-8">
-          {groups.map((group) => (
-            <div key={group}>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
-                Group {group}
-              </h2>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {matchesByGroup[group].map((match) => (
-                  <MatchCard
-                    key={match.id}
-                    match={match}
-                    isLocked={isLocked}
-                    onSaved={handlePredictionSaved}
-                  />
-                ))}
+          {groups.map((group) => {
+            const completion = getGroupCompletion(group);
+            return (
+              <div key={group} id={`group-${group.toLowerCase()}`} className="scroll-mt-32">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1 h-6 bg-primary rounded-full" />
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                    Group {group}
+                  </h3>
+                  <span className="text-sm font-medium text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">
+                    {completion.predicted}/{completion.total} predicted
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  {matchesByGroup[group].map((match) => (
+                    <MatchCard
+                      key={match.id}
+                      match={match}
+                      isLocked={isLocked}
+                      onSaved={handlePredictionSaved}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       {/* Knockout Stage */}
       {activeTab === 'knockout' && (
         <div className="space-y-8">
-          <div className="flex justify-end mb-4">
-            <div className="inline-flex rounded-md shadow-sm" role="group">
+          {/* View Toggle */}
+          <div className="flex justify-end">
+            <div className="bg-surface-light dark:bg-surface-dark p-1 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm inline-flex">
               <button
                 type="button"
                 onClick={() => setKnockoutView('bracket')}
-                className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
+                className={`px-4 py-2 rounded-md font-medium transition-all text-sm flex items-center gap-2 ${
                   knockoutView === 'bracket'
-                    ? 'bg-primary-500 text-white border-primary-500'
-                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                Bracket View
+                <span className="material-symbols-outlined text-lg">account_tree</span>
+                Bracket
               </button>
               <button
                 type="button"
                 onClick={() => setKnockoutView('grid')}
-                className={`px-4 py-2 text-sm font-medium rounded-r-lg border-t border-b border-r ${
+                className={`px-4 py-2 rounded-md font-medium transition-all text-sm flex items-center gap-2 ${
                   knockoutView === 'grid'
-                    ? 'bg-primary-500 text-white border-primary-500'
-                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                Grid View
+                <span className="material-symbols-outlined text-lg">grid_view</span>
+                Grid
               </button>
             </div>
           </div>
@@ -526,12 +610,20 @@ export default function PredictionsClient({
               const matches = knockoutByStage[stage];
               if (!matches || matches.length === 0) return null;
 
+              const predictedInStage = matches.filter(m => m.predictions.length > 0).length;
+
               return (
-                <div key={stage}>
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
-                    {stageNames[stage]}
-                  </h2>
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div key={stage} className="scroll-mt-32">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-1 h-6 bg-purple-500 rounded-full" />
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                      {stageNames[stage]}
+                    </h3>
+                    <span className="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 px-2 py-1 rounded">
+                      {predictedInStage}/{matches.length} predicted
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                     {matches.map((match) => (
                       <MatchCard
                         key={match.id}

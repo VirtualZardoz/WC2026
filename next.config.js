@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: '/tmp/.next',
+  distDir: 'tmp/prod_build',
   reactStrictMode: true,
   devIndicators: {
     buildActivity: true,
@@ -49,9 +49,9 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js requires these
-              "style-src 'self' 'unsafe-inline'", // For inline styles
-              "img-src 'self' data: blob:",
-              "font-src 'self'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Google Fonts styles
+              "img-src 'self' data: blob: https://flagcdn.com https://images.unsplash.com", // Flags + hero images
+              "font-src 'self' https://fonts.gstatic.com", // Google Fonts
               "connect-src 'self'",
               "frame-ancestors 'self'",
               "form-action 'self'",

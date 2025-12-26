@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -8,19 +9,24 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49',
-        },
+        // Primary color from Stitch designs
+        primary: '#0995ec',
+        // Background colors
+        'bg-light': '#f5f7f8',
+        'bg-dark': '#101b22',
+        // Surface colors (cards, modals)
+        'surface-light': '#ffffff',
+        'surface-dark': '#18242b',
+        'surface-dark-alt': '#1a2630',
+        // Text colors
+        'text-main-light': '#111518',
+        'text-main-dark': '#e0e6eb',
+        'text-muted-light': '#5f7b8c',
+        'text-muted-dark': '#9ca3af',
+        // Border colors
+        'border-light': '#dbe2e6',
+        'border-dark': '#2a3b47',
+        // Keep accent for backwards compatibility
         accent: {
           50: '#fdf4ff',
           100: '#fae8ff',
@@ -34,6 +40,14 @@ module.exports = {
           900: '#701a75',
           950: '#4a044e',
         },
+      },
+      fontFamily: {
+        display: ['Inter', 'sans-serif'],
+      },
+      borderRadius: {
+        DEFAULT: '0.25rem',
+        lg: '0.5rem',
+        xl: '0.75rem',
       },
     },
   },

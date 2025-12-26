@@ -2,29 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Stitch Design System - CSS Variables */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 245, 245, 245;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 17, 21, 24;
+  --background-rgb: 245, 247, 248;
+  --surface-rgb: 255, 255, 255;
+  --text-muted-rgb: 95, 123, 140;
+  --border-rgb: 219, 226, 230;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 15, 23, 42;
-    --background-end-rgb: 30, 41, 59;
-  }
+.dark {
+  --foreground-rgb: 224, 230, 235;
+  --background-rgb: 16, 27, 34;
+  --surface-rgb: 24, 36, 43;
+  --text-muted-rgb: 156, 163, 175;
+  --border-rgb: 42, 59, 71;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: rgb(var(--background-rgb));
   min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Material Symbols Configuration */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
 /* Custom scrollbar */
@@ -46,6 +50,18 @@ body {
   background: rgba(0, 0, 0, 0.5);
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
 /* Input number arrows */
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
@@ -59,55 +75,58 @@ input[type='number'] {
 
 /* Focus styles */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary;
 }
 
-/* Card styles */
+/* Card styles - Stitch design */
 .card {
-  @apply bg-white dark:bg-slate-800 rounded-lg shadow-md p-6;
+  @apply bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6;
 }
 
-/* Button styles */
+/* Button styles - Stitch design */
 .btn {
-  @apply px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
 }
 
 .btn-primary {
-  @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  @apply btn bg-primary text-white hover:bg-primary/90 focus:ring-primary/50;
 }
 
 .btn-secondary {
-  @apply btn bg-slate-200 text-slate-800 hover:bg-slate-300 focus:ring-slate-400 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600;
+  @apply btn bg-primary/10 text-primary hover:bg-primary/20 focus:ring-primary/30;
 }
 
 .btn-danger {
   @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
 }
 
-/* Form input styles */
+/* Form input styles - Stitch design */
 .input {
-  @apply px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white;
+  @apply px-4 py-3 border border-border-light dark:border-border-dark rounded-lg shadow-sm
+         focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
+         bg-surface-light dark:bg-surface-dark text-text-main-light dark:text-text-main-dark
+         placeholder:text-text-muted-light dark:placeholder:text-text-muted-dark;
 }
 
 .input-full {
   @apply input w-full;
 }
 
-/* Table styles */
+/* Table styles - Stitch design */
 .table {
   @apply w-full text-sm text-left;
 }
 
 .table th {
-  @apply px-4 py-3 bg-slate-100 dark:bg-slate-700 font-semibold text-slate-700 dark:text-slate-200;
+  @apply px-4 py-3 bg-bg-light dark:bg-surface-dark font-semibold text-text-main-light dark:text-text-main-dark;
 }
 
 .table td {
-  @apply px-4 py-3 border-b border-slate-200 dark:border-slate-700;
+  @apply px-4 py-3 border-b border-border-light dark:border-border-dark;
 }
 
 .table tr:hover td {
-  @apply bg-slate-50 dark:bg-slate-800;
+  @apply bg-bg-light dark:bg-surface-dark-alt;
 }
 
 /* Badge styles */
@@ -131,9 +150,9 @@ input[type='number'] {
   @apply badge bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200;
 }
 
-/* Match card styles */
+/* Match card styles - Stitch design */
 .match-card {
-  @apply card hover:shadow-lg transition-shadow duration-200;
+  @apply card hover:shadow-md hover:border-primary/30 transition-all duration-200;
 }
 
 .match-card.bonus {
@@ -142,21 +161,21 @@ input[type='number'] {
 
 /* Progress bar */
 .progress-bar {
-  @apply h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden;
+  @apply h-2 bg-border-light dark:bg-border-dark rounded-full overflow-hidden;
 }
 
 .progress-bar-fill {
-  @apply h-full bg-primary-500 transition-all duration-300;
+  @apply h-full bg-primary transition-all duration-300;
 }
 
 /* Loading spinner */
 .spinner {
-  @apply animate-spin h-5 w-5 border-2 border-primary-500 border-t-transparent rounded-full;
+  @apply animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full;
 }
 
 /* Alert styles */
 .alert {
-  @apply p-4 rounded-md mb-4;
+  @apply p-4 rounded-lg mb-4;
 }
 
 .alert-success {
@@ -173,4 +192,37 @@ input[type='number'] {
 
 .alert-info {
   @apply alert bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200;
+}
+
+/* Stitch-specific utility classes */
+
+/* Stat card for dashboards */
+.stat-card {
+  @apply bg-surface-light dark:bg-surface-dark rounded-xl p-6
+         border border-border-light dark:border-border-dark shadow-sm
+         hover:shadow-md transition-shadow;
+}
+
+/* Navigation sidebar link */
+.nav-link {
+  @apply flex items-center gap-3 px-4 py-3 rounded-lg text-text-muted-light dark:text-text-muted-dark
+         hover:bg-bg-light dark:hover:bg-surface-dark-alt hover:text-text-main-light dark:hover:text-text-main-dark
+         transition-colors;
+}
+
+.nav-link-active {
+  @apply bg-primary/10 text-primary;
+}
+
+/* Segmented control */
+.segment-btn {
+  @apply px-4 py-2 rounded-lg text-sm font-medium transition-all;
+}
+
+.segment-btn-active {
+  @apply bg-surface-light dark:bg-surface-dark text-text-main-light dark:text-text-main-dark shadow-sm;
+}
+
+.segment-btn-inactive {
+  @apply text-text-muted-light dark:text-text-muted-dark hover:text-text-main-light dark:hover:text-text-main-dark;
 }

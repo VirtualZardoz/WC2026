@@ -231,7 +231,7 @@ export default function KnockoutBracket({
           height: index === 0 && totalInRound > 1 ? undefined : (index < totalInRound - 1 ? spacing - CARD_GAP : undefined),
         }}
       >
-        <div className="w-56">
+        <div className="w-64">
           <MatchCard
             match={match}
             isLocked={isLocked}
@@ -253,7 +253,7 @@ export default function KnockoutBracket({
 
     return (
       <div className="flex flex-col flex-shrink-0">
-        <h3 className="text-center font-bold text-slate-700 dark:text-slate-300 mb-4 sticky top-0 bg-slate-50 dark:bg-slate-900 py-2 z-10">
+        <h3 className="text-center font-black text-xs uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-4 sticky top-0 bg-background-light dark:bg-background-dark py-2 z-10">
           {title}
         </h3>
         <div
@@ -269,7 +269,7 @@ export default function KnockoutBracket({
                   height: idx < matches.length - 1 ? spacing : undefined,
                 }}
               >
-                <div className="w-56">
+                <div className="w-64">
                   <MatchCard
                     match={match}
                     isLocked={isLocked}
@@ -291,25 +291,31 @@ export default function KnockoutBracket({
     <div className="relative">
       {/* Sticky scroll indicator at top */}
       {maxScroll > 0 && (
-        <div className="sticky top-0 z-20 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg mb-4 shadow-sm">
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-500 whitespace-nowrap">◀ Scroll</span>
+        <div className="sticky top-0 z-20 bg-surface-light dark:bg-surface-dark p-3 rounded-xl mb-4 shadow-sm border border-slate-200 dark:border-slate-800">
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap flex items-center gap-1">
+              <span className="material-symbols-outlined text-sm">chevron_left</span>
+              Scroll
+            </span>
             <input
               type="range"
               min="0"
               max={maxScroll}
               value={scrollLeft}
               onChange={handleScrollbarChange}
-              className="w-full h-2 bg-slate-300 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer"
+              className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-primary"
             />
-            <span className="text-xs text-slate-500 whitespace-nowrap">Scroll ▶</span>
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap flex items-center gap-1">
+              Scroll
+              <span className="material-symbols-outlined text-sm">chevron_right</span>
+            </span>
           </div>
-          <div className="flex justify-between text-xs text-slate-400 mt-1 px-8">
+          <div className="flex justify-between text-xs font-bold text-slate-400 dark:text-slate-500 mt-2 px-8">
             <span>R32</span>
             <span>R16</span>
             <span>QF</span>
             <span>SF</span>
-            <span>Final</span>
+            <span className="text-primary">Final</span>
           </div>
         </div>
       )}
@@ -317,10 +323,10 @@ export default function KnockoutBracket({
       {/* Bracket container */}
       <div
         ref={scrollContainerRef}
-        className="overflow-x-auto pb-8"
+        className="overflow-x-auto pb-8 bg-slate-50/50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800"
         style={{ scrollbarWidth: 'thin' }}
       >
-        <div className="flex gap-8 min-w-max p-4">
+        <div className="flex gap-8 min-w-max p-6">
           {/* Round of 32 */}
           {renderRound(stages.round32, 'Round of 32', 0)}
 
@@ -347,29 +353,33 @@ export default function KnockoutBracket({
 
           {/* Final & Third Place */}
           <div className="flex flex-col flex-shrink-0">
-            <h3 className="text-center font-bold text-primary-600 mb-4 sticky top-0 bg-slate-50 dark:bg-slate-900 py-2 z-10">
+            <h3 className="text-center font-black text-lg uppercase tracking-wider text-primary mb-4 sticky top-0 bg-background-light dark:bg-background-dark py-2 z-10 flex items-center justify-center gap-2">
+              <span className="material-symbols-outlined text-yellow-500">emoji_events</span>
               Final
             </h3>
             <div style={{ paddingTop: ((CARD_HEIGHT + CARD_GAP) * 8 - CARD_HEIGHT) / 2 }}>
-              <div className="w-56">
+              <div className="w-72">
                 {stages.final.map(match => (
-                  <MatchCard
-                    key={match.id}
-                    match={match}
-                    isLocked={isLocked}
-                    onSaved={onSaved}
-                    isKnockout
-                    predictedHomeTeam={predictedTeams[match.id]?.home || null}
-                    predictedAwayTeam={predictedTeams[match.id]?.away || null}
-                  />
+                  <div key={match.id} className="ring-2 ring-primary/30 rounded-xl">
+                    <MatchCard
+                      match={match}
+                      isLocked={isLocked}
+                      onSaved={onSaved}
+                      isKnockout
+                      predictedHomeTeam={predictedTeams[match.id]?.home || null}
+                      predictedAwayTeam={predictedTeams[match.id]?.away || null}
+                    />
+                  </div>
                 ))}
               </div>
 
               {/* Third place below final */}
               <div className="mt-12">
-                <h4 className="text-center font-semibold text-slate-500 mb-2">Third Place</h4>
+                <h4 className="text-center font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+                  Third Place
+                </h4>
                 {stages.third.map(match => (
-                  <div key={match.id} className="w-56">
+                  <div key={match.id} className="w-64">
                     <MatchCard
                       match={match}
                       isLocked={isLocked}

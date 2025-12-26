@@ -255,51 +255,58 @@ export default function AdminMatchesClient({ matches, teams }: AdminMatchesClien
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="mb-8 flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+      <div className="flex flex-wrap justify-between gap-4 mb-8">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
             Enter Match Results
           </h1>
-          <p className="mt-2 text-slate-600 dark:text-slate-400">
+          <p className="text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <span className="material-symbols-outlined text-lg">pending_actions</span>
             {pendingCount} matches pending results
           </p>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={toggleBulkMode}
-            className={`btn-${bulkMode ? 'secondary' : 'primary'}`}
+            className={`px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center gap-2 ${
+              bulkMode
+                ? 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+                : 'bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20'
+            }`}
           >
-            {bulkMode ? 'Cancel Bulk Entry' : 'Bulk Entry by Day'}
+            <span className="material-symbols-outlined text-lg">{bulkMode ? 'close' : 'playlist_add'}</span>
+            {bulkMode ? 'Cancel Bulk' : 'Bulk Entry'}
           </button>
           {bulkMode && (
             <button
               onClick={saveBulkResults}
               disabled={saving}
-              className="btn-primary"
+              className="px-4 py-2.5 rounded-lg font-bold text-sm bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/20 transition-all flex items-center gap-2 disabled:opacity-50"
             >
-              {saving ? 'Saving...' : 'Save All Results'}
+              <span className="material-symbols-outlined text-lg">save</span>
+              {saving ? 'Saving...' : 'Save All'}
             </button>
           )}
         </div>
       </div>
 
       {/* Filters */}
-      <div className="card mb-8">
-        <div className="flex flex-wrap gap-4">
+      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-surface-dark p-4 mb-6 shadow-sm">
+        <div className="flex flex-wrap items-end gap-6">
           {/* Status filter */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
               Status
             </label>
-            <div className="flex space-x-2">
+            <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg inline-flex">
               {(['all', 'pending', 'completed'] as const).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`px-3 py-1 text-sm rounded-md ${
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                     filter === f
-                      ? 'bg-primary-500 text-white'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                      ? 'bg-primary text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -310,13 +317,13 @@ export default function AdminMatchesClient({ matches, teams }: AdminMatchesClien
 
           {/* Stage filter */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
               Stage
             </label>
             <select
               value={stageFilter}
               onChange={(e) => setStageFilter(e.target.value)}
-              className="input w-full py-1"
+              className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary focus:border-primary"
             >
               <option value="all">All Stages</option>
               {Object.entries(stageNames).map(([key, name]) => (
@@ -326,61 +333,81 @@ export default function AdminMatchesClient({ matches, teams }: AdminMatchesClien
               ))}
             </select>
           </div>
+
+          {/* Stats summary */}
+          <div className="ml-auto flex items-center gap-4 text-sm">
+            <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+              <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+              Pending: {pendingCount}
+            </span>
+            <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+              <span className="w-2 h-2 rounded-full bg-green-500"></span>
+              Completed: {matches.length - pendingCount}
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Matches List */}
       {filteredMatches.length === 0 ? (
-        <div className="card text-center py-12">
-          <p className="text-slate-500">No matches found</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-surface-dark p-12 text-center">
+          <span className="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-2">search_off</span>
+          <p className="text-slate-500 dark:text-slate-400">No matches found</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {filteredMatches.map((match) => (
             <div
               key={match.id}
-              className={`card ${match.isBonusMatch ? 'ring-2 ring-yellow-400' : ''}`}
+              className={`rounded-xl border bg-surface-light dark:bg-surface-dark p-4 hover:shadow-md transition-shadow ${
+                match.isBonusMatch
+                  ? 'border-yellow-300 dark:border-yellow-700 ring-1 ring-yellow-400/30'
+                  : 'border-slate-200 dark:border-slate-800'
+              }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 {/* Match info */}
                 <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-sm text-slate-500">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
                       #{match.matchNumber}
                     </span>
-                    <span className="badge badge-info text-xs">
+                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                       {stageNames[match.stage]}
                     </span>
                     {match.group && (
-                      <span className="badge bg-slate-200 dark:bg-slate-700 text-xs">
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                         Group {match.group}
                       </span>
                     )}
                     {match.isBonusMatch && (
-                      <span className="badge badge-warning text-xs">⭐ Bonus</span>
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">star</span>
+                        Bonus
+                      </span>
                     )}
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <span className="font-medium text-slate-900 dark:text-white">
+                  <div className="flex items-center gap-3">
+                    <span className="font-bold text-slate-900 dark:text-white">
                       {match.homeTeam?.flagEmoji}{' '}
                       {match.homeTeam?.name ?? match.homePlaceholder}
                       {!match.homeTeamId && match.stage !== 'group' && (
                         <button
                           onClick={() => setOverridingMatch({ id: match.id, slot: 'home' })}
-                          className="ml-2 text-[10px] text-primary-600 hover:underline"
+                          className="ml-2 text-[10px] text-primary hover:underline font-medium"
                         >
                           Override
                         </button>
                       )}
                     </span>
-                    <span className="text-slate-400">vs</span>
-                    <span className="font-medium text-slate-900 dark:text-white">
+                    <span className="text-slate-300 dark:text-slate-600 font-bold">vs</span>
+                    <span className="font-bold text-slate-900 dark:text-white">
                       {match.awayTeam?.name ?? match.awayPlaceholder}{' '}
                       {match.awayTeam?.flagEmoji}
                       {!match.awayTeamId && match.stage !== 'group' && (
                         <button
                           onClick={() => setOverridingMatch({ id: match.id, slot: 'away' })}
-                          className="ml-2 text-[10px] text-primary-600 hover:underline"
+                          className="ml-2 text-[10px] text-primary hover:underline font-medium"
                         >
                           Override
                         </button>
@@ -393,46 +420,46 @@ export default function AdminMatchesClient({ matches, teams }: AdminMatchesClien
                 {/* Result display or edit */}
                 {bulkMode ? (
                   <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                       <input
                         type="number"
                         min="0"
                         max="20"
                         value={bulkResults[match.id]?.home ?? ''}
                         onChange={(e) => handleBulkChange(match.id, 'home', e.target.value)}
-                        className="w-16 input text-center"
-                        placeholder="0"
+                        className="w-14 h-10 text-center text-lg font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                        placeholder="-"
                       />
-                      <span className="text-slate-400">-</span>
+                      <span className="text-slate-300 dark:text-slate-600 font-bold">-</span>
                       <input
                         type="number"
                         min="0"
                         max="20"
                         value={bulkResults[match.id]?.away ?? ''}
                         onChange={(e) => handleBulkChange(match.id, 'away', e.target.value)}
-                        className="w-16 input text-center"
-                        placeholder="0"
+                        className="w-14 h-10 text-center text-lg font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                        placeholder="-"
                       />
                     </div>
                     {match.stage !== 'group' && bulkResults[match.id]?.home !== '' && bulkResults[match.id]?.away !== '' && parseInt(bulkResults[match.id]?.home) === parseInt(bulkResults[match.id]?.away) && (
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-slate-500">Winner:</span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">Winner:</span>
                         <button
                           onClick={() => handleBulkWinnerChange(match.id, match.homeTeamId)}
-                          className={`px-2 py-1 text-xs rounded ${
+                          className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
                             bulkResults[match.id]?.winnerId === match.homeTeamId
-                              ? 'bg-primary-500 text-white'
-                              : 'bg-slate-200 dark:bg-slate-700'
+                              ? 'bg-primary text-white'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                           }`}
                         >
                           {match.homeTeam?.name ?? 'Home'}
                         </button>
                         <button
                           onClick={() => handleBulkWinnerChange(match.id, match.awayTeamId)}
-                          className={`px-2 py-1 text-xs rounded ${
+                          className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
                             bulkResults[match.id]?.winnerId === match.awayTeamId
-                              ? 'bg-primary-500 text-white'
-                              : 'bg-slate-200 dark:bg-slate-700'
+                              ? 'bg-primary text-white'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                           }`}
                         >
                           {match.awayTeam?.name ?? 'Away'}
@@ -442,55 +469,59 @@ export default function AdminMatchesClient({ matches, teams }: AdminMatchesClien
                   </div>
                 ) : editingMatch === match.id ? (
                   <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                       <input
                         type="number"
                         min="0"
                         max="20"
                         value={homeScore}
                         onChange={(e) => setHomeScore(e.target.value)}
-                        className="w-16 input text-center"
-                        placeholder="0"
+                        className="w-14 h-10 text-center text-lg font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                        placeholder="-"
                       />
-                      <span className="text-slate-400">-</span>
+                      <span className="text-slate-300 dark:text-slate-600 font-bold">-</span>
                       <input
                         type="number"
                         min="0"
                         max="20"
                         value={awayScore}
                         onChange={(e) => setAwayScore(e.target.value)}
-                        className="w-16 input text-center"
-                        placeholder="0"
+                        className="w-14 h-10 text-center text-lg font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                        placeholder="-"
                       />
                       <button
                         onClick={() => confirmSave(match)}
-                        className="btn-primary text-sm"
+                        className="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium transition-all flex items-center gap-1"
                       >
+                        <span className="material-symbols-outlined text-base">check</span>
                         Save
                       </button>
-                      <button onClick={cancelEditing} className="btn-secondary text-sm">
+                      <button
+                        onClick={cancelEditing}
+                        className="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-medium transition-all"
+                      >
                         Cancel
                       </button>
                     </div>
                     {match.stage !== 'group' && isDraw && (
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-slate-500">Winner:</span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">Winner:</span>
                         <button
                           onClick={() => setWinnerId(match.homeTeamId)}
-                          className={`px-2 py-1 text-xs rounded ${
+                          className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
                             winnerId === match.homeTeamId
-                              ? 'bg-primary-500 text-white'
-                              : 'bg-slate-200 dark:bg-slate-700'
+                              ? 'bg-primary text-white'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                           }`}
                         >
                           {match.homeTeam?.name ?? 'Home'}
                         </button>
                         <button
                           onClick={() => setWinnerId(match.awayTeamId)}
-                          className={`px-2 py-1 text-xs rounded ${
+                          className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
                             winnerId === match.awayTeamId
-                              ? 'bg-primary-500 text-white'
-                              : 'bg-slate-200 dark:bg-slate-700'
+                              ? 'bg-primary text-white'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                           }`}
                         >
                           {match.awayTeam?.name ?? 'Away'}
@@ -499,24 +530,27 @@ export default function AdminMatchesClient({ matches, teams }: AdminMatchesClien
                     )}
                   </div>
                 ) : match.realScoreHome !== null && match.realScoreAway !== null ? (
-                  <div className="flex items-center space-x-4">
-                    <div className="px-4 py-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                      <span className="text-xl font-bold text-green-800 dark:text-green-200">
+                  <div className="flex items-center gap-3">
+                    <div className="px-4 py-2 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg flex items-center gap-2">
+                      <span className="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+                      <span className="text-xl font-black text-green-700 dark:text-green-300">
                         {match.realScoreHome} - {match.realScoreAway}
                       </span>
                     </div>
                     <button
                       onClick={() => startEditing(match)}
-                      className="btn-secondary text-sm"
+                      className="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-medium transition-all flex items-center gap-1"
                     >
+                      <span className="material-symbols-outlined text-base">edit</span>
                       Edit
                     </button>
                   </div>
                 ) : (
                   <button
                     onClick={() => startEditing(match)}
-                    className="btn-primary text-sm"
+                    className="px-4 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-sm font-medium shadow-lg shadow-primary/20 transition-all flex items-center gap-2"
                   >
+                    <span className="material-symbols-outlined text-base">edit_note</span>
                     Enter Result
                   </button>
                 )}
@@ -528,31 +562,39 @@ export default function AdminMatchesClient({ matches, teams }: AdminMatchesClien
 
       {/* Override Modal */}
       {overridingMatch && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 max-w-md w-full max-h-[80vh] flex flex-col">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
-              Override Team ({overridingMatch.slot})
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 max-w-md w-full max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-black text-slate-900 dark:text-white">
+                Override Team ({overridingMatch.slot})
+              </h3>
+              <button
+                onClick={() => setOverridingMatch(null)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">
               Select a team to manually place in this knockout slot.
             </p>
-            <div className="flex-1 overflow-y-auto space-y-2 mb-6">
+            <div className="flex-1 overflow-y-auto space-y-1 mb-4 max-h-[50vh]">
               {teams.map((team) => (
                 <button
                   key={team.id}
                   onClick={() => handleOverride(team.id)}
                   disabled={saving}
-                  className="w-full text-left p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
+                  className="w-full text-left p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 transition-colors disabled:opacity-50"
                 >
-                  <span>{team.flagEmoji}</span>
-                  <span className="flex-1">{team.name}</span>
-                  <span className="text-xs text-slate-400">{team.code}</span>
+                  <span className="text-xl">{team.flagEmoji}</span>
+                  <span className="flex-1 font-medium text-slate-900 dark:text-white">{team.name}</span>
+                  <span className="text-xs text-slate-400 font-mono">{team.code}</span>
                 </button>
               ))}
             </div>
             <button
               onClick={() => setOverridingMatch(null)}
-              className="btn-secondary w-full"
+              className="w-full px-4 py-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
               disabled={saving}
             >
               Cancel
@@ -562,45 +604,57 @@ export default function AdminMatchesClient({ matches, teams }: AdminMatchesClien
       )}
 
       {/* Confirmation Modal */}
-
       {confirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 max-w-md w-full">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
-              Confirm Result
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-2">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 max-w-md w-full">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
+                <span className="material-symbols-outlined">warning</span>
+              </div>
+              <h3 className="text-lg font-black text-slate-900 dark:text-white">
+                Confirm Result
+              </h3>
+            </div>
+            <p className="text-slate-500 dark:text-slate-400 mb-3">
               Are you sure you want to save this result?
             </p>
-            <p className="text-lg font-medium text-slate-900 dark:text-white mb-4">
-              {confirmModal.matchName}:{' '}
-              <span className="text-primary-600">
+            <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 mb-4">
+              <p className="text-lg font-bold text-slate-900 dark:text-white">
+                {confirmModal.matchName}
+              </p>
+              <p className="text-2xl font-black text-primary mt-1">
                 {confirmModal.home} - {confirmModal.away}
-              </span>
-            </p>
-            <p className="text-sm text-amber-600 mb-6">
-              This will recalculate points for all predictions on this match.
-            </p>
-            <div className="flex space-x-3">
+              </p>
+            </div>
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-6">
+              <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-lg">info</span>
+              <p className="text-sm text-amber-700 dark:text-amber-300">
+                This will recalculate points for all predictions on this match.
+              </p>
+            </div>
+            <div className="flex gap-3">
               <button
                 onClick={() => setConfirmModal(null)}
-                className="btn-secondary flex-1"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                 disabled={saving}
               >
                 Cancel
               </button>
               <button
                 onClick={saveResult}
-                className="btn-primary flex-1 flex items-center justify-center"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2"
                 disabled={saving}
               >
                 {saving ? (
                   <>
-                    <span className="spinner mr-2"></span>
+                    <span className="material-symbols-outlined animate-spin text-base">progress_activity</span>
                     Saving...
                   </>
                 ) : (
-                  'Confirm'
+                  <>
+                    <span className="material-symbols-outlined text-base">check</span>
+                    Confirm
+                  </>
                 )}
               </button>
             </div>
