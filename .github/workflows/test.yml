@@ -33,7 +33,7 @@ jobs:
         run: npm run lint
 
       - name: Run unit tests
-        run: npm run test -- --exclude 'tests/security/security-headers.test.ts' --exclude 'tests/features/signup-toggle.test.ts'
+        run: npm run test -- --exclude 'tests/integration/**' --exclude 'tests/security/security-headers.test.ts'
 
       - name: Build
         run: npm run build
