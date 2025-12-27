@@ -54,12 +54,12 @@ export async function POST(request: NextRequest) {
 
     if (
       predictedHome < 0 ||
-      predictedHome > 20 ||
+      predictedHome > 99 ||
       predictedAway < 0 ||
-      predictedAway > 20
+      predictedAway > 99
     ) {
       return NextResponse.json(
-        { error: 'Scores must be between 0 and 20' },
+        { error: 'Scores must be between 0 and 99' },
         { status: 400 }
       );
     }

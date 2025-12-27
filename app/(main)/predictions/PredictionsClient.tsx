@@ -326,13 +326,15 @@ export default function PredictionsClient({
     const sortedMatches = [...knockoutMatches].sort((a, b) => a.matchNumber - b.matchNumber);
 
     for (const match of sortedMatches) {
-      let homeTeam = match.homeTeam;
-      let awayTeam = match.awayTeam;
+      // For predictions: ALWAYS resolve from placeholders using user's predicted qualifiers
+      // Don't use match.homeTeam/awayTeam which are actual teams from admin cascade
+      let homeTeam: Team | null = null;
+      let awayTeam: Team | null = null;
 
-      if (!homeTeam && match.homePlaceholder) {
+      if (match.homePlaceholder) {
         homeTeam = resolveTeam(match.homePlaceholder, match);
       }
-      if (!awayTeam && match.awayPlaceholder) {
+      if (match.awayPlaceholder) {
         awayTeam = resolveTeam(match.awayPlaceholder, match);
       }
 

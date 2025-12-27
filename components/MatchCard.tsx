@@ -77,9 +77,10 @@ export default function MatchCard({
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
-  // Use predicted team if no actual team is assigned
-  const effectiveHomeTeam = match.homeTeam || predictedHomeTeam || null;
-  const effectiveAwayTeam = match.awayTeam || predictedAwayTeam || null;
+  // For predictions page: predictedTeam props are passed (Team or null), use them exclusively
+  // For results page: predictedTeam props are undefined, fall back to match.homeTeam/awayTeam
+  const effectiveHomeTeam = predictedHomeTeam !== undefined ? predictedHomeTeam : match.homeTeam;
+  const effectiveAwayTeam = predictedAwayTeam !== undefined ? predictedAwayTeam : match.awayTeam;
 
   const homeName = effectiveHomeTeam?.name ?? match.homePlaceholder ?? 'TBD';
   const awayName = effectiveAwayTeam?.name ?? match.awayPlaceholder ?? 'TBD';
@@ -102,16 +103,25 @@ export default function MatchCard({
   const handleSave = async () => {
     if (isLocked) return;
 
-    const home = parseInt(homeScore);
-    const away = parseInt(awayScore);
+    // Trim and validate input
+    const homeVal = homeScore.trim();
+    const awayVal = awayScore.trim();
 
-    if (isNaN(home) || isNaN(away)) {
-      setError('Please enter valid scores');
+    if (homeVal === '' || awayVal === '') {
+      setError('Please enter both scores');
       return;
     }
 
-    if (home < 0 || home > 20 || away < 0 || away > 20) {
-      setError('Scores must be between 0 and 20');
+    const home = parseInt(homeVal, 10);
+    const away = parseInt(awayVal, 10);
+
+    if (isNaN(home) || isNaN(away)) {
+      setError('Please enter valid numbers');
+      return;
+    }
+
+    if (home < 0 || home > 99 || away < 0 || away > 99) {
+      setError(`Invalid scores (${home}-${away}). Must be 0-99`);
       return;
     }
 
@@ -248,7 +258,7 @@ export default function MatchCard({
           <input
             type="number"
             min="0"
-            max="20"
+            max="99"
             value={homeScore}
             onChange={(e) => setHomeScore(e.target.value)}
             disabled={isLocked}
@@ -263,7 +273,7 @@ export default function MatchCard({
           <input
             type="number"
             min="0"
-            max="20"
+            max="99"
             value={awayScore}
             onChange={(e) => setAwayScore(e.target.value)}
             disabled={isLocked}
