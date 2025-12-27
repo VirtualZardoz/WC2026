@@ -25,6 +25,9 @@ services:
           cpus: '0.5'
           memory: 512M
 
+    # Run as host user to fix permission issues
+    user: "${UID:-1000}:${GID:-1000}"
+
     # Volume mount for project directory
     volumes:
       - ./:/project:rw

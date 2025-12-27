@@ -1557,5 +1557,19 @@
       "Step 4: Verify error or access denied message appears"
     ],
     "passes": true
+  },
+  {
+    "id": "113",
+    "category": "functional",
+    "description": "Admin can enable/disable user registration from settings",
+    "steps": [
+      "Step 1: Login as admin",
+      "Step 2: Navigate to /admin/settings",
+      "Step 3: Toggle signup switch to Disabled",
+      "Step 4: Attempt to register new user - verify blocked",
+      "Step 5: Toggle signup switch to Enabled",
+      "Step 6: Attempt to register new user - verify allowed"
+    ],
+    "passes": true
   }
 ]

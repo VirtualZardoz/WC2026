@@ -1,30 +1,29 @@
 {
-  "current_task": null,
+  "current_task": {
+    "test_id": "113",
+    "phase": "implementation",
+    "description": "Admin can enable/disable user registration",
+    "approach": "Add SystemSetting model, feature flag lib, API route, and UI toggle",
+    "target_files": [
+      "prisma/schema.prisma",
+      "lib/feature-flags.ts",
+      "app/api/admin/settings/signup/route.ts",
+      "app/api/register/route.ts",
+      "app/(main)/admin/settings/page.tsx"
+    ],
+    "completed_steps": [],
+    "remaining_steps": [
+      "Update Prisma schema and migrate",
+      "Create lib/feature-flags.ts",
+      "Create API endpoints",
+      "Update register API",
+      "Update Admin Settings UI",
+      "Update Register UI"
+    ],
+    "verify_attempts": 0,
+    "started_at": "2025-12-25T18:30:00Z",
+    "last_checkpoint": "2025-12-25T18:30:00Z"
+  },
   "task_queue": [],
-  "completed_tasks": [
-    {
-      "test_id": "109",
-      "phase": "completed",
-      "description": "Admin can create a new user",
-      "completed_at": "2024-05-22T10:15:00Z"
-    },
-    {
-      "test_id": "110",
-      "phase": "completed",
-      "description": "Admin can delete another user",
-      "completed_at": "2024-05-22T10:20:00Z"
-    },
-    {
-      "test_id": "111",
-      "phase": "completed",
-      "description": "Admin cannot delete themselves",
-      "completed_at": "2024-05-22T10:20:00Z"
-    },
-    {
-      "test_id": "112",
-      "phase": "completed",
-      "description": "Non-admin users cannot access admin users page",
-      "completed_at": "2024-05-22T10:25:00Z"
-    }
-  ]
+  "completed_tasks": []
 }
