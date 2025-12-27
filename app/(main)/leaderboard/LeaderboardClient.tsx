@@ -25,7 +25,7 @@ interface LeaderboardClientProps {
 }
 
 type SortField = 'points' | 'exactScores' | 'name' | 'bonus';
-type PhaseFilter = 'all' | 'group' | 'knockout';
+type PhaseFilter = 'all' | 'group' | 'knockout' | 'bonus';
 
 export default function LeaderboardClient({
   leaderboard,
@@ -51,9 +51,25 @@ export default function LeaderboardClient({
   const getPoints = (entry: LeaderboardEntry) => {
     if (phase === 'group') return entry.groupPoints;
     if (phase === 'knockout') return entry.knockoutPoints;
+    if (phase === 'bonus') return entry.bonusMatchPoints;
     return entry.totalPoints;
   };
 
+  // Calculate ranks FIRST based on points (before any user sorting)
+  const pointsSortedLeaderboard = [...leaderboard].sort((a, b) => getPoints(b) - getPoints(a));
+  let currentRank = 0;
+  let currentVal = -1;
+  const rankMap = new Map<string, number>();
+  pointsSortedLeaderboard.forEach((entry, index) => {
+    const val = getPoints(entry);
+    if (val !== currentVal) {
+      currentRank = index + 1;
+      currentVal = val;
+    }
+    rankMap.set(entry.id, currentRank);
+  });
+
+  // Now apply user's sort preference for display
   const sortedLeaderboard = [...leaderboard].sort((a, b) => {
     let comparison = 0;
     switch (sortField) {
@@ -73,17 +89,11 @@ export default function LeaderboardClient({
     return sortAsc ? -comparison : comparison;
   });
 
-  // Calculate ranks
-  let currentRank = 0;
-  let currentVal = -1;
-  const rankedLeaderboard = sortedLeaderboard.map((entry, index) => {
-    const val = getPoints(entry);
-    if (val !== currentVal) {
-      currentRank = index + 1;
-      currentVal = val;
-    }
-    return { ...entry, rank: currentRank };
-  });
+  // Add ranks from the pre-calculated map
+  const rankedLeaderboard = sortedLeaderboard.map((entry) => ({
+    ...entry,
+    rank: rankMap.get(entry.id) || 0,
+  }));
 
   // Filter by search
   const filteredLeaderboard = rankedLeaderboard.filter(entry =>
@@ -288,7 +298,7 @@ export default function LeaderboardClient({
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
           {/* Phase Toggle */}
           <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg w-full md:w-auto">
-            {(['all', 'group', 'knockout'] as const).map((p) => (
+            {(['all', 'group', 'knockout', 'bonus'] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setPhase(p)}
@@ -296,9 +306,10 @@ export default function LeaderboardClient({
                   phase === p
                     ? 'bg-white dark:bg-surface-dark text-slate-900 dark:text-white shadow-sm'
                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
+                } ${p === 'bonus' ? 'flex items-center gap-1' : ''}`}
               >
-                {p === 'all' ? 'Overall' : p === 'group' ? 'Group Stage' : 'Knockout'}
+                {p === 'bonus' && <span className="material-symbols-outlined text-amber-500 text-sm">star</span>}
+                {p === 'all' ? 'Overall' : p === 'group' ? 'Group Stage' : p === 'knockout' ? 'Knockout' : 'Bonus'}
               </button>
             ))}
           </div>
@@ -336,7 +347,7 @@ export default function LeaderboardClient({
                   </th>
                   <SortHeader field="name">Participant</SortHeader>
                   <SortHeader field="points" className="text-right">
-                    {phase === 'all' ? 'Total' : phase === 'group' ? 'Group' : 'Knockout'} Pts
+                    {phase === 'all' ? 'Total' : phase === 'group' ? 'Group' : phase === 'knockout' ? 'Knockout' : 'Bonus'} Pts
                   </SortHeader>
                   <SortHeader field="exactScores" className="text-center hidden sm:table-cell">
                     Exact
@@ -363,9 +374,9 @@ export default function LeaderboardClient({
                       {/* Rank */}
                       <td className="py-4 px-6 text-center">
                         {entry.rank <= 3 ? (
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mx-auto ${getRankBadgeStyle(entry.rank)}`}>
+                          <div className={`relative w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mx-auto ${getRankBadgeStyle(entry.rank)}`}>
                             {entry.rank === 1 && (
-                              <span className="material-symbols-outlined text-yellow-500 text-sm absolute -mt-6 -mr-4">crown</span>
+                              <span className="material-symbols-outlined text-yellow-500 text-sm absolute -top-3 -right-1">crown</span>
                             )}
                             {entry.rank}
                           </div>
