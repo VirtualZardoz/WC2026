@@ -20,47 +20,48 @@ export async function generateMetadata({ params }: UserDetailPageProps): Promise
 }
 
 export default async function UserDetailPage({ params }: UserDetailPageProps) {
-  const user = await prisma.user.findUnique({
-    where: { id: params.id },
-    include: {
-      predictions: {
-        include: {
-          match: {
-            include: {
-              homeTeam: true,
-              awayTeam: true,
+  const [user, bonusMatches] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: params.id },
+      include: {
+        predictions: {
+          include: {
+            match: {
+              include: {
+                homeTeam: true,
+                awayTeam: true,
+              },
+            },
+          },
+          orderBy: {
+            match: {
+              matchNumber: 'asc',
             },
           },
         },
-        orderBy: {
-          match: {
-            matchNumber: 'asc',
-          },
-        },
       },
-    },
-  });
+    }),
+    prisma.match.findMany({
+      where: { isBonusMatch: true },
+      select: { id: true },
+    }),
+  ]);
 
   if (!user) {
     notFound();
   }
 
+  const bonusMatchIds = new Set(bonusMatches.map((m) => m.id));
+
   const totalPoints = user.predictions.reduce((sum, p) => sum + p.pointsEarned, 0);
   const exactScores = user.predictions.filter((p) => p.pointsEarned === 3).length;
   const correctResults = user.predictions.filter((p) => p.pointsEarned === 1 || p.pointsEarned === 2).length;
-  const knockoutBonus = user.predictions.filter((p) => p.match.stage !== 'group' && p.pointsEarned % 2 === 0 && p.pointsEarned > 0 && p.predictedHome !== p.match.realScoreHome).length;
-  // Note: knockout bonus is 1 point. If they got result (1) + bonus (1) = 2. If they got exact (3) + bonus (1) = 4.
-  // Actually the logic in the API was:
-  // exact: 3
-  // result: 1
-  // knockout bonus: +1
-  // So:
-  // Exact + Bonus = 4
-  // Result + Bonus = 2
-  // Only Bonus = 1 (but this only happens if they got result wrong but winner right, which is impossible if they got winner right they must have got result right, unless it's a draw and they picked wrong winner but right draw? No, if it's a draw they get 1 point for result 'draw'. If they also get the qualifier right they get +1. So 2 points.)
-  // Wait, if they predict 1-1 winner home, and it's 2-2 winner home -> result 'draw' (1pt) + bonus (1pt) = 2pts.
-  // If they predict 1-1 winner home, and it's 2-2 winner away -> result 'draw' (1pt) + bonus (0pt) = 1pt.
-  // If they predict 2-1, and it's 3-0 -> result 'home' (1pt) + bonus (1pt) = 2pts.
+
+  // Bonus match stats
+  const bonusPredictions = user.predictions.filter((p) => bonusMatchIds.has(p.matchId));
+  const bonusMatchExact = bonusPredictions.filter((p) => p.pointsEarned >= 3).length;
+  const bonusMatchPoints = bonusPredictions.reduce((sum, p) => sum + p.pointsEarned, 0);
+  const bonusMatchesPlayed = bonusPredictions.filter((p) => p.match.realScoreHome !== null).length;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -88,6 +89,16 @@ export default async function UserDetailPage({ params }: UserDetailPageProps) {
             <span className="text-3xl font-bold text-slate-600">{user.predictions.length}/104</span>
             <span className="text-sm text-slate-500 uppercase tracking-wider">Matches Predicted</span>
           </div>
+          {bonusMatches.length > 0 && (
+            <div className="card px-6 py-4 flex flex-col items-center bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border-amber-200 dark:border-amber-800">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-amber-500">star</span>
+                <span className="text-3xl font-bold text-amber-600">{bonusMatchExact}/{bonusMatchesPlayed}</span>
+              </div>
+              <span className="text-sm text-amber-700 dark:text-amber-400 uppercase tracking-wider">Bonus Exact</span>
+              <span className="text-xs text-amber-600 dark:text-amber-500 mt-1">{bonusMatchPoints} pts</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -103,11 +114,14 @@ export default async function UserDetailPage({ params }: UserDetailPageProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-              {user.predictions.map((p) => (
-                <tr key={p.id}>
+              {user.predictions.map((p) => {
+                const isBonus = bonusMatchIds.has(p.matchId);
+                return (
+                <tr key={p.id} className={isBonus ? 'bg-amber-50/50 dark:bg-amber-900/10' : ''}>
                   <td className="px-4 py-4">
                     <div className="flex flex-col">
-                      <span className="text-xs text-slate-500 mb-1">
+                      <span className="text-xs text-slate-500 mb-1 flex items-center gap-1">
+                        {isBonus && <span className="material-symbols-outlined text-amber-500 text-sm">star</span>}
                         #{p.match.matchNumber} - {p.match.stage.toUpperCase()} {p.match.group ? `Group ${p.match.group}` : ''}
                       </span>
                       <div className="flex items-center space-x-2">
@@ -154,7 +168,8 @@ export default async function UserDetailPage({ params }: UserDetailPageProps) {
                     </span>
                   </td>
                 </tr>
-              ))}
+              );
+              })}
             </tbody>
           </table>
         </div>
