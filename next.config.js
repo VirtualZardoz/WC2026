@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: 'tmp/prod_build',
+  distDir: '.next',
   reactStrictMode: true,
   devIndicators: {
     buildActivity: true,

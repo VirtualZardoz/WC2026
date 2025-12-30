@@ -82,3 +82,12 @@ show-*.js
 
 # Migration scripts (keep if needed for seeding)
 # migrate-real-fixtures.js
+
+# Build output
+.next_build/
+tmp/
+
+# Test files
+test_write.txt
+write_test.txt
+screenshots/
