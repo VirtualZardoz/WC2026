@@ -185,9 +185,9 @@ async function migrate() {
   // Round of 32 venues (spread across multiple cities)
   const r32Venues = ['ATT', 'MET', 'HAR', 'SOF', 'MER', 'NRG', 'LEV', 'LIN', 'ARR', 'LUM', 'GIL', 'AZT', 'BBV', 'AKR', 'BCP', 'BMO'];
 
-  // Round of 32 (32 matches) - June 28-30
-  for (let i = 0; i < 32; i++) {
-    const dayOffset = Math.floor(i / 11); // ~11 matches per day
+  // Round of 32 (16 matches) - June 28-30
+  for (let i = 0; i < 16; i++) {
+    const dayOffset = Math.floor(i / 6); // ~6 matches per day
     const matchDate = new Date('2026-06-28T16:00:00Z');
     matchDate.setDate(matchDate.getDate() + dayOffset);
     matchDate.setHours(16 + (i % 4) * 2); // 16:00, 18:00, 20:00, 22:00
@@ -196,24 +196,24 @@ async function migrate() {
       data: {
         matchNumber: matchNumber++,
         stage: 'round32',
-        homePlaceholder: `Winner ${Math.floor(i/2) + 1}`,
-        awayPlaceholder: `Runner-up ${Math.floor(i/2) + 1}`,
+        homePlaceholder: `1st Group ${String.fromCharCode(65 + i)}`,
+        awayPlaceholder: `2nd Group ${String.fromCharCode(65 + (i + 6) % 12)}`,
         matchDate,
         venue: venues[r32Venues[i % r32Venues.length]],
       }
     });
   }
-  console.log('  ✅ Created 32 Round of 32 matches');
+  console.log('  ✅ Created 16 Round of 32 matches');
 
   // Round of 16 venues (8 main venues)
   const r16Venues = ['ATT', 'MET', 'SOF', 'MER', 'HAR', 'NRG', 'AZT', 'BCP'];
 
-  // Round of 16 (16 matches) - July 1-3
-  for (let i = 0; i < 16; i++) {
-    const dayOffset = Math.floor(i / 6); // ~6 matches per day
+  // Round of 16 (8 matches) - July 1-2
+  for (let i = 0; i < 8; i++) {
+    const dayOffset = Math.floor(i / 4); // 4 matches per day
     const matchDate = new Date('2026-07-01T17:00:00Z');
     matchDate.setDate(matchDate.getDate() + dayOffset);
-    matchDate.setHours(17 + (i % 3) * 3); // 17:00, 20:00, 23:00
+    matchDate.setHours(17 + (i % 2) * 4); // 17:00, 21:00
 
     await prisma.match.create({
       data: {
@@ -226,14 +226,14 @@ async function migrate() {
       }
     });
   }
-  console.log('  ✅ Created 16 Round of 16 matches');
+  console.log('  ✅ Created 8 Round of 16 matches');
 
   // Quarter-finals venues (4 premium venues)
   const qfVenues = ['ATT', 'MET', 'SOF', 'AZT'];
 
-  // Quarter-finals (8 matches) - July 5-6
-  for (let i = 0; i < 8; i++) {
-    const dayOffset = Math.floor(i / 4);
+  // Quarter-finals (4 matches) - July 5-6
+  for (let i = 0; i < 4; i++) {
+    const dayOffset = Math.floor(i / 2);
     const matchDate = new Date('2026-07-05T18:00:00Z');
     matchDate.setDate(matchDate.getDate() + dayOffset);
     matchDate.setHours(18 + (i % 2) * 4); // 18:00, 22:00
@@ -249,15 +249,13 @@ async function migrate() {
       }
     });
   }
-  console.log('  ✅ Created 8 Quarter-final matches');
+  console.log('  ✅ Created 4 Quarter-final matches');
 
-  // Semi-finals (4 matches) - July 9-10
+  // Semi-finals (2 matches) - July 9-10
   const sfVenues = ['ATT', 'MET'];
-  for (let i = 0; i < 4; i++) {
-    const dayOffset = Math.floor(i / 2);
+  for (let i = 0; i < 2; i++) {
     const matchDate = new Date('2026-07-09T20:00:00Z');
-    matchDate.setDate(matchDate.getDate() + dayOffset);
-    matchDate.setHours(20 + (i % 2) * 4); // 20:00, 00:00
+    matchDate.setDate(matchDate.getDate() + i);
 
     await prisma.match.create({
       data: {
@@ -266,11 +264,11 @@ async function migrate() {
         homePlaceholder: `QF Winner ${i*2 + 1}`,
         awayPlaceholder: `QF Winner ${i*2 + 2}`,
         matchDate,
-        venue: venues[sfVenues[i % sfVenues.length]],
+        venue: venues[sfVenues[i]],
       }
     });
   }
-  console.log('  ✅ Created 4 Semi-final matches');
+  console.log('  ✅ Created 2 Semi-final matches');
 
   // Third place playoff - July 18 at Hard Rock Stadium
   await prisma.match.create({

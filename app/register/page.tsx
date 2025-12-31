@@ -3,6 +3,9 @@ import RegisterClient from './RegisterClient';
 import Link from 'next/link';
 import AuthHeader from '@/components/AuthHeader';
 
+// Force dynamic rendering - check registration flag at runtime
+export const dynamic = 'force-dynamic';
+
 export default async function RegisterPage() {
   const enabled = await isRegistrationEnabled();
 

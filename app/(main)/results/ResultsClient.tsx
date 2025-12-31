@@ -191,14 +191,14 @@ export default function ResultsClient({ matches }: ResultsClientProps) {
               </div>
             </div>
             <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-4">
-              <div className="flex-1 bg-background-light dark:bg-background-dark rounded-lg p-3 flex items-center gap-3">
+              <div className="flex-1 bg-bg-light dark:bg-bg-dark rounded-lg p-3 flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary">target</span>
                 <div className="flex flex-col">
                   <span className="text-xs text-slate-500 dark:text-slate-400">Exact Score</span>
                   <span className="font-bold text-sm">{latestMatch.exactCount} Users ({getExactPercent(latestMatch)}%)</span>
                 </div>
               </div>
-              <div className="flex-1 bg-background-light dark:bg-background-dark rounded-lg p-3 flex items-center gap-3">
+              <div className="flex-1 bg-bg-light dark:bg-bg-dark rounded-lg p-3 flex items-center gap-3">
                 <span className="material-symbols-outlined text-green-600">check_circle</span>
                 <div className="flex flex-col">
                   <span className="text-xs text-slate-500 dark:text-slate-400">Correct Result</span>
@@ -300,7 +300,7 @@ export default function ResultsClient({ matches }: ResultsClientProps) {
                         </div>
                       </td>
                       <td className="py-4 px-4 text-center">
-                        <div className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-800 font-black text-lg tracking-widest text-slate-900 dark:text-white">
+                        <div className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-bg-light dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-black text-lg tracking-widest text-slate-900 dark:text-white">
                           {match.realScoreHome} - {match.realScoreAway}
                         </div>
                       </td>

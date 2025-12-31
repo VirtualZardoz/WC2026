@@ -255,7 +255,7 @@ export default function KnockoutBracket({
 
     return (
       <div className="flex flex-col flex-shrink-0">
-        <h3 className="text-center font-black text-xs uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-4 sticky top-0 bg-background-light dark:bg-background-dark py-2 z-10">
+        <h3 className="text-center font-black text-xs uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-4 sticky top-0 bg-bg-light dark:bg-bg-dark py-2 z-10">
           {title}
         </h3>
         <div
@@ -355,7 +355,7 @@ export default function KnockoutBracket({
 
           {/* Final & Third Place */}
           <div className="flex flex-col flex-shrink-0">
-            <h3 className="text-center font-black text-lg uppercase tracking-wider text-primary mb-4 sticky top-0 bg-background-light dark:bg-background-dark py-2 z-10 flex items-center justify-center gap-2">
+            <h3 className="text-center font-black text-lg uppercase tracking-wider text-primary mb-4 sticky top-0 bg-bg-light dark:bg-bg-dark py-2 z-10 flex items-center justify-center gap-2">
               <span className="material-symbols-outlined text-yellow-500">emoji_events</span>
               Final
             </h3>

@@ -1,6 +1,9 @@
 import prisma from '@/lib/prisma';
 import ResultsClient from './ResultsClient';
 
+// Force dynamic rendering - always fetch fresh data from database
+export const dynamic = 'force-dynamic';
+
 async function getCompletedMatches() {
   const matches = await prisma.match.findMany({
     where: {

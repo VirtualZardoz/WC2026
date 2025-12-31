@@ -262,10 +262,10 @@ export default function MatchCard({
             value={homeScore}
             onChange={(e) => setHomeScore(e.target.value)}
             disabled={isLocked}
-            className={`w-12 h-10 sm:w-14 sm:h-12 text-center text-lg sm:text-xl font-black bg-slate-50 dark:bg-background-dark border rounded-lg transition-all text-slate-900 dark:text-white placeholder-slate-300 ${
+            className={`w-12 h-10 sm:w-14 sm:h-12 text-center text-lg sm:text-xl font-black bg-slate-50 dark:bg-slate-800 border rounded-lg transition-all text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-500 ${
               isKnockoutStage
-                ? 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
-                : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary'
+                ? 'border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
+                : 'border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary focus:border-primary'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
             placeholder="-"
           />
@@ -277,10 +277,10 @@ export default function MatchCard({
             value={awayScore}
             onChange={(e) => setAwayScore(e.target.value)}
             disabled={isLocked}
-            className={`w-12 h-10 sm:w-14 sm:h-12 text-center text-lg sm:text-xl font-black bg-slate-50 dark:bg-background-dark border rounded-lg transition-all text-slate-900 dark:text-white placeholder-slate-300 ${
+            className={`w-12 h-10 sm:w-14 sm:h-12 text-center text-lg sm:text-xl font-black bg-slate-50 dark:bg-slate-800 border rounded-lg transition-all text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-500 ${
               isKnockoutStage
-                ? 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
-                : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary focus:border-primary'
+                ? 'border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
+                : 'border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-primary focus:border-primary'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
             placeholder="-"
           />

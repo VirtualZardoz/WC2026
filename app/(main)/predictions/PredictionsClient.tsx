@@ -489,7 +489,7 @@ export default function PredictionsClient({
       )}
 
       {/* Stage Filters - Sticky */}
-      <div className="sticky top-0 z-20 bg-background-light dark:bg-background-dark pt-2 pb-4 mb-2">
+      <div className="sticky top-0 z-20 bg-bg-light dark:bg-bg-dark pt-2 pb-4 mb-2">
         <div className="flex flex-wrap items-center justify-between gap-4">
           {/* Stage Toggle */}
           <div className="bg-surface-light dark:bg-surface-dark p-1 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm inline-flex">
