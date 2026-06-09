@@ -58,13 +58,14 @@ export default async function PredictionsStagePage({ params }: { params: { stage
   const groupMatches = matches.filter((m) => m.stage === 'group');
   const knockoutMatches = matches.filter((m) => m.stage !== 'group');
 
-  // Filter based on stage param
-  const filteredGroupMatches = stage === 'group' ? groupMatches : (stage === 'knockout' ? [] : groupMatches);
+  // Filter knockout matches based on stage param, but ALWAYS include all group matches
+  // so the client can compute predictedQualifiers for the knockout bracket.
   const filteredKnockoutMatches = stage === 'knockout' ? knockoutMatches : (stage === 'group' ? [] : knockoutMatches);
 
-  // Organize group matches by group letter
+  // Organize ALL group matches by group letter regardless of stage param.
+  // The knockout bracket needs group predictions to populate its slots.
   const matchesByGroup: { [key: string]: typeof matches } = {};
-  filteredGroupMatches.forEach((match) => {
+  groupMatches.forEach((match) => {
     const group = match.group || 'Unknown';
     if (!matchesByGroup[group]) {
       matchesByGroup[group] = [];

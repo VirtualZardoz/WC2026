@@ -185,6 +185,54 @@ async function migrate() {
   // Round of 32 venues (spread across multiple cities)
   const r32Venues = ['ATT', 'MET', 'HAR', 'SOF', 'MER', 'NRG', 'LEV', 'LIN', 'ARR', 'LUM', 'GIL', 'AZT', 'BBV', 'AKR', 'BCP', 'BMO'];
 
+  // Round of 32 pairings — official FIFA World Cup 2026 bracket (Matches 73-88)
+  // Format must match the resolver in KnockoutBracket.tsx and lib/predictedStandings.ts:
+  //   "Winner X"     — group winner (single letter, A-L)
+  //   "Runner-up X"  — group runner-up (single letter, A-L)
+  //   "3rd X/Y/Z"    — best third-placed team slot (text after "3rd " is descriptive only;
+  //                    resolver uses positional index into bestThirds[] sorted by pts/GD/GF)
+  //                    MUST be in awayPlaceholder — resolver filters on awayPlaceholder.startsWith('3rd ')
+  //
+  // Verification (acceptance criteria):
+  //   Winners A-L:    each appears exactly once (12 total) ✓
+  //   Runners-up A-L: each appears exactly once (12 total) ✓
+  //   3rd slots:      exactly 8, all in away position      ✓
+  //   Duplicates:     none                                 ✓
+  const r32Pairings = [
+    // M1  (Match 73): Runner-up A vs Runner-up B
+    ['Runner-up A',  'Runner-up B'],
+    // M2  (Match 74): Winner E vs 3rd A/B/C/D/F
+    ['Winner E',     '3rd A/B/C/D/F'],
+    // M3  (Match 75): Winner F vs Runner-up C
+    ['Winner F',     'Runner-up C'],
+    // M4  (Match 76): Winner C vs Runner-up F
+    ['Winner C',     'Runner-up F'],
+    // M5  (Match 77): Winner I vs 3rd C/D/F/G/H
+    ['Winner I',     '3rd C/D/F/G/H'],
+    // M6  (Match 78): Runner-up E vs Runner-up I
+    ['Runner-up E',  'Runner-up I'],
+    // M7  (Match 79): Winner A vs 3rd C/E/F/H/I
+    ['Winner A',     '3rd C/E/F/H/I'],
+    // M8  (Match 80): Winner L vs 3rd E/H/I/J/K
+    ['Winner L',     '3rd E/H/I/J/K'],
+    // M9  (Match 81): Winner D vs 3rd B/E/F/I/J
+    ['Winner D',     '3rd B/E/F/I/J'],
+    // M10 (Match 82): Winner G vs 3rd A/E/H/I/J
+    ['Winner G',     '3rd A/E/H/I/J'],
+    // M11 (Match 83): Runner-up K vs Runner-up L
+    ['Runner-up K',  'Runner-up L'],
+    // M12 (Match 84): Winner H vs Runner-up J
+    ['Winner H',     'Runner-up J'],
+    // M13 (Match 85): Winner B vs 3rd E/F/G/I/J
+    ['Winner B',     '3rd E/F/G/I/J'],
+    // M14 (Match 86): Winner J vs Runner-up H
+    ['Winner J',     'Runner-up H'],
+    // M15 (Match 87): Winner K vs 3rd D/E/I/J/L
+    ['Winner K',     '3rd D/E/I/J/L'],
+    // M16 (Match 88): Runner-up D vs Runner-up G
+    ['Runner-up D',  'Runner-up G'],
+  ];
+
   // Round of 32 (16 matches) - June 28-30
   for (let i = 0; i < 16; i++) {
     const dayOffset = Math.floor(i / 6); // ~6 matches per day
@@ -196,8 +244,8 @@ async function migrate() {
       data: {
         matchNumber: matchNumber++,
         stage: 'round32',
-        homePlaceholder: `1st Group ${String.fromCharCode(65 + i)}`,
-        awayPlaceholder: `2nd Group ${String.fromCharCode(65 + (i + 6) % 12)}`,
+        homePlaceholder: r32Pairings[i][0],
+        awayPlaceholder: r32Pairings[i][1],
         matchDate,
         venue: venues[r32Venues[i % r32Venues.length]],
       }
@@ -207,6 +255,29 @@ async function migrate() {
 
   // Round of 16 venues (8 main venues)
   const r16Venues = ['ATT', 'MET', 'SOF', 'MER', 'HAR', 'NRG', 'AZT', 'BCP'];
+
+  // Round of 16 pairings — official cross-bracket feeders (NOT sequential pairs)
+  // M1 (Match 89) through M8 (Match 96)
+  // Format: "Winner R32 Mn" where n references R32 match ordinal (1-16)
+  // Resolver: stageOffsets['R32']=72, so "Winner R32 M1" → predictedWinners[73]
+  const r16Pairings = [
+    // M1  (Match 89): Winner R32 M2 vs Winner R32 M5
+    ['Winner R32 M2',  'Winner R32 M5'],
+    // M2  (Match 90): Winner R32 M1 vs Winner R32 M3
+    ['Winner R32 M1',  'Winner R32 M3'],
+    // M3  (Match 91): Winner R32 M4 vs Winner R32 M6
+    ['Winner R32 M4',  'Winner R32 M6'],
+    // M4  (Match 92): Winner R32 M7 vs Winner R32 M8
+    ['Winner R32 M7',  'Winner R32 M8'],
+    // M5  (Match 93): Winner R32 M11 vs Winner R32 M12
+    ['Winner R32 M11', 'Winner R32 M12'],
+    // M6  (Match 94): Winner R32 M9 vs Winner R32 M10
+    ['Winner R32 M9',  'Winner R32 M10'],
+    // M7  (Match 95): Winner R32 M14 vs Winner R32 M16
+    ['Winner R32 M14', 'Winner R32 M16'],
+    // M8  (Match 96): Winner R32 M13 vs Winner R32 M15
+    ['Winner R32 M13', 'Winner R32 M15'],
+  ];
 
   // Round of 16 (8 matches) - July 1-2
   for (let i = 0; i < 8; i++) {
@@ -219,8 +290,8 @@ async function migrate() {
       data: {
         matchNumber: matchNumber++,
         stage: 'round16',
-        homePlaceholder: `R32 Winner ${i*2 + 1}`,
-        awayPlaceholder: `R32 Winner ${i*2 + 2}`,
+        homePlaceholder: r16Pairings[i][0],
+        awayPlaceholder: r16Pairings[i][1],
         matchDate,
         venue: venues[r16Venues[i % r16Venues.length]],
       }
@@ -230,6 +301,21 @@ async function migrate() {
 
   // Quarter-finals venues (4 premium venues)
   const qfVenues = ['ATT', 'MET', 'SOF', 'AZT'];
+
+  // Quarter-finals pairings — official cross-bracket feeders
+  // QF M2 and M3 are cross-bracket (not the sequential pairs M3-4 and M5-6)
+  // M1 (Match 97) through M4 (Match 100)
+  // Resolver: stageOffsets['R16']=88, so "Winner R16 M1" → predictedWinners[89]
+  const qfPairings = [
+    // M1  (Match 97): Winner R16 M1 vs Winner R16 M2
+    ['Winner R16 M1',  'Winner R16 M2'],
+    // M2  (Match 98): Winner R16 M5 vs Winner R16 M6
+    ['Winner R16 M5',  'Winner R16 M6'],
+    // M3  (Match 99): Winner R16 M3 vs Winner R16 M4
+    ['Winner R16 M3',  'Winner R16 M4'],
+    // M4  (Match 100): Winner R16 M7 vs Winner R16 M8
+    ['Winner R16 M7',  'Winner R16 M8'],
+  ];
 
   // Quarter-finals (4 matches) - July 5-6
   for (let i = 0; i < 4; i++) {
@@ -242,8 +328,8 @@ async function migrate() {
       data: {
         matchNumber: matchNumber++,
         stage: 'quarter',
-        homePlaceholder: `R16 Winner ${i*2 + 1}`,
-        awayPlaceholder: `R16 Winner ${i*2 + 2}`,
+        homePlaceholder: qfPairings[i][0],
+        awayPlaceholder: qfPairings[i][1],
         matchDate,
         venue: venues[qfVenues[i % qfVenues.length]],
       }
@@ -261,8 +347,8 @@ async function migrate() {
       data: {
         matchNumber: matchNumber++,
         stage: 'semi',
-        homePlaceholder: `QF Winner ${i*2 + 1}`,
-        awayPlaceholder: `QF Winner ${i*2 + 2}`,
+        homePlaceholder: `Winner QF M${i*2 + 1}`,
+        awayPlaceholder: `Winner QF M${i*2 + 2}`,
         matchDate,
         venue: venues[sfVenues[i]],
       }
@@ -275,8 +361,8 @@ async function migrate() {
     data: {
       matchNumber: matchNumber++,
       stage: 'third',
-      homePlaceholder: 'SF Loser 1',
-      awayPlaceholder: 'SF Loser 2',
+      homePlaceholder: 'Loser SF M1',
+      awayPlaceholder: 'Loser SF M2',
       matchDate: new Date('2026-07-18T20:00:00Z'),
       venue: venues['HAR'],
     }
@@ -288,8 +374,8 @@ async function migrate() {
     data: {
       matchNumber: matchNumber++,
       stage: 'final',
-      homePlaceholder: 'SF Winner 1',
-      awayPlaceholder: 'SF Winner 2',
+      homePlaceholder: 'Winner SF M1',
+      awayPlaceholder: 'Winner SF M2',
       matchDate: new Date('2026-07-19T19:00:00Z'), // 3pm ET
       venue: venues['MET'],
     }
