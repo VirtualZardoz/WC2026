@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-06-09T15:56:35.302Z",
+  "phase": "debug",
+  "phase_name": "knockout-bracket-not-populating",
+  "phase_dir": ".planning/debug",
+  "plan": null,
+  "task": null,
+  "total_tasks": null,
+  "status": "paused",
+  "session_type": "gsd:debug",
+  "debug_file": ".planning/debug/knockout-bracket-not-populating.md",
+  "head_commit": "f75ad30",
+  "completed_tasks": [
+    {"id": 1, "name": "Investigate empty/TBD knockout bracket", "status": "done", "detail": "Two root causes found and confirmed with code evidence."},
+    {"id": 2, "name": "Fix bracket-receives-no-group-data bug", "status": "done", "detail": "app/(main)/predictions/[stage]/page.tsx now always builds matchesByGroup from all group matches. User-confirmed correct.", "commit": "f75ad30"},
+    {"id": 3, "name": "Correct R32 placeholder table", "status": "done", "detail": "16-match R32 (m73-88) Winner/Runner-up/3rd format. Verified: 12 winners x1, 12 runners-up x1, 8 thirds (all away), no dupes. User-approved."},
+    {"id": 4, "name": "Correct R16/QF feeders", "status": "done", "detail": "R16 (m89-96) + QF (m97-100) cross-bracket feeders. References each upstream match exactly once. SF/third/Final left untouched (already correct)."},
+    {"id": 5, "name": "Verify resolver ordinal->matchNumber mapping", "status": "done", "detail": "MAKE-OR-BREAK check PASSED. KnockoutBracket.tsx + lib/predictedStandings.ts both key predictedWinners by matchNumber; stageOffsets {R32:72,R16:88,QF:96,SF:100} resolve correctly. R16+ were empty only due to bad feeder data, not a resolver bug."},
+    {"id": 6, "name": "Stage fix scripts", "status": "done", "detail": "migrate-real-fixtures.js (fresh-seed parity, R32+R16+QF) and fix-knockout-bracket.js (production overwrite by matchNumber, count assertions for 16/8/4, does not touch SF/third/Final)."},
+    {"id": 7, "name": "Commit + push verified code", "status": "done", "detail": "Committed 3 files (page.tsx, migrate-real-fixtures.js, fix-knockout-bracket.js) as f75ad30, pushed to origin/main.", "commit": "f75ad30"},
+    {"id": 8, "name": "Local CI-equivalent validation", "status": "done", "detail": "npm ci (fixed corrupt node_modules) -> lint PASS, test 77/77 PASS, build PASS (exit 0). .next produced (73M). Used CI env (DATABASE_URL=file:./test.db + ephemeral test.db via prisma db push); production/dev DB untouched."}
+  ],
+  "remaining_tasks": [
+    {"id": 9, "name": "Apply fix-knockout-bracket.js to PRODUCTION DB", "status": "not_started", "detail": "GATED on explicit user approval. Requires: (1) confirm prod DATABASE_URL/path on Infomaniak (may NOT be prisma/dev.db), (2) back up the live SQLite file first: cp <prod.db> <prod.db>.bak-$(date +%Y%m%d-%H%M%S), (3) run `node fix-knockout-bracket.js` with prod DATABASE_URL, (4) re-read a few rows to confirm writes."},
+    {"id": 10, "name": "Deploy .next build to Infomaniak", "status": "not_started", "detail": "Per DEPLOYMENT-CHEATSHEET.md. User said keep the produced .next build for upload. NOT yet deployed."},
+    {"id": 11, "name": "Re-run GitHub Actions 'Tests' for f75ad30 (optional)", "status": "not_started", "detail": "CI run never executed: hosted runner not acquired (GitHub infra/quota), not a code failure. Re-run from Actions tab once runners recover to get a green check on the commit. Local validation already green."}
+  ],
+  "blockers": [
+    {"description": "GitHub hosted runner not acquired for f75ad30 Tests run", "type": "external", "workaround": "Validated locally instead; all green. Re-run workflow when GitHub runners recover."},
+    {"description": "Production DB path on Infomaniak unconfirmed", "type": "human_action", "workaround": "Confirm via `echo $DATABASE_URL` in prod shell before applying fix-knockout-bracket.js."}
+  ],
+  "human_actions_pending": [
+    {"action": "Approve + apply fix-knockout-bracket.js to production DB", "context": "Existing live R32 data is structurally wrong (positional, zero thirds, phantom groups M-P). Code fix alone does not repair existing rows. Back up first.", "blocking": true},
+    {"action": "Confirm production DATABASE_URL / SQLite path on Infomaniak", "context": "Needed before backup + apply; may differ from local prisma/dev.db.", "blocking": true},
+    {"action": "Upload .next build to Infomaniak per DEPLOYMENT-CHEATSHEET.md", "context": "User intends to deploy the validated build.", "blocking": false}
+  ],
+  "decisions": [
+    {"decision": "Third-place assignment uses ordered best-thirds (top-8 ranked, positional by matchNumber), NOT FIFA Annex C", "rationale": "Matches existing resolver in both display and scoring paths; cluster labels like '3rd A/B/C/D/F' are cosmetic (only the '3rd ' prefix is parsed). Annex C accuracy would require resolver code changes - declared out of scope / optional separate task. User-approved."},
+    {"decision": "Production repair SETs the correct bracket by matchNumber, not regex-reformat", "rationale": "Live data was generated positionally and is structurally invalid (no thirds, phantom groups M-P); a reformat cannot fix it. Superseded fix-r32-placeholders.js and fix-r32-bracket.js."},
+    {"decision": "SF (101-102), third-place (103), Final (104) left untouched", "rationale": "User confirmed already correct."},
+    {"decision": "Committed only 3 files; excluded superseded scripts + debug notes + CLAUDE.md", "rationale": "fix-r32-bracket.js / fix-r32-placeholders.js are superseded; keep history clean."}
+  ],
+  "uncommitted_files": [
+    ".planning/debug/knockout-bracket-not-populating.md (untracked debug notes)",
+    ".planning/codebase/ (untracked)",
+    "CLAUDE.md (untracked)",
+    "fix-r32-bracket.js (untracked, superseded - can delete)",
+    "fix-r32-placeholders.js (untracked, superseded - can delete)",
+    ".next/ (untracked build artifact, 73M - keep for Infomaniak upload)",
+    "prisma/test.db or test.db (untracked ephemeral CI test DB - safe to delete)"
+  ],
+  "next_action": "Decide whether to apply fix-knockout-bracket.js to production: confirm prod DATABASE_URL on Infomaniak, back up the live SQLite file, then run `node fix-knockout-bracket.js` with prod DATABASE_URL. Separately, upload the .next build per DEPLOYMENT-CHEATSHEET.md.",
+  "context_notes": "Code is committed (f75ad30) and pushed to origin/main; local CI-equivalent validation is fully green (lint, 77/77 tests, build). NOTHING has been applied to any production/real DB and nothing deployed - both are explicitly gated on user approval. The resolver itself is correct; only the DB feeder DATA needs the one-time fix-knockout-bracket.js run on prod. Full bracket table (m73-m104) and verification counts are in the debug file."
+}
