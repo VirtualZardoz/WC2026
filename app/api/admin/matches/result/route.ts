@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { advanceKnockoutWinner, updateKnockoutBracket } from '@/lib/tournament';
 import { calculatePredictionPoints } from '@/lib/scoring';
+import { validateResultInput } from '@/lib/result-validation';
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -17,9 +18,9 @@ export async function POST(request: NextRequest) {
     const { matchId, homeScore, awayScore, winnerId } = body;
 
     // Validation
-    if (!matchId || homeScore === undefined || awayScore === undefined) {
+    if (!matchId) {
       return NextResponse.json(
-        { error: 'Match ID and scores are required' },
+        { error: 'Match ID is required' },
         { status: 400 }
       );
     }
@@ -33,6 +34,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Match not found' }, { status: 404 });
     }
 
+    // Validate scores, placeholder teams, winner, and knockout-draw requirements
+    const validationErr = validateResultInput({ homeScore, awayScore, winnerId }, match);
+    if (validationErr) {
+      return NextResponse.json({ error: validationErr.message }, { status: 400 });
+    }
+
     // Determine actual winner for knockout matches.
     // This sets the bracket cascade winner; uses body.winnerId for penalty draws.
     // Logic lives here (not in lib/scoring.ts) because it drives bracket progression.
@@ -43,13 +50,8 @@ export async function POST(request: NextRequest) {
       } else if (awayScore > homeScore) {
         actualWinnerId = match.awayTeamId;
       } else {
-        // Draw in knockout — winner decided by penalties, must be provided
-        if (!winnerId) {
-          return NextResponse.json(
-            { error: 'Winner selection is required for knockout draws' },
-            { status: 400 }
-          );
-        }
+        // Draw in knockout — winner decided by penalties; validateResultInput already
+        // ensured winnerId is present and valid for this branch.
         actualWinnerId = winnerId;
       }
     }
@@ -88,13 +90,6 @@ export async function POST(request: NextRequest) {
     // The highest-value invariant (result + points commit atomically) is preserved.
     // -----------------------------------------------------------------------
 
-    // Run bracket cascade BEFORE the transaction so the match state it reads is current.
-    if (match.stage === 'group') {
-      await updateKnockoutBracket();
-    } else if (actualWinnerId) {
-      await advanceKnockoutWinner(matchId, actualWinnerId);
-    }
-
     // Atomic: match score update + all prediction point writes
     await prisma.$transaction(async (tx) => {
       // Update match result
@@ -114,6 +109,14 @@ export async function POST(request: NextRequest) {
         });
       }
     });
+
+    // Run bracket cascade AFTER the transaction commits so the cascade reads the
+    // just-written result (correct completedGroupMatches count, correct winner).
+    if (match.stage === 'group') {
+      await updateKnockoutBracket();
+    } else if (actualWinnerId) {
+      await advanceKnockoutWinner(matchId, actualWinnerId);
+    }
 
     return NextResponse.json({
       message: 'Result saved and points calculated',
