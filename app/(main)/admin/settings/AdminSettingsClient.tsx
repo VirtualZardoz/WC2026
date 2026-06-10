@@ -65,10 +65,16 @@ function getFlagUrl(code: string): string | null {
   return `https://flagcdn.com/48x36/${iso}.png`;
 }
 
+function toLocalDatetimeInput(iso: string): string {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 export default function AdminSettingsClient({ settings }: Props) {
   const [deadline, setDeadline] = useState(
     settings.tournament?.predictionDeadline
-      ? new Date(settings.tournament.predictionDeadline).toISOString().slice(0, 16)
+      ? toLocalDatetimeInput(settings.tournament.predictionDeadline)
       : ''
   );
   const [signupEnabled, setSignupEnabled] = useState(settings.signupEnabled);

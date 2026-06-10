@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 interface UserDetailPageProps {
   params: {
@@ -20,7 +22,7 @@ export async function generateMetadata({ params }: UserDetailPageProps): Promise
 }
 
 export default async function UserDetailPage({ params }: UserDetailPageProps) {
-  const [user, bonusMatches] = await Promise.all([
+  const [user, bonusMatches, tournament, session] = await Promise.all([
     prisma.user.findUnique({
       where: { id: params.id },
       include: {
@@ -45,6 +47,8 @@ export default async function UserDetailPage({ params }: UserDetailPageProps) {
       where: { isBonusMatch: true },
       select: { id: true },
     }),
+    prisma.tournament.findFirst({ where: { isActive: true } }),
+    getServerSession(authOptions),
   ]);
 
   if (!user) {
@@ -52,6 +56,10 @@ export default async function UserDetailPage({ params }: UserDetailPageProps) {
   }
 
   const bonusMatchIds = new Set(bonusMatches.map((m) => m.id));
+
+  const deadlinePassed = !tournament || new Date() > new Date(tournament.predictionDeadline);
+  const isOwner = session?.user?.id === params.id;
+  const canSeePredictions = deadlinePassed || isOwner;
 
   const totalPoints = user.predictions.reduce((sum, p) => sum + p.pointsEarned, 0);
   const exactScores = user.predictions.filter((p) => p.pointsEarned === 3).length;
@@ -102,78 +110,84 @@ export default async function UserDetailPage({ params }: UserDetailPageProps) {
         </div>
       </div>
 
-      <div className="card overflow-hidden p-0">
-        <div className="overflow-x-auto">
-          <table className="table">
-            <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800">
-                <th className="px-4 py-3 text-left">Match</th>
-                <th className="px-4 py-3 text-center">Prediction</th>
-                <th className="px-4 py-3 text-center">Real Result</th>
-                <th className="px-4 py-3 text-center">Points</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-              {user.predictions.map((p) => {
-                const isBonus = bonusMatchIds.has(p.matchId);
-                return (
-                <tr key={p.id} className={isBonus ? 'bg-amber-50/50 dark:bg-amber-900/10' : ''}>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-col">
-                      <span className="text-xs text-slate-500 mb-1 flex items-center gap-1">
-                        {isBonus && <span className="material-symbols-outlined text-amber-500 text-sm">star</span>}
-                        #{p.match.matchNumber} - {p.match.stage.toUpperCase()} {p.match.group ? `Group ${p.match.group}` : ''}
-                      </span>
-                      <div className="flex items-center space-x-2">
-                        <span className="font-medium text-slate-900 dark:text-white w-24 text-right">
-                          {p.match.homeTeam?.name || p.match.homePlaceholder}
-                        </span>
-                        <span className="text-slate-400">vs</span>
-                        <span className="font-medium text-slate-900 dark:text-white w-24">
-                          {p.match.awayTeam?.name || p.match.awayPlaceholder}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-center">
-                    <div className="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-md">
-                      <span className="font-bold mr-1">{p.predictedHome}</span>
-                      <span className="text-slate-400">-</span>
-                      <span className="font-bold ml-1">{p.predictedAway}</span>
-                      {p.predictedWinner && (
-                        <span className="ml-2 text-xs text-primary-600">
-                          ({p.predictedWinner === 'home' ? 'H' : 'A'})
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-center">
-                    {p.match.realScoreHome !== null ? (
-                      <div className="inline-flex items-center px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-md border border-green-100 dark:border-green-900/30">
-                        <span className="font-bold mr-1">{p.match.realScoreHome}</span>
-                        <span className="text-green-300 dark:text-green-700">-</span>
-                        <span className="font-bold ml-1">{p.match.realScoreAway}</span>
-                      </div>
-                    ) : (
-                      <span className="text-slate-400 text-sm">TBD</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-4 text-center">
-                    <span className={`text-lg font-bold ${
-                      p.pointsEarned === 3 ? 'text-green-600' : 
-                      p.pointsEarned >= 1 ? 'text-primary-600' : 
-                      'text-slate-400'
-                    }`}>
-                      {p.pointsEarned}
-                    </span>
-                  </td>
+      {canSeePredictions ? (
+        <div className="card overflow-hidden p-0">
+          <div className="overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr className="bg-slate-50 dark:bg-slate-800">
+                  <th className="px-4 py-3 text-left">Match</th>
+                  <th className="px-4 py-3 text-center">Prediction</th>
+                  <th className="px-4 py-3 text-center">Real Result</th>
+                  <th className="px-4 py-3 text-center">Points</th>
                 </tr>
-              );
-              })}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                {user.predictions.map((p) => {
+                  const isBonus = bonusMatchIds.has(p.matchId);
+                  return (
+                  <tr key={p.id} className={isBonus ? 'bg-amber-50/50 dark:bg-amber-900/10' : ''}>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-slate-500 mb-1 flex items-center gap-1">
+                          {isBonus && <span className="material-symbols-outlined text-amber-500 text-sm">star</span>}
+                          #{p.match.matchNumber} - {p.match.stage.toUpperCase()} {p.match.group ? `Group ${p.match.group}` : ''}
+                        </span>
+                        <div className="flex items-center space-x-2">
+                          <span className="font-medium text-slate-900 dark:text-white w-24 text-right">
+                            {p.match.homeTeam?.name || p.match.homePlaceholder}
+                          </span>
+                          <span className="text-slate-400">vs</span>
+                          <span className="font-medium text-slate-900 dark:text-white w-24">
+                            {p.match.awayTeam?.name || p.match.awayPlaceholder}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-center">
+                      <div className="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-md">
+                        <span className="font-bold mr-1">{p.predictedHome}</span>
+                        <span className="text-slate-400">-</span>
+                        <span className="font-bold ml-1">{p.predictedAway}</span>
+                        {p.predictedWinner && (
+                          <span className="ml-2 text-xs text-primary-600">
+                            ({p.predictedWinner === 'home' ? 'H' : 'A'})
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-center">
+                      {p.match.realScoreHome !== null ? (
+                        <div className="inline-flex items-center px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-md border border-green-100 dark:border-green-900/30">
+                          <span className="font-bold mr-1">{p.match.realScoreHome}</span>
+                          <span className="text-green-300 dark:text-green-700">-</span>
+                          <span className="font-bold ml-1">{p.match.realScoreAway}</span>
+                        </div>
+                      ) : (
+                        <span className="text-slate-400 text-sm">TBD</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-4 text-center">
+                      <span className={`text-lg font-bold ${
+                        p.pointsEarned === 3 ? 'text-green-600' :
+                        p.pointsEarned >= 1 ? 'text-primary-600' :
+                        'text-slate-400'
+                      }`}>
+                        {p.pointsEarned}
+                      </span>
+                    </td>
+                  </tr>
+                );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="card px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+          Predictions are hidden until the deadline passes.
+        </div>
+      )}
     </div>
   );
 }

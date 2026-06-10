@@ -23,7 +23,7 @@ export default function InactivityMonitor() {
     warningShownRef.current = true;
 
     // Show browser notification if permitted
-    if (Notification.permission === 'granted') {
+    if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
       new Notification('Session Expiring', {
         body: 'You will be logged out in 5 minutes due to inactivity.',
         icon: '/favicon.ico',
@@ -87,7 +87,7 @@ export default function InactivityMonitor() {
     });
 
     // Request notification permission
-    if (Notification.permission === 'default') {
+    if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
       Notification.requestPermission();
     }
 
