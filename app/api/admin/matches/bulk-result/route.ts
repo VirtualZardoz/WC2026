@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { advanceKnockoutWinner, updateKnockoutBracket } from '@/lib/tournament';
 import { calculatePredictionPoints } from '@/lib/scoring';
+import { validateResultInput } from '@/lib/result-validation';
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -23,20 +24,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // -----------------------------------------------------------------------
+    // Validation pass — fetch all matches and validate before writing anything.
+    // All-or-nothing: if any entry is invalid, 400 the whole batch.
+    // -----------------------------------------------------------------------
+    const matchCache = new Map<string, Awaited<ReturnType<typeof prisma.match.findUnique>>>();
+    const offending: (string | number)[] = [];
+
+    for (const res of results) {
+      const { matchId, homeScore, awayScore, winnerId, matchNumber } = res;
+
+      if (!matchId) {
+        offending.push(matchNumber ?? matchId ?? '(unknown)');
+        continue;
+      }
+
+      const match = await prisma.match.findUnique({ where: { id: matchId } });
+      if (!match) {
+        offending.push(matchNumber ?? matchId);
+        continue;
+      }
+      matchCache.set(matchId, match);
+
+      const err = validateResultInput({ homeScore, awayScore, winnerId }, match);
+      if (err) {
+        offending.push(matchNumber ?? matchId);
+      }
+    }
+
+    if (offending.length > 0) {
+      return NextResponse.json(
+        { error: `Invalid results for match(es): ${offending.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
+    // -----------------------------------------------------------------------
+    // Write loop — all entries already validated; no silent continues.
+    // -----------------------------------------------------------------------
     const updatedPredictionsCount = [];
 
     for (const res of results) {
       const { matchId, homeScore, awayScore, winnerId } = res;
 
-      if (!matchId || homeScore === undefined || awayScore === undefined) {
-        continue;
-      }
-
-      const match = await prisma.match.findUnique({
-        where: { id: matchId },
-      });
-
-      if (!match) continue;
+      const match = matchCache.get(matchId)!;
 
       // Determine actual winner for knockout matches.
       // Logic lives here (not in lib/scoring.ts) because it drives bracket progression.
@@ -47,6 +78,7 @@ export async function POST(request: NextRequest) {
         } else if (awayScore > homeScore) {
           actualWinnerId = match.awayTeamId;
         } else {
+          // Draw in knockout — winnerId already validated as present and valid.
           actualWinnerId = winnerId ?? null;
         }
       }
@@ -79,16 +111,8 @@ export async function POST(request: NextRequest) {
       // Transaction strategy: Option B (per-match) — transact match.update + all
       // per-prediction pointsEarned writes for THIS match in one atomic operation.
       // Cascade functions (updateKnockoutBracket / advanceKnockoutWinner) use the
-      // module-level prisma client and run outside the tx. One bad match does not
-      // corrupt others — existing continue-on-invalid behavior is preserved.
+      // module-level prisma client and run outside the tx.
       // -----------------------------------------------------------------------
-
-      // Run bracket cascade before the transaction for this match
-      if (match.stage === 'group') {
-        await updateKnockoutBracket();
-      } else if (actualWinnerId) {
-        await advanceKnockoutWinner(matchId, actualWinnerId);
-      }
 
       // Atomic per-match: score update + all prediction point writes
       await prisma.$transaction(async (tx) => {
@@ -108,6 +132,15 @@ export async function POST(request: NextRequest) {
           });
         }
       });
+
+      // Run bracket cascade AFTER the transaction commits for this match so the
+      // cascade reads the just-written result (correct completedGroupMatches count,
+      // correct winner).
+      if (match.stage === 'group') {
+        await updateKnockoutBracket();
+      } else if (actualWinnerId) {
+        await advanceKnockoutWinner(matchId, actualWinnerId);
+      }
 
       updatedPredictionsCount.push(predictions.length);
     }
