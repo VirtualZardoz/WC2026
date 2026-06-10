@@ -1,10 +1,15 @@
 # Project State — WC2026 Pronostics
 
-**Last activity:** 2026-06-10 - Deployed quick task 260610-jx7 (scoring hardening) to prod; app FROZEN for launch
+**Last activity:** 2026-06-10 - Completed quick task 260610-mud (pre-launch hotfix bundle, 6 fixes) — committed locally, NOT pushed/deployed
 
 > **🔒 FROZEN FOR LAUNCH (2026-06-10):** No further code changes while users predict
 > (Alexandre's directive). Kickoff 2026-06-11. Treat remaining scoring/UX-polish items as
 > post-launch backlog, not pending work.
+>
+> **Change-managed exception (260610-mud):** A 6-fix pre-launch hotfix bundle (approved by
+> Alexandre, spec `.planning/HOTFIX-BUNDLE-SPEC-2026-06-10.md`) is committed LOCALLY
+> (`fdefac4`→`17167f6`, HEAD = `17167f6`, 5 ahead of origin) but **NOT pushed and NOT
+> deployed** — prod deploy is Alexandre's separate manual procedure.
 
 ## What This Is
 
@@ -53,3 +58,4 @@ RESOLVED as by-design (documented in `lib/scoring.ts`).
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
 | 260610-jx7 | Harden the prediction scoring engine (extract lib/scoring.ts pure fn, fix knockout winner-bonus, wrap result-entry in prisma.$transaction, add scoring tests) | 2026-06-10 | b82783d | Verified + Deployed (prod build `EvA-AMSoi2IsORxHDQ-qj`, pushed origin/main) | [260610-jx7-harden-the-prediction-scoring-engine-ext](./quick/260610-jx7-harden-the-prediction-scoring-engine-ext/) |
+| 260610-mud | Pre-launch hotfix bundle — 6 fixes (iOS Notification guard, pre-deadline prediction leak, deadline tz bug, bracket cascade-after-tx, result input validation, tests) | 2026-06-10 | 17167f6 | Done — committed local only, NOT pushed/deployed (46/46 targeted tests green, tsc clean) | [260610-mud-execute-pre-launch-hotfix-bundle-6-fixes](./quick/260610-mud-execute-pre-launch-hotfix-bundle-6-fixes/) |
