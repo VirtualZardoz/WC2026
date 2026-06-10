@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { advanceKnockoutWinner, updateKnockoutBracket } from '@/lib/tournament';
+import { calculatePredictionPoints } from '@/lib/scoring';
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -37,83 +38,77 @@ export async function POST(request: NextRequest) {
 
       if (!match) continue;
 
-      let actualWinnerId = null;
+      // Determine actual winner for knockout matches.
+      // Logic lives here (not in lib/scoring.ts) because it drives bracket progression.
+      let actualWinnerId: string | null = null;
       if (match.stage !== 'group') {
         if (homeScore > awayScore) {
           actualWinnerId = match.homeTeamId;
         } else if (awayScore > homeScore) {
           actualWinnerId = match.awayTeamId;
         } else {
-          actualWinnerId = winnerId;
+          actualWinnerId = winnerId ?? null;
         }
       }
 
-      await prisma.match.update({
-        where: { id: matchId },
-        data: {
-          realScoreHome: homeScore,
-          realScoreAway: awayScore,
-        },
+      // Fetch predictions and compute points before entering the transaction
+      const predictions = await prisma.prediction.findMany({
+        where: { matchId },
       });
 
+      const scoredUpdates = predictions.map((prediction) => ({
+        id: prediction.id,
+        pointsEarned: calculatePredictionPoints(
+          {
+            predictedHome: prediction.predictedHome,
+            predictedAway: prediction.predictedAway,
+            predictedWinner: prediction.predictedWinner,
+          },
+          {
+            stage: match.stage,
+            realScoreHome: homeScore,
+            realScoreAway: awayScore,
+            homeTeamId: match.homeTeamId,
+            awayTeamId: match.awayTeamId,
+            actualWinnerId,
+          }
+        ),
+      }));
+
+      // -----------------------------------------------------------------------
+      // Transaction strategy: Option B (per-match) — transact match.update + all
+      // per-prediction pointsEarned writes for THIS match in one atomic operation.
+      // Cascade functions (updateKnockoutBracket / advanceKnockoutWinner) use the
+      // module-level prisma client and run outside the tx. One bad match does not
+      // corrupt others — existing continue-on-invalid behavior is preserved.
+      // -----------------------------------------------------------------------
+
+      // Run bracket cascade before the transaction for this match
       if (match.stage === 'group') {
         await updateKnockoutBracket();
       } else if (actualWinnerId) {
         await advanceKnockoutWinner(matchId, actualWinnerId);
       }
 
-      const predictions = await prisma.prediction.findMany({
-        where: { matchId },
+      // Atomic per-match: score update + all prediction point writes
+      await prisma.$transaction(async (tx) => {
+        await tx.match.update({
+          where: { id: matchId },
+          data: {
+            realScoreHome: homeScore,
+            realScoreAway: awayScore,
+          },
+        });
+
+        // Write all prediction points (SET, never increment — idempotent)
+        for (const { id, pointsEarned } of scoredUpdates) {
+          await tx.prediction.update({
+            where: { id },
+            data: { pointsEarned },
+          });
+        }
       });
 
-      const actualResult =
-        homeScore > awayScore ? 'home' : homeScore < awayScore ? 'away' : 'draw';
-
-      for (const prediction of predictions) {
-        let points = 0;
-        if (
-          prediction.predictedHome === homeScore &&
-          prediction.predictedAway === awayScore
-        ) {
-          points = 3;
-        } else {
-          const predictedResult =
-            prediction.predictedHome > prediction.predictedAway
-              ? 'home'
-              : prediction.predictedHome < prediction.predictedAway
-              ? 'away'
-              : 'draw';
-
-          if (predictedResult === actualResult) {
-            points = 1;
-          }
-        }
-
-        if (match.stage !== 'group' && actualWinnerId) {
-          let userPredictedWinnerId = null;
-          if (prediction.predictedHome > prediction.predictedAway) {
-            userPredictedWinnerId = match.homeTeamId;
-          } else if (prediction.predictedAway > prediction.predictedHome) {
-            userPredictedWinnerId = match.awayTeamId;
-          } else {
-            userPredictedWinnerId =
-              prediction.predictedWinner === 'home'
-                ? match.homeTeamId
-                : prediction.predictedWinner === 'away'
-                ? match.awayTeamId
-                : null;
-          }
-
-          if (userPredictedWinnerId === actualWinnerId) {
-            points += 1;
-          }
-        }
-
-        await prisma.prediction.update({
-          where: { id: prediction.id },
-          data: { pointsEarned: points },
-        });
-      }
       updatedPredictionsCount.push(predictions.length);
     }
 

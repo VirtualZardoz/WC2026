@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { advanceKnockoutWinner, updateKnockoutBracket } from '@/lib/tournament';
+import { calculatePredictionPoints } from '@/lib/scoring';
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -32,15 +33,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Match not found' }, { status: 404 });
     }
 
-    // Determine actual winner for knockout matches
-    let actualWinnerId = null;
+    // Determine actual winner for knockout matches.
+    // This sets the bracket cascade winner; uses body.winnerId for penalty draws.
+    // Logic lives here (not in lib/scoring.ts) because it drives bracket progression.
+    let actualWinnerId: string | null = null;
     if (match.stage !== 'group') {
       if (homeScore > awayScore) {
         actualWinnerId = match.homeTeamId;
       } else if (awayScore > homeScore) {
         actualWinnerId = match.awayTeamId;
       } else {
-        // Draw in knockout, use provided winnerId (penalties)
+        // Draw in knockout — winner decided by penalties, must be provided
         if (!winnerId) {
           return NextResponse.json(
             { error: 'Winner selection is required for knockout draws' },
@@ -51,84 +54,66 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Update match result
-    await prisma.match.update({
-      where: { id: matchId },
-      data: {
-        realScoreHome: homeScore,
-        realScoreAway: awayScore,
-      },
+    // Fetch all predictions before the transaction so we can compute points
+    // outside the tx (pure function — no DB reads needed inside tx).
+    const predictions = await prisma.prediction.findMany({
+      where: { matchId },
     });
 
-    // Auto-progression
+    // Build the scored updates array once (pure computation).
+    const scoredUpdates = predictions.map((prediction) => ({
+      id: prediction.id,
+      pointsEarned: calculatePredictionPoints(
+        {
+          predictedHome: prediction.predictedHome,
+          predictedAway: prediction.predictedAway,
+          predictedWinner: prediction.predictedWinner,
+        },
+        {
+          stage: match.stage,
+          realScoreHome: homeScore,
+          realScoreAway: awayScore,
+          homeTeamId: match.homeTeamId,
+          awayTeamId: match.awayTeamId,
+          actualWinnerId,
+        }
+      ),
+    }));
+
+    // -----------------------------------------------------------------------
+    // Transaction strategy: Option B — transact match.update + all per-prediction
+    // pointsEarned writes together. The bracket cascade functions (updateKnockoutBracket /
+    // advanceKnockoutWinner) use the module-level prisma client and are intentionally
+    // kept outside the tx to avoid modifying verified bracket feeder logic.
+    // The highest-value invariant (result + points commit atomically) is preserved.
+    // -----------------------------------------------------------------------
+
+    // Run bracket cascade BEFORE the transaction so the match state it reads is current.
     if (match.stage === 'group') {
       await updateKnockoutBracket();
     } else if (actualWinnerId) {
       await advanceKnockoutWinner(matchId, actualWinnerId);
     }
 
-    // Calculate points for all predictions on this match
-    const predictions = await prisma.prediction.findMany({
-      where: { matchId },
-    });
-
-    const actualResult =
-      homeScore > awayScore ? 'home' : homeScore < awayScore ? 'away' : 'draw';
-
-    for (const prediction of predictions) {
-      let points = 0;
-
-      // 1. Check for exact score (3 points)
-      if (
-        prediction.predictedHome === homeScore &&
-        prediction.predictedAway === awayScore
-      ) {
-        points = 3;
-      } else {
-        // 2. Check for correct result (1 point)
-        const predictedResult =
-          prediction.predictedHome > prediction.predictedAway
-            ? 'home'
-            : prediction.predictedHome < prediction.predictedAway
-            ? 'away'
-            : 'draw';
-
-        if (predictedResult === actualResult) {
-          points = 1;
-        }
-      }
-
-      // 3. Knockout bonus (1 point)
-      if (match.stage !== 'group' && actualWinnerId) {
-        // If user predicted the same winner as the actual winner
-        // We need to determine user's predicted winner
-        let userPredictedWinnerId = null;
-        if (prediction.predictedHome > prediction.predictedAway) {
-          userPredictedWinnerId = match.homeTeamId;
-        } else if (prediction.predictedAway > prediction.predictedHome) {
-          userPredictedWinnerId = match.awayTeamId;
-        } else {
-          // Prediction was a draw
-          // For now we assume user's predictedWinner is "home" or "away" (slug)
-          userPredictedWinnerId =
-            prediction.predictedWinner === 'home'
-              ? match.homeTeamId
-              : prediction.predictedWinner === 'away'
-              ? match.awayTeamId
-              : null;
-        }
-
-        if (userPredictedWinnerId === actualWinnerId) {
-          points += 1;
-        }
-      }
-
-      // Update prediction points
-      await prisma.prediction.update({
-        where: { id: prediction.id },
-        data: { pointsEarned: points },
+    // Atomic: match score update + all prediction point writes
+    await prisma.$transaction(async (tx) => {
+      // Update match result
+      await tx.match.update({
+        where: { id: matchId },
+        data: {
+          realScoreHome: homeScore,
+          realScoreAway: awayScore,
+        },
       });
-    }
+
+      // Write all prediction points (SET, never increment — idempotent)
+      for (const { id, pointsEarned } of scoredUpdates) {
+        await tx.prediction.update({
+          where: { id },
+          data: { pointsEarned },
+        });
+      }
+    });
 
     return NextResponse.json({
       message: 'Result saved and points calculated',
