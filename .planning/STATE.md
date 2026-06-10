@@ -1,6 +1,10 @@
 # Project State — WC2026 Pronostics
 
-**Last activity:** 2026-06-10 - Completed quick task 260610-jx7: Harden the prediction scoring engine
+**Last activity:** 2026-06-10 - Deployed quick task 260610-jx7 (scoring hardening) to prod; app FROZEN for launch
+
+> **🔒 FROZEN FOR LAUNCH (2026-06-10):** No further code changes while users predict
+> (Alexandre's directive). Kickoff 2026-06-11. Treat remaining scoring/UX-polish items as
+> post-launch backlog, not pending work.
 
 ## What This Is
 
@@ -17,7 +21,11 @@ TailwindCSS · Vitest (`tests/`, incl. `tests/security`).
 
 - **Live** at https://wc2026.sabeti.com — group-stage scoring is correct, idempotent, deployed.
 - Knockout bracket data/placeholders/feeders fixed + verified + deployed to production DB
-  (see `.planning/debug/knockout-bracket-not-populating.md`, HEAD-ish commit `8bbea89`).
+  (see `.planning/debug/knockout-bracket-not-populating.md`, commit `8bbea89`).
+- **Scoring engine hardened + deployed** (quick task 260610-jx7): single source of truth in
+  `lib/scoring.ts`, both result endpoints transactional, knockout winner-bonus fixed. Built from
+  `b82783d`, shipped as prod build `EvA-AMSoi2IsORxHDQ-qj`, verified live. Commits `292cc1b →
+  b82783d` pushed to origin/main (origin was `8bbea89`, now `b82783d`).
 - Codebase mapped: see `.planning/codebase/` (ARCHITECTURE, CONCERNS, STACK, STRUCTURE, TESTING, etc.).
 
 ## Key Files (scoring domain)
@@ -44,4 +52,4 @@ RESOLVED as by-design (documented in `lib/scoring.ts`).
 
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
-| 260610-jx7 | Harden the prediction scoring engine (extract lib/scoring.ts pure fn, fix knockout winner-bonus, wrap result-entry in prisma.$transaction, add scoring tests) | 2026-06-10 | 5aa2a80 | Verified | [260610-jx7-harden-the-prediction-scoring-engine-ext](./quick/260610-jx7-harden-the-prediction-scoring-engine-ext/) |
+| 260610-jx7 | Harden the prediction scoring engine (extract lib/scoring.ts pure fn, fix knockout winner-bonus, wrap result-entry in prisma.$transaction, add scoring tests) | 2026-06-10 | b82783d | Verified + Deployed (prod build `EvA-AMSoi2IsORxHDQ-qj`, pushed origin/main) | [260610-jx7-harden-the-prediction-scoring-engine-ext](./quick/260610-jx7-harden-the-prediction-scoring-engine-ext/) |

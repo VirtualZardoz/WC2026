@@ -149,3 +149,20 @@ Files verified:
 Commits verified:
 - `292cc1b` — Task 1: pure scoring function + tests
 - `5aa2a80` — Task 2: endpoint refactor with transaction
+
+---
+
+## Deployment (2026-06-10)
+
+**Status: DEPLOYED to production · pushed to origin/main · app FROZEN for launch.**
+
+- Built locally from `b82783d` and shipped as prod build **`EvA-AMSoi2IsORxHDQ-qj`**. The API
+  scoring routes (`result/route.ts`, `bulk-result/route.ts`) compile into the `.next` server
+  bundle, so the build swap deployed the new scoring engine.
+- **Verified live:** consistent build id across requests; `/login` + auth endpoints return 200;
+  old build assets now 404 (clean cutover).
+- **Pushed to origin/main:** the 4 scoring commits `292cc1b → b82783d` are on `origin/main`
+  (origin was at `8bbea89`, now `b82783d`).
+- **Freeze:** App is frozen — no further changes while users predict (Alexandre's directive).
+  Any remaining scoring / UX-polish items are **post-launch backlog**, not pending work.
+- Nothing outstanding on the scoring task.
